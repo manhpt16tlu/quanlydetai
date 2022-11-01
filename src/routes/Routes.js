@@ -1,6 +1,6 @@
 import Organ from '../pages/Organ/Organ';
 import Topic from '../pages/Topic/Topic';
-import routesConfig from './config';
+import { routes as routesConfig } from 'configs/general';
 import Home from 'pages/Home/Home';
 import OrganCreate from 'pages/Organ/OrganCreate';
 import OrganList from 'pages/Organ/OrganList';

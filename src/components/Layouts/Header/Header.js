@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import cln from 'classnames';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import routes from '../../../routes/config';
+import { routes as routesConfig } from 'configs/general';
 const links = [
   {
-    to: routes.home,
+    to: routesConfig.home,
     text: 'Trang chủ',
   },
   {
-    to: routes.organ,
+    to: routesConfig.organ,
     text: 'Cơ quan',
   },
   {
-    to: routes.topic,
+    to: routesConfig.topic,
     text: 'Đề tài',
   },
 ];

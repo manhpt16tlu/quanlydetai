@@ -1,4 +1,4 @@
-import api from '../utils/api';
+import api from 'configs/api';
 const call = async function (method, url) {
   if (method === 'GET') {
     const data = await api.get(url).catch((err) => console.log(err));

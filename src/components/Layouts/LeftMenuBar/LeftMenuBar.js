@@ -1,23 +1,24 @@
 import { Link, NavLink } from 'react-router-dom';
-import routes from 'routes/config';
+import { routes as routesConfig } from 'configs/general';
+import { menuBarLeftType } from 'configs/general';
 function LeftMenuBar({ type }) {
   const organContent = [
     {
-      to: routes.organCreate,
+      to: routesConfig.organCreate,
       text: 'Tạo mới',
     },
     {
-      to: routes.organList,
+      to: routesConfig.organList,
       text: 'Danh sách',
     },
   ];
   const topicContent = [];
   let content;
   switch (type) {
-    case 'organ':
+    case menuBarLeftType.organ:
       content = organContent;
       break;
-    case 'topic':
+    case menuBarLeftType.topic:
       content = topicContent;
       break;
   }
