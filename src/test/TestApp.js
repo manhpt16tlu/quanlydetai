@@ -1,6 +1,6 @@
 import Component from './MyComponent';
 function TestApp() {
-  return null;
+  return <Component />;
 }
 
 export default TestApp;

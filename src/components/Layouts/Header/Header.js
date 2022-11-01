@@ -17,34 +17,16 @@ const links = [
   },
 ];
 function Header() {
-  let currentIndex;
   const loc = useLocation();
-  links.forEach((l, i) => {
-    if (l.to === loc.pathname) {
-      currentIndex = i;
-      return;
-    }
-  });
-  const [active, setActive] = useState(currentIndex);
-  links.forEach((e, i) => {
-    e.click = function (i) {
-      setActive(i);
-    };
-  });
   return (
     <div className="ui menu">
       {links.map((l, i) => {
         const classes = cln({
           item: true,
-          active: active == i ? true : false,
+          active: loc.pathname === l.to ? true : false,
         });
         return (
-          <Link
-            className={classes}
-            key={i}
-            to={l.to}
-            onClick={() => l.click(i)}
-          >
+          <Link className={classes} key={i} to={l.to}>
             {l.text}
           </Link>
         );

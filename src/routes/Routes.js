@@ -18,6 +18,7 @@ const publicRoutes = [
         component: <OrganCreate />,
       },
       {
+        index: true,
         path: routesConfig.organList,
         component: <OrganList />,
       },
