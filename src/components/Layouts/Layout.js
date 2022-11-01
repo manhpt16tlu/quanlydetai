@@ -1,10 +1,12 @@
 import Header from './Header/Header';
+import HeroSection from './HeroSection/HeroSection';
 
 function Layout(props) {
   return (
-    <div>
+    <div className="ui container">
+      <HeroSection />
       <Header />
-      <div className="content">{props.children}</div>
+      <div className="ui container">{props.children}</div>
     </div>
   );
 }

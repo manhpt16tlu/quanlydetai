@@ -1,6 +1,11 @@
-import api from './Api';
-function OrganService() {
-    return (  );
-}
-
-export default OrganService;
+import api from '../utils/api';
+const call = async function (method, url) {
+  if (method === 'GET') {
+    const data = await api.get(url).catch((err) => console.log(err));
+    return data.data;
+  }
+};
+const getAll = () => {
+  return call('GET', 'organ');
+};
+export { getAll };
