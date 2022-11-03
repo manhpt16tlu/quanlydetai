@@ -1,5 +1,7 @@
 import { Routes, Route, Link } from 'react-router-dom';
-import 'semantic-ui-css/semantic.min.css'; //css lib
+import 'semantic-ui-css/semantic.min.css'; //css semantic
+import 'react-toastify/dist/ReactToastify.css'; //css toast
+import 'antd/dist/antd.css'; //css antd
 import Organ from './pages/Organ/Organ';
 import Topic from './pages/Topic/Topic';
 import GlobalStyle from './components/GlobalStyle/GlobalStyle';

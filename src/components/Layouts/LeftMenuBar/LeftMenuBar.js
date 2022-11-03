@@ -9,7 +9,7 @@ function LeftMenuBar({ type }) {
     },
     {
       to: routesConfig.organList,
-      text: 'Danh sách',
+      text: 'Xem và chỉnh sửa',
     },
   ];
   const topicContent = [];
@@ -23,15 +23,17 @@ function LeftMenuBar({ type }) {
       break;
   }
   return (
-    <div className="ui pointing vertical menu">
-      {content.map((c, i) => {
-        return (
-          <NavLink key={i} className="item" to={c.to}>
-            {c.text}
-          </NavLink>
-        );
-      })}
-    </div>
+    <>
+      <div className="ui pointing secondary vertical menu large">
+        {content.map((c, i) => {
+          return (
+            <NavLink key={i} className="item" to={c.to}>
+              {c.text}
+            </NavLink>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

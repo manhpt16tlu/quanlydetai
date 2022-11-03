@@ -19,7 +19,7 @@ const links = [
 function Header() {
   const loc = useLocation();
   return (
-    <div className="ui menu">
+    <div className="ui menu big">
       {links.map((l, i) => {
         const classes = cln({
           item: true,
@@ -32,12 +32,12 @@ function Header() {
         );
       })}
       <div className="right menu">
-        <div className="item">
+        {/* <div className="item">
           <div className="ui icon input">
             <input type="text" placeholder="Search..." />
             <i aria-hidden="true" className="search icon"></i>
           </div>
-        </div>
+        </div> */}
         <a className="item">Đăng xuất</a>
       </div>
     </div>
