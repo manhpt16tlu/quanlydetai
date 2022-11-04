@@ -2,10 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import * as organService from '../../services/OrganService';
 import style from './OrganList.module.scss';
 import { Input, Space } from 'antd';
+import cln from 'classnames';
 function OrganList() {
   const [organs, setOrgans] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateId, setUpdateId] = useState(null);
+  const [pageData, setPageData] = useState({
+    size: null,
+    total: null,
+    current: 0,
+    pages: [],
+  });
   const { Search } = Input;
 
   const onClickUpdate = (e) => {
@@ -27,10 +34,10 @@ function OrganList() {
     setIsUpdate(true);
     setUpdateId(organ.id);
   };
-  const RowUpdate = ({ organ, index }) => {
+  const RowUpdate = ({ organ, stt }) => {
     return (
       <tr className="">
-        <td className="center aligned">{index}</td>
+        <td className="center aligned">{stt + 1}</td>
         <td className="">
           <input
             defaultValue={organ.name}
@@ -60,10 +67,10 @@ function OrganList() {
       </tr>
     );
   };
-  const RowNormal = ({ organ, index }) => {
+  const RowNormal = ({ organ, stt }) => {
     return (
       <tr className={isUpdate ? 'disabled' : null}>
-        <td className="center aligned">{index}</td>
+        <td className="center aligned">{stt + 1}</td>
         <td className="">{organ.name}</td>
         <td className="">{organ.address}</td>
         <td className="">
@@ -78,12 +85,39 @@ function OrganList() {
       </tr>
     );
   };
+
+  const onChangePage = (p) => {
+    if (p >= 0 && p < pageData.total) {
+      setPageData((prev) => ({
+        ...prev,
+        current: p,
+      }));
+    }
+  };
+
   useEffect(() => {
-    organService.getAll().then((data) => {
+    organService.getAll(pageData.current).then((data) => {
       console.log('call api');
-      setOrgans(data);
+      let temp = [];
+      for (let i = 0; i < data.data.totalPages; i++) {
+        let classLinkPage = cln('item', {
+          active: i === pageData.current,
+        });
+        temp.push(
+          <a key={i} className={classLinkPage} onClick={() => onChangePage(i)}>
+            {i + 1}
+          </a>
+        );
+      }
+      setOrgans(data.data.content);
+      setPageData({
+        ...pageData,
+        size: data.data.size,
+        total: data.data.totalPages,
+        pages: temp,
+      });
     });
-  }, [isUpdate]);
+  }, [isUpdate, pageData.current]);
 
   const onSearch = (value) => console.log(value);
 
@@ -112,9 +146,17 @@ function OrganList() {
           <tbody className="">
             {organs.map((o, i) => {
               return updateId !== o.id ? (
-                <RowNormal organ={o} key={i} index={i} />
+                <RowNormal
+                  organ={o}
+                  key={i}
+                  stt={pageData.size * pageData.current + i}
+                />
               ) : (
-                <RowUpdate organ={o} key={i} index={i} />
+                <RowUpdate
+                  organ={o}
+                  key={i}
+                  stt={pageData.size * pageData.current + i}
+                />
               );
             })}
           </tbody>
@@ -122,14 +164,17 @@ function OrganList() {
             <tr className="">
               <th colSpan="4" className="">
                 <div className="ui pagination right floated menu">
-                  <a className="icon item">
+                  <a
+                    className="icon item"
+                    onClick={() => onChangePage(pageData.current - 1)}
+                  >
                     <i aria-hidden="true" className="chevron left icon"></i>
                   </a>
-                  <a className="item">1</a>
-                  <a className="item">2</a>
-                  <a className="item">3</a>
-                  <a className="item">4</a>
-                  <a className="icon item">
+                  {pageData.pages}
+                  <a
+                    className="icon item"
+                    onClick={() => onChangePage(pageData.current + 1)}
+                  >
                     <i aria-hidden="true" className="chevron right icon"></i>
                   </a>
                 </div>

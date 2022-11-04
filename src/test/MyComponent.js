@@ -1,5 +1,5 @@
 function Component() {
-  return [1, 2, 3, null];
+  return;
 }
 
 export default Component;
