@@ -76,10 +76,10 @@ function OrganList() {
         <td className="">
           <button
             disabled={isUpdate}
-            className="ui button"
+            className="ui tiny button"
             onClick={() => onClickEdit(organ)}
           >
-            Edit
+            Update
           </button>
         </td>
       </tr>
@@ -110,14 +110,14 @@ function OrganList() {
         );
       }
       setOrgans(data.data.content);
-      setPageData({
-        ...pageData,
+      setPageData((prev) => ({
+        ...prev,
         size: data.data.size,
         total: data.data.totalPages,
         pages: temp,
-      });
+      }));
     });
-  }, [isUpdate, pageData.current]);
+  }, [isUpdate, pageData.current, pageData.total]);
 
   const onSearch = (value) => console.log(value);
 
