@@ -4,6 +4,7 @@ const routes = {
   organ: '/organization',
   organCreate: '/organization/create',
   organList: '/organization/list',
+  organDetail: '/organization/detail',
   notfound: '*',
 };
 const menuBarLeftType = {

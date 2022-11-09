@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Input, Space } from 'antd';
 import cln from 'classnames';
 import { toast, ToastContainer } from 'react-toastify';
 import * as organService from '../../services/OrganService';
 import style from './OrganList.module.scss';
+import { routes as routesConfig } from 'configs/general';
 function OrganList() {
   const [organs, setOrgans] = useState([]);
-  const [isUpdate, setIsUpdate] = useState(false);
-  const [updateId, setUpdateId] = useState(null);
   const [pageData, setPageData] = useState({
     size: null,
     total: null,
@@ -15,81 +15,18 @@ function OrganList() {
     pages: [],
   });
   const [searchTerm, setSearchTearm] = useState('');
+  const navigage = useNavigate();
   const { Search } = Input;
 
-  const onClickUpdate = (e) => {
-    e.preventDefault();
-    toast.promise(
-      organService
-        .update(
-          {
-            name: e.target['ten'].value,
-            address: e.target['diachi'].value,
-          },
-          e.target['id'].value
-        )
-        .then(() => {
-          setIsUpdate(false);
-          setUpdateId(null);
-        }),
-      {
-        pending: 'Pending',
-        success: 'Success',
-        error: 'Error',
-      },
-      { position: toast.POSITION.TOP_CENTER }
-    );
-  };
-  const onClickEdit = (organ) => {
-    setIsUpdate(true);
-    setUpdateId(organ.id);
-  };
-  const RowUpdate = ({ organ, stt }) => {
+  const Row = ({ organ, stt }) => {
     return (
       <tr className="">
-        <td className="center aligned">{stt + 1}</td>
-        <td className="">
-          <input
-            defaultValue={organ.name}
-            className={style.biggerInput}
-            name="ten"
-            required
-          />
-          <input
-            defaultValue={organ.id}
-            name="id"
-            style={{ display: 'none' }}
-          />
-        </td>
-        <td className="">
-          <input
-            defaultValue={organ.address}
-            className={style.biggerInput}
-            name="diachi"
-            required
-          />
-        </td>
-        <td className="">
-          <button type="submit" className="ui teal button">
-            OK
-          </button>
-        </td>
-      </tr>
-    );
-  };
-  const RowNormal = ({ organ, stt }) => {
-    return (
-      <tr className={isUpdate ? 'disabled' : null}>
         <td className="center aligned">{stt + 1}</td>
         <td className="">{organ.name}</td>
         <td className="">{organ.address}</td>
         <td className="">
-          <button
-            disabled={isUpdate}
-            className="ui tiny button"
-            onClick={() => onClickEdit(organ)}
-          >
-            Update
+          <button className="ui button" onClick={() => onEdit(organ)}>
+            <i aria-hidden="true" className="setting large icon fitted"></i>
           </button>
         </td>
       </tr>
@@ -107,9 +44,20 @@ function OrganList() {
 
   useEffect(() => {
     organService.getAll(pageData.current, searchTerm).then((data) => {
-      console.log('call api');
+      console.log('effect 1 call api', data);
+      setOrgans(data.data.content);
+      setPageData((prev) => ({
+        ...prev,
+        size: data.data.size,
+        total: data.data.totalPages,
+      }));
+    });
+  }, [pageData.current, searchTerm]);
+  useEffect(() => {
+    console.log('effect 2 display pagination');
+    if (pageData.total != null) {
       let temp = [];
-      for (let i = 0; i < data.data.totalPages; i++) {
+      for (let i = 0; i < pageData.total; i++) {
         let classLinkPage = cln('item', {
           active: i === pageData.current,
         });
@@ -119,32 +67,23 @@ function OrganList() {
           </a>
         );
       }
-      setOrgans(data.data.content);
       setPageData((prev) => ({
         ...prev,
-        size: data.data.size,
-        total: data.data.totalPages,
         pages: temp,
       }));
-    });
-  }, [isUpdate, pageData.current, pageData.total, searchTerm]);
-
+    }
+  }, [pageData.total, pageData.current]);
   const onSearch = (value) => {
     if (value.trim()) setSearchTearm(value);
     else setSearchTearm('');
   };
-
-  useEffect(() => {
-    setPageData((prev) => ({
-      ...prev,
-      current: 0,
-    }));
-  }, [searchTerm]);
+  const onEdit = (data) => {
+    navigage(routesConfig.organDetail, { state: data });
+  };
   return (
     <div className="ui container">
       <div className={style.searchBar}>
         <Search
-          disabled={isUpdate}
           placeholder="input search text"
           onSearch={onSearch}
           size="large"
@@ -153,59 +92,48 @@ function OrganList() {
           }}
         />
       </div>
-      <form className={`${style.marginTop}`} onSubmit={onClickUpdate}>
-        <table className={`ui teal celled fixed table large`}>
-          <thead className="">
-            <tr className="">
-              <th className="one wide center aligned"></th>
-              <th className="center aligned">Tên cơ quan</th>
-              <th className="center aligned">Địa chỉ</th>
-              <th className="two wide"></th>
-            </tr>
-          </thead>
-          <tbody className="">
-            {organs.map((o, i) => {
-              return updateId !== o.id ? (
-                <RowNormal
-                  organ={o}
-                  key={i}
-                  stt={pageData.size * pageData.current + i}
-                />
-              ) : (
-                <RowUpdate
-                  organ={o}
-                  key={i}
-                  stt={pageData.size * pageData.current + i}
-                />
-              );
-            })}
-          </tbody>
-          {!isUpdate ? (
-            <tfoot className="">
-              <tr className="">
-                <th colSpan="4" className="">
-                  <div className="ui pagination right floated menu">
-                    <a
-                      className="icon item"
-                      onClick={() => onChangePage(pageData.current - 1)}
-                    >
-                      <i aria-hidden="true" className="chevron left icon"></i>
-                    </a>
-                    {pageData.pages}
-                    <a
-                      className="icon item"
-                      onClick={() => onChangePage(pageData.current + 1)}
-                    >
-                      <i aria-hidden="true" className="chevron right icon"></i>
-                    </a>
-                  </div>
-                </th>
-              </tr>
-            </tfoot>
-          ) : null}
-        </table>
-      </form>
-      <ToastContainer autoClose={1200} />
+      <table className={`ui teal celled fixed table large`}>
+        <thead className="">
+          <tr className="">
+            <th className="one wide center aligned"></th>
+            <th className="center aligned">Tên cơ quan</th>
+            <th className="center aligned">Địa chỉ</th>
+            <th className="two wide"></th>
+          </tr>
+        </thead>
+        <tbody className="">
+          {organs.map((o, i) => {
+            return (
+              <Row
+                organ={o}
+                key={i}
+                stt={pageData.size * pageData.current + i}
+              />
+            );
+          })}
+        </tbody>
+        <tfoot className="">
+          <tr className="">
+            <th colSpan="4" className="">
+              <div className="ui pagination right floated menu">
+                <a
+                  className="icon item"
+                  onClick={() => onChangePage(pageData.current - 1)}
+                >
+                  <i aria-hidden="true" className="chevron left icon"></i>
+                </a>
+                {pageData.pages}
+                <a
+                  className="icon item"
+                  onClick={() => onChangePage(pageData.current + 1)}
+                >
+                  <i aria-hidden="true" className="chevron right icon"></i>
+                </a>
+              </div>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
     </div>
   );
 }

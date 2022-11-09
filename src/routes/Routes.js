@@ -5,6 +5,7 @@ import Home from 'pages/Home/Home';
 import OrganCreate from 'pages/Organ/OrganCreate';
 import OrganList from 'pages/Organ/OrganList';
 import NotFound from 'pages/NotFound/NotFound';
+import OrganDetail from 'pages/Organ/OrganDetail';
 const publicRoutes = [
   {
     path: routesConfig.home,
@@ -21,6 +22,10 @@ const publicRoutes = [
         index: true,
         path: routesConfig.organList,
         component: <OrganList />,
+      },
+      {
+        path: routesConfig.organDetail,
+        component: <OrganDetail />,
       },
     ],
     component: <Organ />,
