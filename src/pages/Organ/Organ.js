@@ -14,5 +14,4 @@ function Organ() {
     </div>
   );
 }
-
 export default Organ;

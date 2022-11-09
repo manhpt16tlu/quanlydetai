@@ -28,8 +28,8 @@ const call = async function (method, url, body) {
   // } else if (method === 'PUT') {
   // }
 };
-const getAll = (page) => {
-  return call('GET', `organ?page=${page}`);
+const getAll = (page, search) => {
+  return call('GET', `organ?page=${page}&search=${search}`);
 };
 const create = (body) => {
   return call('POST', 'organ', body);

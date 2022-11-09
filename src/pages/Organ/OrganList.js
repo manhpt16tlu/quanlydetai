@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import * as organService from '../../services/OrganService';
-import style from './OrganList.module.scss';
 import { Input, Space } from 'antd';
 import cln from 'classnames';
+import { toast, ToastContainer } from 'react-toastify';
+import * as organService from '../../services/OrganService';
+import style from './OrganList.module.scss';
 function OrganList() {
   const [organs, setOrgans] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
@@ -13,22 +14,31 @@ function OrganList() {
     current: 0,
     pages: [],
   });
+  const [searchTerm, setSearchTearm] = useState('');
   const { Search } = Input;
 
   const onClickUpdate = (e) => {
     e.preventDefault();
-    organService
-      .update(
-        {
-          name: e.target['ten'].value,
-          address: e.target['diachi'].value,
-        },
-        e.target['id'].value
-      )
-      .then(() => {
-        setIsUpdate(false);
-        setUpdateId(null);
-      });
+    toast.promise(
+      organService
+        .update(
+          {
+            name: e.target['ten'].value,
+            address: e.target['diachi'].value,
+          },
+          e.target['id'].value
+        )
+        .then(() => {
+          setIsUpdate(false);
+          setUpdateId(null);
+        }),
+      {
+        pending: 'Pending',
+        success: 'Success',
+        error: 'Error',
+      },
+      { position: toast.POSITION.TOP_CENTER }
+    );
   };
   const onClickEdit = (organ) => {
     setIsUpdate(true);
@@ -96,7 +106,7 @@ function OrganList() {
   };
 
   useEffect(() => {
-    organService.getAll(pageData.current).then((data) => {
+    organService.getAll(pageData.current, searchTerm).then((data) => {
       console.log('call api');
       let temp = [];
       for (let i = 0; i < data.data.totalPages; i++) {
@@ -117,14 +127,24 @@ function OrganList() {
         pages: temp,
       }));
     });
-  }, [isUpdate, pageData.current, pageData.total]);
+  }, [isUpdate, pageData.current, pageData.total, searchTerm]);
 
-  const onSearch = (value) => console.log(value);
+  const onSearch = (value) => {
+    if (value.trim()) setSearchTearm(value);
+    else setSearchTearm('');
+  };
 
+  useEffect(() => {
+    setPageData((prev) => ({
+      ...prev,
+      current: 0,
+    }));
+  }, [searchTerm]);
   return (
     <div className="ui container">
       <div className={style.searchBar}>
         <Search
+          disabled={isUpdate}
           placeholder="input search text"
           onSearch={onSearch}
           size="large"
@@ -160,29 +180,32 @@ function OrganList() {
               );
             })}
           </tbody>
-          <tfoot className="">
-            <tr className="">
-              <th colSpan="4" className="">
-                <div className="ui pagination right floated menu">
-                  <a
-                    className="icon item"
-                    onClick={() => onChangePage(pageData.current - 1)}
-                  >
-                    <i aria-hidden="true" className="chevron left icon"></i>
-                  </a>
-                  {pageData.pages}
-                  <a
-                    className="icon item"
-                    onClick={() => onChangePage(pageData.current + 1)}
-                  >
-                    <i aria-hidden="true" className="chevron right icon"></i>
-                  </a>
-                </div>
-              </th>
-            </tr>
-          </tfoot>
+          {!isUpdate ? (
+            <tfoot className="">
+              <tr className="">
+                <th colSpan="4" className="">
+                  <div className="ui pagination right floated menu">
+                    <a
+                      className="icon item"
+                      onClick={() => onChangePage(pageData.current - 1)}
+                    >
+                      <i aria-hidden="true" className="chevron left icon"></i>
+                    </a>
+                    {pageData.pages}
+                    <a
+                      className="icon item"
+                      onClick={() => onChangePage(pageData.current + 1)}
+                    >
+                      <i aria-hidden="true" className="chevron right icon"></i>
+                    </a>
+                  </div>
+                </th>
+              </tr>
+            </tfoot>
+          ) : null}
         </table>
       </form>
+      <ToastContainer autoClose={1200} />
     </div>
   );
 }
