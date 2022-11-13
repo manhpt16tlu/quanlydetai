@@ -22,11 +22,8 @@ const call = async function (method, url, body) {
   }
   return ret;
 };
-const getAll = (page, search) => {
-  return call('GET', `organ?page=${page}&search=${search}`);
-};
-const getAllNoPaging = () => {
-  return call('GET', `organ/nopaging`);
+const getAll = () => {
+  return call('GET', `result`);
 };
 const create = (body) => {
   return call('POST', 'organ', body);
@@ -35,4 +32,4 @@ const update = (body, organId) => {
   return call('PUT', `organ/${organId}`, body);
 };
 
-export { getAll, getAllNoPaging, create, update };
+export { getAll, create, update };

@@ -15,6 +15,10 @@ const links = [
     to: routesConfig.topic,
     text: 'Đề tài',
   },
+  {
+    to: routesConfig.form,
+    text: 'Biểu mẫu',
+  },
 ];
 function Header() {
   const loc = useLocation();
