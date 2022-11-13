@@ -7,6 +7,7 @@ import Topic from './pages/Topic/Topic';
 import GlobalStyle from './components/GlobalStyle/GlobalStyle';
 import { publicRoutes, privateRoutes } from './routes/Routes';
 import Layout from './components/Layouts/Layout';
+import AppLayout from 'components/Layouts/v2/AppLayout';
 function App() {
   const processChildRoute = (route) => {
     let childRoute;
@@ -34,21 +35,17 @@ function App() {
     return childRoute;
   };
   return (
-    <GlobalStyle>
-      <Routes>
-        {publicRoutes.map((route, index) => {
-          return (
-            <Route
-              key={index}
-              path={route.path}
-              element={<Layout>{route.component}</Layout>}
-            >
-              {processChildRoute(route)}
-            </Route>
-          );
-        })}
-      </Routes>
-    </GlobalStyle>
+    <Routes>
+      {publicRoutes.map((route, index) => {
+        return (
+          <Route
+            key={index}
+            path={route.path}
+            element={<AppLayout>{route.component}</AppLayout>}
+          />
+        );
+      })}
+    </Routes>
   );
 }
 

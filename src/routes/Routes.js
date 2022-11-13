@@ -10,44 +10,40 @@ import Form from 'pages/Form/Form';
 import TopicCreate from 'pages/Topic/TopicCreate';
 import TopicApprove from 'pages/Topic/TopicApprove';
 import TopicList from 'pages/Topic/TopicList';
+import TopicDetail from 'pages/Topic/TopicDetail';
 const publicRoutes = [
   {
     path: routesConfig.home,
     component: <Home />,
   },
+
   {
-    path: routesConfig.organ,
-    child: [
-      {
-        path: routesConfig.organCreate,
-        component: <OrganCreate />,
-      },
-      {
-        index: true,
-        path: routesConfig.organList,
-        component: <OrganList />,
-      },
-      {
-        path: routesConfig.organDetail,
-        component: <OrganDetail />,
-      },
-    ],
-    component: <Organ />,
+    path: routesConfig.organCreate,
+    component: <OrganCreate />,
   },
   {
-    path: routesConfig.topic,
-    child: [
-      {
-        path: routesConfig.topicCreate,
-        component: <TopicCreate />,
-      },
-      {
-        path: routesConfig.topicApprove,
-        component: <TopicApprove />,
-      },
-      { index: true, path: routesConfig.topicList, component: <TopicList /> },
-    ],
-    component: <Topic />,
+    path: routesConfig.organList,
+    component: <OrganList />,
+  },
+  {
+    path: routesConfig.organDetail,
+    component: <OrganDetail />,
+  },
+  {
+    path: routesConfig.topicCreate,
+    component: <TopicCreate />,
+  },
+  {
+    path: routesConfig.topicApprove,
+    component: <TopicApprove />,
+  },
+  {
+    path: routesConfig.topicList,
+    component: <TopicList />,
+  },
+  {
+    path: routesConfig.topicDetail,
+    component: <TopicDetail />,
   },
   {
     path: routesConfig.notfound,

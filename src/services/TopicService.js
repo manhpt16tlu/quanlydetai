@@ -22,8 +22,8 @@ const call = async function (method, url, body) {
   }
   return ret;
 };
-const getAll = (page, search) => {
-  return call('GET', `topic?page=${page}&search=${search}`);
+const getAll = () => {
+  return call('GET', `topic`);
 };
 const create = (body, organId, fieldId, statusId, resultId) => {
   return call(

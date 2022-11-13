@@ -25,8 +25,8 @@ function OrganList() {
         <td className="">{organ.name}</td>
         <td className="">{organ.address}</td>
         <td className="">
-          <button className="ui button" onClick={() => onEdit(organ)}>
-            <i aria-hidden="true" className="setting large icon fitted"></i>
+          <button className="ui button fluid" onClick={() => onEdit(organ)}>
+            <i aria-hidden="true" className="setting icon fitted"></i>
           </button>
         </td>
       </tr>
@@ -92,10 +92,10 @@ function OrganList() {
           }}
         />
       </div>
-      <table className={`ui teal celled fixed table large`}>
+      <table className={`ui teal celled fixed table`}>
         <thead className="">
           <tr className="">
-            <th className="one wide center aligned"></th>
+            <th className="one wide center aligned">STT</th>
             <th className="center aligned">Tên cơ quan</th>
             <th className="center aligned">Địa chỉ</th>
             <th className="two wide"></th>

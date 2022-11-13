@@ -33,6 +33,7 @@ function TopicCreate() {
   const [organOptions, setOrganOptions] = useState([]);
   const [resultOptions, setResultOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
+  const [disableSelect, setDisableSelect] = useState(false);
   const getSelectProps = (optionsData) => {
     return {
       allowClear: true,
@@ -74,7 +75,7 @@ function TopicCreate() {
                 values[formFieldNames.result]
               )
               .then((data) => {
-                form.resetFields();
+                form.resetFields(); //clear form
               }),
             {
               pending: 'Pending',
@@ -113,6 +114,15 @@ function TopicCreate() {
       setResultOptions(temp);
     });
   }, []);
+  const onStatusChange = (value) => {
+    if (value !== 3) {
+      form.setFieldValue(formFieldNames.result, 5);
+      setDisableSelect(true);
+    } else {
+      form.setFieldValue(formFieldNames.result, undefined);
+      setDisableSelect(false);
+    }
+  };
   return (
     <>
       <Form
@@ -239,7 +249,10 @@ function TopicCreate() {
             },
           ]}
         >
-          <Select {...getSelectProps(statusOptions)} />
+          <Select
+            {...getSelectProps(statusOptions)}
+            onChange={onStatusChange}
+          />
         </Form.Item>
         <Form.Item
           label="Kết quả"
@@ -251,7 +264,7 @@ function TopicCreate() {
             },
           ]}
         >
-          <Select {...getSelectProps(resultOptions)} />
+          <Select disabled={disableSelect} {...getSelectProps(resultOptions)} />
         </Form.Item>
         <Form.Item
           wrapperCol={{

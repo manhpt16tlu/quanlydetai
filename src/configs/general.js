@@ -1,15 +1,14 @@
 const routes = {
   home: '/',
-  topic: '/topic',
   topicCreate: '/topic/create',
   topicList: '/topic/list',
   topicApprove: '/topic/approve',
-  organ: '/organization',
-  form: '/form',
-  statistic: '/statistic',
+  topicDetail: '/topic/detail',
   organCreate: '/organization/create',
   organList: '/organization/list',
   organDetail: '/organization/detail',
+  form: '/form',
+  statistic: '/statistic',
   notfound: '*',
 };
 const menuBarLeftType = {
