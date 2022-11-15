@@ -1,11 +1,26 @@
 // import Component from './MyComponent';
 import 'antd/dist/antd.css';
-import { Button } from 'antd';
+import { Button, Form, Input } from 'antd';
+import { useState } from 'react';
 function TestApp() {
+  const [s, setS] = useState({ name: 'm' });
+  const [form] = Form.useForm();
+  const click = () => {
+    setS({
+      name: 's',
+    });
+    form.resetFields();
+  };
+  console.log('render');
   return (
-    <Button disabled block loading={{ delay: 50 }}>
-      Click
-    </Button>
+    <>
+      <Form form={form} initialValues={s}>
+        <Form.Item name="name">
+          <Input />
+        </Form.Item>
+      </Form>
+      <button onClick={click}>click</button>
+    </>
   );
 }
 

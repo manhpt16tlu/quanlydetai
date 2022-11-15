@@ -1,5 +1,6 @@
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { DoubleLeftOutlined } from '@ant-design/icons';
 import { Space, Button, Form, Input, Statistic, Row, Col } from 'antd';
 import { toast, ToastContainer } from 'react-toastify';
 import * as organService from 'services/OrganService';
@@ -7,7 +8,7 @@ import * as countService from 'services/CountService';
 import { MESSAGE_REQUIRE } from 'configs/general';
 function OrganDetail() {
   const { TextArea } = Input;
-  const navigage = useNavigate();
+  const navigate = useNavigate();
   const formFieldNames = {
     name: 'ten',
     address: 'diachi',
@@ -32,7 +33,7 @@ function OrganDetail() {
       )
       .then(() => {
         setUpdate(false);
-        navigage(location.pathname, {
+        navigate(location.pathname, {
           state: {
             id: organ.id,
             name: values[formFieldNames.name],
@@ -173,6 +174,9 @@ function OrganDetail() {
           <Statistic title="Đề tài đang thực hiện" value={statistic.stat2} />
         </Col>
       </Row>
+      <Button type="primary" onClick={() => navigate(-1)}>
+        <DoubleLeftOutlined /> Quay lại
+      </Button>
       <ToastContainer autoClose={1200} />
     </>
   );

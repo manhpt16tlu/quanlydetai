@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { Input, Space } from 'antd';
 import cln from 'classnames';
 import { toast, ToastContainer } from 'react-toastify';

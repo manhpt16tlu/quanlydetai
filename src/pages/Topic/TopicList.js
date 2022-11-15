@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import * as topicService from 'services/TopicService';
 import { routes as routesConfig } from 'configs/general';
 const dataIndexTable = {
+  id: 'id',
+  uid: 'uid',
   name: 'tendetai',
   organ: 'coquanchutri',
   manager: 'chunhiem',
@@ -14,7 +16,14 @@ const columns = [
     title: 'Tên đề tài',
     dataIndex: dataIndexTable.name,
     width: '40%',
-    render: (text) => <Link to={routesConfig.topicDetail}>{text}</Link>,
+    render: (text, record) => (
+      <Link
+        to={routesConfig.topicDetail}
+        state={{ topicID: record[dataIndexTable.id] }}
+      >
+        {text}
+      </Link>
+    ),
   },
   {
     title: 'Cơ quan chủ trì',
@@ -34,7 +43,6 @@ const rowSelection = {
   type: 'checkbox',
   onChange: (selectedRowKeys, selectedRows) => {},
   getCheckboxProps: (record) => {
-    console.log(record);
     return {};
   },
 };
@@ -50,6 +58,7 @@ const generateDateString = (startDate, endDate) => {
 const generateTableData = (data) => {
   return data.map((topic, index) => ({
     key: index,
+    [dataIndexTable.id]: topic.id,
     [dataIndexTable.name]: topic.name,
     [dataIndexTable.organ]: topic.organ.name,
     [dataIndexTable.manager]: topic.manager,

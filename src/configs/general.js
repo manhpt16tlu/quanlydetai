@@ -10,6 +10,7 @@ const routes = {
   form: '/form',
   statistic: '/statistic',
   notfound: '*',
+  notfoundRedirect: '/pagenotfound',
 };
 const menuBarLeftType = {
   organ: 'organization',

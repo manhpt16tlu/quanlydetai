@@ -14,7 +14,7 @@ import * as resultService from 'services/TopicResultService';
 import * as statusService from 'services/TopicStatusService';
 import * as topicService from 'services/TopicService';
 import { optionSelectFill as optionFill } from 'utils/topicUtil';
-
+import { uid } from 'utils/uidUtil';
 function TopicCreate() {
   const { TextArea } = Input;
   const [form] = Form.useForm();
@@ -63,6 +63,7 @@ function TopicCreate() {
             topicService
               .create(
                 {
+                  uid: uid(),
                   name: values[formFieldNames.name],
                   manager: values[formFieldNames.manager],
                   startDate: sdate,

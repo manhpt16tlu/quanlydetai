@@ -61,13 +61,15 @@ function AppLayout(props) {
     <Layout>
       <Sider breakpoint="lg" collapsedWidth="0">
         <div className={style.logo}>
-          <Title
-            level={4}
-            style={{
-              color: '#ffffff',
-            }}
-          >
-            QUẢN LÝ ĐỀ TÀI
+          <Title level={4}>
+            <Link
+              to={routesConfig.home}
+              style={{
+                color: '#ffffff',
+              }}
+            >
+              QUẢN LÝ ĐỀ TÀI
+            </Link>
           </Title>
         </div>
         <Menu

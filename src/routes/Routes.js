@@ -1,7 +1,5 @@
 import { routes as routesConfig } from 'configs/general';
-import Topic from '../pages/Topic/Topic';
 import Home from 'pages/Home/Home';
-import Organ from '../pages/Organ/Organ';
 import OrganCreate from 'pages/Organ/OrganCreate';
 import OrganList from 'pages/Organ/OrganList';
 import NotFound from 'pages/NotFound/NotFound';
@@ -52,6 +50,10 @@ const publicRoutes = [
   {
     path: routesConfig.form,
     component: <Form />,
+  },
+  {
+    path: routesConfig.notfoundRedirect,
+    component: <NotFound />,
   },
 ];
 const privateRoutes = [];
