@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Input, Space } from 'antd';
+import { Input } from 'antd';
 import cln from 'classnames';
-import { toast, ToastContainer } from 'react-toastify';
+import { routes as routesConfig } from 'configs/general';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as organService from '../../services/OrganService';
 import style from './OrganList.module.scss';
-import { routes as routesConfig } from 'configs/general';
 function OrganList() {
   const [organs, setOrgans] = useState([]);
   const [pageData, setPageData] = useState({

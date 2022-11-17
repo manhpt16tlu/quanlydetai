@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
 import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd';
 import {
-  MESSAGE_REQUIRE as messageRequire,
   DATE_FORMAT as dateFormat,
-  DEFAULT_TOPIC_VALUES,
   DATE_FORMAT,
+  MESSAGE_REQUIRE as messageRequire,
 } from 'configs/general';
+import { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import * as fieldService from 'services/TopicField';
-import * as organService from 'services/OrganService';
 import * as countService from 'services/CountService';
+import * as organService from 'services/OrganService';
+import * as fieldService from 'services/TopicFieldService';
 import * as resultService from 'services/TopicResultService';
-import * as statusService from 'services/TopicStatusService';
 import * as topicService from 'services/TopicService';
+import * as statusService from 'services/TopicStatusService';
 import { optionSelectFill as optionFill } from 'utils/topicUtil';
 import { uid } from 'utils/uidUtil';
 function TopicCreate() {

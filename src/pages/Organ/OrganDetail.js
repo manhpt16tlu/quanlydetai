@@ -1,11 +1,11 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { DoubleLeftOutlined } from '@ant-design/icons';
-import { Space, Button, Form, Input, Statistic, Row, Col } from 'antd';
-import { toast, ToastContainer } from 'react-toastify';
-import * as organService from 'services/OrganService';
-import * as countService from 'services/CountService';
+import { Button, Col, Form, Input, Row, Space, Statistic } from 'antd';
 import { MESSAGE_REQUIRE } from 'configs/general';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import * as countService from 'services/CountService';
+import * as organService from 'services/OrganService';
 function OrganDetail() {
   const { TextArea } = Input;
   const navigate = useNavigate();

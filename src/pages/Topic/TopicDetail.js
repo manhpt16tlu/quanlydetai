@@ -1,7 +1,6 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import moment from 'moment';
+import { DoubleLeftOutlined } from '@ant-design/icons';
 import {
+  Affix,
   Button,
   DatePicker,
   Form,
@@ -9,26 +8,29 @@ import {
   InputNumber,
   Select,
   Space,
-  Affix,
 } from 'antd';
-import { DoubleLeftOutlined } from '@ant-design/icons';
 import {
-  MESSAGE_REQUIRE as messageRequire,
   DATE_FORMAT as dateFormat,
+  MESSAGE_REQUIRE as messageRequire,
+  routes as routesConfig,
 } from 'configs/general';
-import { routes as routesConfig } from 'configs/general';
-import * as fieldService from 'services/TopicField';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import * as organService from 'services/OrganService';
-import * as countService from 'services/CountService';
+import * as fieldService from 'services/TopicFieldService';
 import * as resultService from 'services/TopicResultService';
-import * as statusService from 'services/TopicStatusService';
 import * as topicService from 'services/TopicService';
+import * as statusService from 'services/TopicStatusService';
+import { openNotificationWithIcon } from 'utils/general';
 import { optionSelectFill } from 'utils/topicUtil';
+
 function TopicDetail() {
   const { TextArea } = Input;
   const { RangePicker } = DatePicker;
   const [form] = Form.useForm();
   const location = useLocation();
+  const topicId = location.state?.topicID;
   const navigate = useNavigate();
 
   const formFieldNames = {
@@ -40,6 +42,25 @@ function TopicDetail() {
     result: 'ketqua',
     time: 'thoigianthuchien',
     expense: 'kinhphi',
+  };
+  const getNewData = async (values) => {
+    const newField = await fieldService.getById(values[formFieldNames.field]);
+    const newStatus = await statusService.getById(
+      values[formFieldNames.status]
+    );
+    const newResult = await resultService.getById(
+      values[formFieldNames.result] ?? 5
+    );
+    return {
+      topicField: newField.data, // must .data because newField include status,message,...
+      topicStatus: newStatus.data,
+      topicResult: newResult.data,
+      name: values[formFieldNames.name],
+      manager: values[formFieldNames.manager],
+      expense: values[formFieldNames.expense],
+      startDate: values[formFieldNames.time][0].format(dateFormat),
+      endDate: values[formFieldNames.time][1].format(dateFormat),
+    };
   };
   const [bottom, setBottom] = useState(10);
   const [fieldOptions, setFieldOptions] = useState([]);
@@ -57,8 +78,19 @@ function TopicDetail() {
     [formFieldNames.expense]: undefined,
   });
   const [disableBtn, setDisableBtn] = useState(true);
-  const onFinish = (values) => {
-    console.log('Success:', values[formFieldNames.result]);
+  const [reload, setReload] = useState(false);
+  const onFinish = async (values) => {
+    const body = await getNewData(values);
+    topicService
+      .update(body, topicId)
+      .then(() => {
+        setDisableBtn(true);
+        setReload(true);
+        openNotificationWithIcon('success', 'Cập nhật đề tài', 'top');
+      })
+      .catch(() => {
+        openNotificationWithIcon('error', 'Cập nhật đề tài', 'top');
+      });
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -74,10 +106,9 @@ function TopicDetail() {
     };
   };
   useEffect(() => {
-    const id = location.state?.topicID;
-    if (id) {
+    if (topicId) {
       console.log('call api');
-      topicService.getById(id).then((data) => {
+      topicService.getById(topicId).then((data) => {
         const topic = data.data;
         setInitFormData({
           [formFieldNames.name]: topic.name,
@@ -110,7 +141,7 @@ function TopicDetail() {
         setResultOptions(temp);
       });
     } else navigate(routesConfig.notfoundRedirect);
-  }, []);
+  }, [reload]);
   useEffect(() => {
     form.resetFields();
   }, [initFormData]);

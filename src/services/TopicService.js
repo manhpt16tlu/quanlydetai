@@ -35,8 +35,8 @@ const create = (body, organId, fieldId, statusId, resultId) => {
 const getById = (id) => {
   return call('GET', `topic/${id}`);
 };
-const update = (body, organId) => {
-  return call('PUT', `topic/${organId}`, body);
+const update = (body, topicId) => {
+  return call('PUT', `topic/${topicId}`, body);
 };
 
 export { getAll, getById, create, update };
