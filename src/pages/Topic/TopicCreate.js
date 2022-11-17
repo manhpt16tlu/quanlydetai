@@ -212,6 +212,7 @@ function TopicCreate() {
           ]}
         >
           <RangePicker
+            placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
             style={{
               width: 250,
             }}

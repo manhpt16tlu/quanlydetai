@@ -57,9 +57,8 @@ function TopicDetail() {
     [formFieldNames.expense]: undefined,
   });
   const [disableBtn, setDisableBtn] = useState(true);
-  const [disableSelect, setDisableSelect] = useState(false);
   const onFinish = (values) => {
-    console.log('Success:', values);
+    console.log('Success:', values[formFieldNames.result]);
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -116,17 +115,7 @@ function TopicDetail() {
     form.resetFields();
   }, [initFormData]);
   const onFormDataChange = (values) => {
-    console.log(values);
     setDisableBtn(false);
-  };
-  const onStatusChange = (value) => {
-    if (value !== 3) {
-      form.setFieldValue(formFieldNames.result, 5);
-      setDisableSelect(true);
-    } else {
-      form.setFieldValue(formFieldNames.result, undefined);
-      setDisableSelect(false);
-    }
   };
   const resetForm = () => {
     form.resetFields();
@@ -264,16 +253,28 @@ function TopicDetail() {
           <Select {...getSelectProps(statusOptions)} />
         </Form.Item>
         <Form.Item
-          label="Kết quả"
-          name={formFieldNames.result}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
+          noStyle
+          shouldUpdate={(prev, curr) =>
+            prev[formFieldNames.status] !== curr[formFieldNames.status]
+          }
         >
-          <Select {...getSelectProps(resultOptions)} />
+          {/* check status change */}
+          {({ getFieldValue }) =>
+            getFieldValue(formFieldNames.status) === 3 ? (
+              <Form.Item
+                label="Kết quả"
+                name={formFieldNames.result}
+                rules={[
+                  {
+                    required: true,
+                    message: messageRequire,
+                  },
+                ]}
+              >
+                <Select {...getSelectProps(resultOptions)} />
+              </Form.Item>
+            ) : null
+          }
         </Form.Item>
         <Form.Item
           wrapperCol={{
@@ -283,7 +284,7 @@ function TopicDetail() {
         >
           <Space size="large">
             <Button type="primary" disabled={disableBtn} onClick={resetForm}>
-              Reset
+              Đặt lại
             </Button>
             <Button type="primary" disabled={disableBtn} htmlType="submit">
               Cập nhật
