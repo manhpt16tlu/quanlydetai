@@ -1,10 +1,9 @@
-import { Routes, Route, Link } from 'react-router-dom';
-import 'semantic-ui-css/semantic.min.css'; //css semantic
-import 'react-toastify/dist/ReactToastify.css'; //css toast
-import 'antd/dist/antd.css'; //css antd
-import GlobalStyle from './components/GlobalStyle/GlobalStyle';
-import { publicRoutes, privateRoutes } from './routes/Routes';
 import AppLayout from 'components/Layouts/v2/AppLayout';
+import { Route, Routes } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css'; //css toast
+import 'semantic-ui-css/semantic.min.css'; //css semantic
+import 'antd/dist/antd.css'; //css antd
+import { publicRoutes } from './routes/Routes';
 function App() {
   const processChildRoute = (route) => {
     let childRoute;

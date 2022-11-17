@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Typography } from 'antd';
 import style from './AppLayout.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { routes as routesConfig } from 'configs/general';
 const { Header, Sider, Content, Footer } = Layout;
 const { Title } = Typography;
@@ -27,29 +27,29 @@ const items = [
   getItem('Đề tài', 'sub1', <FolderOutlined />, [
     getItem(
       <Link to={routesConfig.topicCreate}>Tạo mới</Link>,
-      '1',
+      routesConfig.topicCreate,
       <PlusOutlined />
     ),
     getItem(
       <Link to={routesConfig.topicList}>Xem và chỉnh sửa</Link>,
-      '2',
+      routesConfig.topicList,
       <SettingOutlined />
     ),
     getItem(
       <Link to={routesConfig.topicApprove}>Phê duyệt</Link>,
-      '3',
+      routesConfig.topicApprove,
       <CheckCircleOutlined />
     ),
   ]),
   getItem('Cơ quan', 'sub2', <BankOutlined />, [
     getItem(
       <Link to={routesConfig.organCreate}>Tạo mới</Link>,
-      '4',
+      routesConfig.organCreate,
       <PlusOutlined />
     ),
     getItem(
       <Link to={routesConfig.organList}>Xem và chỉnh sửa</Link>,
-      '5',
+      routesConfig.organList,
       <SettingOutlined />
     ),
   ]),
@@ -57,6 +57,8 @@ const items = [
   getItem('Biểu mẫu', '7', <FileTextOutlined />),
 ];
 function AppLayout(props) {
+  const location = useLocation();
+  const { pathname } = location;
   return (
     <Layout>
       <Sider breakpoint="lg" collapsedWidth="0">
@@ -68,14 +70,14 @@ function AppLayout(props) {
                 color: '#ffffff',
               }}
             >
-              QUẢN LÝ ĐỀ TÀI
+              QUAN LY DE TAI
             </Link>
           </Title>
         </div>
         <Menu
           theme="dark"
           mode="inline"
-          // defaultSelectedKeys={['4']}
+          selectedKeys={[pathname]}
           items={items}
         />
       </Sider>

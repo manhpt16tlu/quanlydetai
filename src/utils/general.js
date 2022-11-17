@@ -8,8 +8,8 @@ const openNotificationWithIcon = (type, action, placement) => {
   });
 };
 const notifiTypes = {
-  success: 'Thành công',
-  error: 'Không thành công',
+  success: 'thành công',
+  error: 'không thành công',
 };
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
