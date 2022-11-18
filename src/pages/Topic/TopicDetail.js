@@ -135,6 +135,10 @@ function TopicDetail() {
       });
       statusService.getAll().then((data) => {
         const temp = optionSelectFill(data.data);
+        const indexNeedRemove = temp.indexOf(
+          temp.find((t, i) => t.label === 'Chưa duyệt')
+        );
+        temp.splice(indexNeedRemove, 1);
         setStatusOptions(temp);
       });
       resultService.getAll().then((data) => {

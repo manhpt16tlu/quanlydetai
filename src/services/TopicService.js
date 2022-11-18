@@ -25,6 +25,9 @@ const call = async function (method, url, body) {
 const getAll = () => {
   return call('GET', `topic`);
 };
+const getApproved = () => {
+  return call('GET', `topic/approved`);
+};
 const create = (body, organId, fieldId, statusId, resultId) => {
   return call(
     'POST',
@@ -39,4 +42,4 @@ const update = (body, topicId) => {
   return call('PUT', `topic/${topicId}`, body);
 };
 
-export { getAll, getById, create, update };
+export { getAll, getById, create, update, getApproved };

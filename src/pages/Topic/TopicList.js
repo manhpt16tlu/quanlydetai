@@ -1,4 +1,5 @@
-import { Divider, Radio, Table } from 'antd';
+import { Divider, Radio, Table, Input, Space, Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as topicService from 'services/TopicService';
@@ -11,34 +12,7 @@ const dataIndexTable = {
   manager: 'chunhiem',
   time: 'thoigianthuchien',
 };
-const columns = [
-  {
-    title: 'Tên đề tài',
-    dataIndex: dataIndexTable.name,
-    width: '40%',
-    render: (text, record) => (
-      <Link
-        to={routesConfig.topicDetail}
-        state={{ [btoa('topicId')]: btoa(record[dataIndexTable.id]) }}
-      >
-        {text}
-      </Link>
-    ),
-  },
-  {
-    title: 'Cơ quan chủ trì',
-    dataIndex: dataIndexTable.organ,
-  },
-  {
-    title: 'Chủ nhiệm',
-    dataIndex: dataIndexTable.manager,
-  },
-  {
-    title: 'Thời gian thực hiện',
-    dataIndex: dataIndexTable.time,
-    align: 'center',
-  },
-];
+
 const rowSelection = {
   type: 'checkbox',
   onChange: (selectedRowKeys, selectedRows) => {},
@@ -69,10 +43,112 @@ function TopicList() {
   const [tableData, setTableData] = useState([]);
   useEffect(() => {
     console.log('call api');
-    topicService.getAll().then((data) => {
+    topicService.getApproved().then((data) => {
       setTableData(generateTableData(data.data));
     });
   }, []);
+
+  const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => {
+      return (
+        <div
+          style={{
+            padding: 8,
+          }}
+        >
+          <Input
+            placeholder={`Nhập ${inputPlaceHolder}`}
+            value={selectedKeys[0]}
+            onChange={(e) => {
+              setSelectedKeys(e.target.value ? [e.target.value] : []);
+              confirm({
+                closeDropdown: false,
+              });
+            }}
+            style={{
+              marginBottom: 8,
+              display: 'block',
+            }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => confirm()}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters();
+                confirm();
+              }}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </div>
+      );
+    },
+    onFilter: (value, record) => {
+      return record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes(value.toLowerCase());
+    },
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+          fontSize: 18,
+        }}
+      />
+    ),
+  });
+
+  const columns = [
+    {
+      title: 'Tên đề tài',
+      dataIndex: dataIndexTable.name,
+      width: '40%',
+      render: (text, record) => (
+        <Link
+          to={routesConfig.topicDetail}
+          state={{ [btoa('topicId')]: btoa(record[dataIndexTable.id]) }}
+        >
+          {text}
+        </Link>
+      ),
+      ...getColumnSearchProps(dataIndexTable.name, 'tên đề tài'),
+    },
+    {
+      title: 'Cơ quan chủ trì',
+      dataIndex: dataIndexTable.organ,
+    },
+    {
+      title: 'Chủ nhiệm',
+      dataIndex: dataIndexTable.manager,
+      ...getColumnSearchProps(dataIndexTable.manager, 'tên chủ nhiệm'),
+    },
+    {
+      title: 'Thời gian thực hiện',
+      dataIndex: dataIndexTable.time,
+      align: 'center',
+    },
+  ];
   return (
     <div>
       <Divider />
