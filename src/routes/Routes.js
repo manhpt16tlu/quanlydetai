@@ -44,7 +44,7 @@ const publicRoutes = [
     component: <TopicDetail />,
   },
   {
-    path: routesConfig.notfound,
+    path: routesConfig.notFound,
     component: <NotFound />,
   },
   {
@@ -52,7 +52,7 @@ const publicRoutes = [
     component: <Form />,
   },
   {
-    path: routesConfig.notfoundRedirect,
+    path: routesConfig.notFoundRedirect,
     component: <NotFound />,
   },
 ];

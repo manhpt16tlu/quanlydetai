@@ -19,7 +19,7 @@ const columns = [
     render: (text, record) => (
       <Link
         to={routesConfig.topicDetail}
-        state={{ topicID: record[dataIndexTable.id] }}
+        state={{ [btoa('topicId')]: btoa(record[dataIndexTable.id]) }}
       >
         {text}
       </Link>

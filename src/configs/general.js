@@ -9,8 +9,8 @@ const routes = {
   organDetail: '/organization/detail',
   form: '/form',
   statistic: '/statistic',
-  notfound: '*',
-  notfoundRedirect: '/pagenotfound',
+  notFound: '*',
+  notFoundRedirect: '/pagenotfound',
 };
 const menuBarLeftType = {
   organ: 'organization',

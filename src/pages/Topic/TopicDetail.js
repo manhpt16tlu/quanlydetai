@@ -30,9 +30,10 @@ function TopicDetail() {
   const { RangePicker } = DatePicker;
   const [form] = Form.useForm();
   const location = useLocation();
-  const topicId = location.state?.topicID;
+  const topicId = location.state?.[btoa('topicId')]
+    ? atob(location.state?.[btoa('topicId')])
+    : null;
   const navigate = useNavigate();
-
   const formFieldNames = {
     name: 'tendetai',
     organ: 'coquanchutri',
@@ -140,7 +141,7 @@ function TopicDetail() {
         const temp = optionSelectFill(data.data);
         setResultOptions(temp);
       });
-    } else navigate(routesConfig.notfoundRedirect);
+    } else navigate(routesConfig.notFoundRedirect);
   }, [reload]);
   useEffect(() => {
     form.resetFields();
