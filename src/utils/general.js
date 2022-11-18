@@ -2,7 +2,11 @@ import { notification } from 'antd';
 const openNotificationWithIcon = (type, action, placement) => {
   notification[type]({
     message: `${capitalizeFirstLetter(type)}`,
-    description: `${action} ${notifiTypes[type]}`,
+    description: action
+      ? `${action} ${notifiTypes[type]}`
+      : type === 'error'
+      ? 'Có lỗi xảy ra'
+      : '',
     placement,
     duration: 2.5, // default close after 1.5
   });

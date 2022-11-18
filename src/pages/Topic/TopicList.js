@@ -1,9 +1,11 @@
-import { Divider, Radio, Table, Input, Space, Button } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Divider, Radio, Table, Input, Space, Button, Row, Col } from 'antd';
+import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as topicService from 'services/TopicService';
+import * as organService from 'services/OrganService';
 import { routes as routesConfig } from 'configs/general';
+import { openNotificationWithIcon } from 'utils/general';
 const dataIndexTable = {
   id: 'id',
   uid: 'uid',
@@ -41,13 +43,33 @@ const generateTableData = (data) => {
 };
 function TopicList() {
   const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [dataFilterOrgan, setDataFilterOrgan] = useState([]);
+  const [filteredInfo, setFilteredInfo] = useState({});
   useEffect(() => {
     console.log('call api');
-    topicService.getApproved().then((data) => {
-      setTableData(generateTableData(data.data));
-    });
+    setLoading(true);
+    topicService
+      .getApproved()
+      .then((data) => {
+        setTableData(generateTableData(data.data));
+        setLoading(false);
+      })
+      .then(() => {
+        //process data filter organ
+        return organService.getAllNoPaging();
+      })
+      .then((data) => {
+        const organFilter = data.data.map((organ, i) => {
+          return { text: organ.name, value: organ.name };
+        });
+        setDataFilterOrgan(organFilter);
+      })
+      .catch((err) => {
+        console.log(err);
+        openNotificationWithIcon('error', null, 'top');
+      });
   }, []);
-
   const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -132,15 +154,33 @@ function TopicList() {
           {text}
         </Link>
       ),
+      filteredValue: filteredInfo[dataIndexTable.name] || null,
       ...getColumnSearchProps(dataIndexTable.name, 'tên đề tài'),
     },
     {
       title: 'Cơ quan chủ trì',
       dataIndex: dataIndexTable.organ,
+      filters: dataFilterOrgan,
+      filteredValue: filteredInfo[dataIndexTable.organ] || null,
+      onFilter: (value, record) => {
+        return record[dataIndexTable.organ].startsWith(value);
+      },
+      filterSearch: true,
+      filterIcon: (filtered) => (
+        <FilterOutlined
+          style={{
+            color: filtered ? '#1890ff' : undefined,
+            fontSize: 18,
+          }}
+        />
+      ),
+      width: '20%',
+      // ellipsis: true,
     },
     {
       title: 'Chủ nhiệm',
       dataIndex: dataIndexTable.manager,
+      filteredValue: filteredInfo[dataIndexTable.manager] || null,
       ...getColumnSearchProps(dataIndexTable.manager, 'tên chủ nhiệm'),
     },
     {
@@ -149,8 +189,19 @@ function TopicList() {
       align: 'center',
     },
   ];
+  const handleTableChange = (pagination, filters, sorter) => {
+    //control filter reset
+    setFilteredInfo(filters);
+  };
   return (
     <div>
+      <Row justify="end">
+        <Col>
+          <Button onClick={() => setFilteredInfo({})} type="primary">
+            Clear all filter
+          </Button>
+        </Col>
+      </Row>
       <Divider />
       <Table
         bordered
@@ -163,6 +214,8 @@ function TopicList() {
         }}
         columns={columns}
         dataSource={tableData}
+        loading={loading}
+        onChange={handleTableChange}
       />
     </div>
   );
