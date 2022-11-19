@@ -1,11 +1,12 @@
 import { Divider, Radio, Table, Input, Space, Button, Row, Col } from 'antd';
 import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as topicService from 'services/TopicService';
 import * as organService from 'services/OrganService';
 import { routes as routesConfig } from 'configs/general';
 import { openNotificationWithIcon } from 'utils/general';
+import { INITIAL_PAGE_STATE, pageReducer } from 'utils/topicUtil';
 const dataIndexTable = {
   id: 'id',
   uid: 'uid',
@@ -46,13 +47,19 @@ function TopicList() {
   const [loading, setLoading] = useState(false);
   const [dataFilterOrgan, setDataFilterOrgan] = useState([]);
   const [filteredInfo, setFilteredInfo] = useState({});
+  const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   useEffect(() => {
     console.log('call api');
     setLoading(true);
     topicService
-      .getApproved()
+      .getApproved(dataPaging.current - 1, dataPaging.pageSize)
       .then((data) => {
-        setTableData(generateTableData(data.data));
+        setTableData(generateTableData(data.data.content));
+        dispatch({
+          type: 'FETCH',
+          totalElements: data.data.totalElements,
+          pageSize: data.data.size,
+        });
       })
       .then(() => {
         //process data filter organ
@@ -70,7 +77,7 @@ function TopicList() {
         console.log(err);
         openNotificationWithIcon('error', null, 'top');
       });
-  }, []);
+  }, [dataPaging.current]);
   const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -194,6 +201,20 @@ function TopicList() {
     //control filter reset
     setFilteredInfo(filters);
   };
+  const paginationProps = () => {
+    return {
+      current: dataPaging.current,
+      pageSize: dataPaging.pageSize,
+      total: dataPaging.totalElements,
+      onChange: (page, pageSize) => {
+        dispatch({
+          type: 'PAGE_CHANGE',
+          current: page,
+          pageSize: pageSize,
+        });
+      },
+    };
+  };
   return (
     <div>
       <Row justify="end">
@@ -209,10 +230,7 @@ function TopicList() {
         rowSelection={{
           ...rowSelection,
         }}
-        pagination={{
-          defaultCurrent: 1,
-          defaultPageSize: 7,
-        }}
+        pagination={paginationProps()}
         columns={columns}
         dataSource={tableData}
         loading={loading}

@@ -25,8 +25,8 @@ const call = async function (method, url, body) {
 const getAll = () => {
   return call('GET', `topic`);
 };
-const getApproved = () => {
-  return call('GET', `topic/approved`);
+const getApproved = (page, size) => {
+  return call('GET', `topic/approved?page=${page}&size=${size}`);
 };
 const create = (body, organId, fieldId, statusId, resultId) => {
   return call(
