@@ -53,7 +53,6 @@ function TopicList() {
       .getApproved()
       .then((data) => {
         setTableData(generateTableData(data.data));
-        setLoading(false);
       })
       .then(() => {
         //process data filter organ
@@ -64,6 +63,8 @@ function TopicList() {
           return { text: organ.name, value: organ.name };
         });
         setDataFilterOrgan(organFilter);
+        //finish loading in last then function
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);

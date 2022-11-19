@@ -86,6 +86,7 @@ function AppLayout(props) {
           className={style.siteLayoutSubHeaderBackground}
           style={{
             padding: 0,
+            background: '#fff',
           }}
         />
         <Content
