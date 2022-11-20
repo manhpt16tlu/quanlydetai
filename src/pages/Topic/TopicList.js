@@ -1,10 +1,10 @@
-import { Divider, Radio, Table, Input, Space, Button, Row, Col } from 'antd';
-import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Col, Divider, Input, Row, Space, Table } from 'antd';
+import { routes as routesConfig } from 'configs/general';
 import React, { useEffect, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
-import * as topicService from 'services/TopicService';
 import * as organService from 'services/OrganService';
-import { routes as routesConfig } from 'configs/general';
+import * as topicService from 'services/TopicService';
 import { openNotificationWithIcon } from 'utils/general';
 import { INITIAL_PAGE_STATE, pageReducer } from 'utils/topicUtil';
 const dataIndexTable = {
@@ -52,7 +52,13 @@ function TopicList() {
     console.log('call api');
     setLoading(true);
     topicService
-      .getApproved(dataPaging.current - 1, dataPaging.pageSize)
+      .getFilteredApproved(
+        filteredInfo[dataIndexTable.name]?.[0],
+        filteredInfo[dataIndexTable.organ]?.[0],
+        filteredInfo[dataIndexTable.manager]?.[0],
+        dataPaging.current - 1,
+        dataPaging.pageSize
+      )
       .then((data) => {
         setTableData(generateTableData(data.data.content));
         dispatch({
@@ -77,7 +83,7 @@ function TopicList() {
         console.log(err);
         openNotificationWithIcon('error', null, 'top');
       });
-  }, [dataPaging.current]);
+  }, [dataPaging.current, filteredInfo]);
   const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -96,9 +102,6 @@ function TopicList() {
             value={selectedKeys[0]}
             onChange={(e) => {
               setSelectedKeys(e.target.value ? [e.target.value] : []);
-              confirm({
-                closeDropdown: false,
-              });
             }}
             style={{
               marginBottom: 8,
@@ -108,7 +111,9 @@ function TopicList() {
           <Space>
             <Button
               type="primary"
-              onClick={() => confirm()}
+              onClick={() => {
+                confirm();
+              }}
               icon={<SearchOutlined />}
               size="small"
               style={{
@@ -132,12 +137,6 @@ function TopicList() {
           </Space>
         </div>
       );
-    },
-    onFilter: (value, record) => {
-      return record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase());
     },
     filterIcon: (filtered) => (
       <SearchOutlined
@@ -170,9 +169,6 @@ function TopicList() {
       dataIndex: dataIndexTable.organ,
       filters: dataFilterOrgan,
       filteredValue: filteredInfo[dataIndexTable.organ] || null,
-      onFilter: (value, record) => {
-        return record[dataIndexTable.organ].startsWith(value);
-      },
       filterSearch: true,
       filterIcon: (filtered) => (
         <FilterOutlined
@@ -183,13 +179,13 @@ function TopicList() {
         />
       ),
       width: '20%',
-      // ellipsis: true,
     },
     {
       title: 'Chủ nhiệm',
       dataIndex: dataIndexTable.manager,
       filteredValue: filteredInfo[dataIndexTable.manager] || null,
       ...getColumnSearchProps(dataIndexTable.manager, 'tên chủ nhiệm'),
+      width: '20%',
     },
     {
       title: 'Thời gian thực hiện',
@@ -198,6 +194,7 @@ function TopicList() {
     },
   ];
   const handleTableChange = (pagination, filters, sorter) => {
+    console.log('filters data : ', filters);
     //control filter reset
     setFilteredInfo(filters);
   };
@@ -219,7 +216,12 @@ function TopicList() {
     <div>
       <Row justify="end">
         <Col>
-          <Button onClick={() => setFilteredInfo({})} type="primary">
+          <Button
+            onClick={() => {
+              if (Object.keys(filteredInfo).length !== 0) setFilteredInfo({});
+            }}
+            type="primary"
+          >
             Clear all filter
           </Button>
         </Col>

@@ -1,5 +1,5 @@
 import { DoubleLeftOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row, Space, Statistic } from 'antd';
+import { Affix, Button, Col, Form, Input, Row, Space, Statistic } from 'antd';
 import { MESSAGE_REQUIRE } from 'configs/general';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ function OrganDetail() {
     name: 'ten',
     address: 'diachi',
   };
+  const [bottom, setBottom] = useState(20);
   const location = useLocation();
   const [update, setUpdate] = useState(false);
   const organ = location.state;
@@ -166,17 +167,27 @@ function OrganDetail() {
           <Statistic title="Đề tài chờ phê duyệt" value={statistic.stat1} />
         </Col>
       </Row>
-      <Row gutter={16}>
-        <Col span={5}>
-          <Statistic title="Đề tài đã nghiệm thu" value={statistic.stat3} />
-        </Col>
-        <Col span={5}>
-          <Statistic title="Đề tài đang thực hiện" value={statistic.stat2} />
-        </Col>
-      </Row>
-      <Button type="primary" onClick={() => navigate(-1)}>
-        <DoubleLeftOutlined /> Quay lại
-      </Button>
+      <Space
+        direction="vertical"
+        size={300}
+        style={{
+          display: 'flex',
+        }}
+      >
+        <Row gutter={16}>
+          <Col span={5}>
+            <Statistic title="Đề tài đã nghiệm thu" value={statistic.stat3} />
+          </Col>
+          <Col span={5}>
+            <Statistic title="Đề tài đang thực hiện" value={statistic.stat2} />
+          </Col>
+        </Row>
+        <Affix offsetBottom={bottom}>
+          <Button type="primary" onClick={() => navigate(-1)}>
+            <DoubleLeftOutlined /> Quay lại
+          </Button>
+        </Affix>
+      </Space>
       <ToastContainer autoClose={1200} />
     </>
   );

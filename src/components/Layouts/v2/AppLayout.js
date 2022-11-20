@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
 import {
-  FileTextOutlined,
-  SettingOutlined,
-  PlusOutlined,
-  CheckCircleOutlined,
-  FolderOutlined,
-  BankOutlined,
   AreaChartOutlined,
+  BankOutlined,
+  CheckCircleOutlined,
+  FileTextOutlined,
+  FolderOutlined,
+  PlusOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Typography } from 'antd';
-import style from './AppLayout.module.scss';
-import { Link, useLocation } from 'react-router-dom';
 import { routes as routesConfig } from 'configs/general';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import style from './AppLayout.module.scss';
 const { Header, Sider, Content, Footer } = Layout;
 const { Title } = Typography;
 function getItem(label, key, icon, children, type) {
@@ -59,6 +59,15 @@ const items = [
 function AppLayout(props) {
   const location = useLocation();
   const { pathname } = location;
+  let menuKey = pathname;
+  //hight light menu key
+  if (menuKey.includes('/detail')) {
+    if (menuKey.startsWith('/topic')) {
+      menuKey = routesConfig.topicList;
+    } else if (menuKey.startsWith('/organization')) {
+      menuKey = routesConfig.organList;
+    }
+  }
   return (
     <Layout>
       <Sider breakpoint="lg" collapsedWidth="0">
@@ -77,7 +86,7 @@ function AppLayout(props) {
         <Menu
           theme="dark"
           mode="inline"
-          selectedKeys={[pathname]}
+          selectedKeys={[menuKey]}
           items={items}
         />
       </Sider>

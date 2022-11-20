@@ -63,7 +63,7 @@ function TopicDetail() {
       endDate: values[formFieldNames.time][1].format(dateFormat),
     };
   };
-  const [bottom, setBottom] = useState(10);
+  const [bottom, setBottom] = useState(20);
   const [fieldOptions, setFieldOptions] = useState([]);
   const [organOptions, setOrganOptions] = useState([]);
   const [resultOptions, setResultOptions] = useState([]);
@@ -160,179 +160,188 @@ function TopicDetail() {
   console.log('topic detail render');
   return (
     <>
-      <Form
-        form={form}
-        labelCol={{
-          span: 4,
+      <Space
+        direction="vertical"
+        size={100}
+        style={{
+          display: 'flex',
         }}
-        wrapperCol={{
-          span: 12,
-        }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        layout="horizontal"
-        initialValues={initFormData}
-        size="default"
-        onValuesChange={onFormDataChange}
-        style={{ marginBottom: 100 }}
       >
-        <Form.Item
-          label="Tên đề tài"
-          name={formFieldNames.name}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <TextArea
-            autoSize={{
-              minRows: 1,
-              maxRows: 2,
-            }}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Cơ quan chủ trì"
-          name={formFieldNames.organ}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <Select {...getSelectProps(organOptions)} disabled />
-        </Form.Item>
-        <Form.Item
-          label="Chủ nhiệm"
-          name={formFieldNames.manager}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Lĩnh vực"
-          name={formFieldNames.field}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <Select
-            allowClear
-            showSearch
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-            }
-            options={fieldOptions}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Thời gian thực hiện"
-          name={formFieldNames.time}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <RangePicker
-            style={{
-              width: 250,
-            }}
-            format={dateFormat}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Kinh phí"
-          name={formFieldNames.expense}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <InputNumber
-            formatter={(value) =>
-              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }
-            parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-            style={{
-              width: 250,
-            }}
-            step="500000"
-            min="0"
-          />
-        </Form.Item>
-        <Form.Item
-          label="Trạng thái"
-          name={formFieldNames.status}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <Select {...getSelectProps(statusOptions)} />
-        </Form.Item>
-        <Form.Item
-          noStyle
-          shouldUpdate={(prev, curr) =>
-            prev[formFieldNames.status] !== curr[formFieldNames.status]
-          }
-        >
-          {/* check status change */}
-          {({ getFieldValue }) =>
-            getFieldValue(formFieldNames.status) === 3 ? (
-              <Form.Item
-                label="Kết quả"
-                name={formFieldNames.result}
-                rules={[
-                  {
-                    required: true,
-                    message: messageRequire,
-                  },
-                ]}
-              >
-                <Select {...getSelectProps(resultOptions)} />
-              </Form.Item>
-            ) : null
-          }
-        </Form.Item>
-        <Form.Item
-          wrapperCol={{
-            offset: 12,
-            span: 5,
+        <Form
+          form={form}
+          labelCol={{
+            span: 4,
           }}
+          wrapperCol={{
+            span: 12,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          layout="horizontal"
+          initialValues={initFormData}
+          size="default"
+          onValuesChange={onFormDataChange}
         >
-          <Space size="large">
-            <Button type="primary" disabled={disableBtn} onClick={resetForm}>
-              Đặt lại
-            </Button>
-            <Button type="primary" disabled={disableBtn} htmlType="submit">
-              Cập nhật
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
-      <Affix offsetBottom={bottom}>
-        <Button type="primary" onClick={() => navigate(-1)}>
-          <DoubleLeftOutlined /> Quay lại
-        </Button>
-      </Affix>
+          <Form.Item
+            label="Tên đề tài"
+            name={formFieldNames.name}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <TextArea
+              autoSize={{
+                minRows: 1,
+                maxRows: 2,
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Cơ quan chủ trì"
+            name={formFieldNames.organ}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <Select {...getSelectProps(organOptions)} disabled />
+          </Form.Item>
+          <Form.Item
+            label="Chủ nhiệm"
+            name={formFieldNames.manager}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Lĩnh vực"
+            name={formFieldNames.field}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <Select
+              allowClear
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={fieldOptions}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Thời gian thực hiện"
+            name={formFieldNames.time}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <RangePicker
+              style={{
+                width: 250,
+              }}
+              format={dateFormat}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Kinh phí"
+            name={formFieldNames.expense}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <InputNumber
+              formatter={(value) =>
+                `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
+              parser={(value) => value.replace(/$\s?|(,*)/g, '')}
+              style={{
+                width: 250,
+              }}
+              step="500000"
+              min="0"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Trạng thái"
+            name={formFieldNames.status}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <Select {...getSelectProps(statusOptions)} />
+          </Form.Item>
+          <Form.Item
+            noStyle
+            shouldUpdate={(prev, curr) =>
+              prev[formFieldNames.status] !== curr[formFieldNames.status]
+            }
+          >
+            {/* check status change */}
+            {({ getFieldValue }) =>
+              getFieldValue(formFieldNames.status) === 3 ? (
+                <Form.Item
+                  label="Kết quả"
+                  name={formFieldNames.result}
+                  rules={[
+                    {
+                      required: true,
+                      message: messageRequire,
+                    },
+                  ]}
+                >
+                  <Select {...getSelectProps(resultOptions)} />
+                </Form.Item>
+              ) : null
+            }
+          </Form.Item>
+          <Form.Item
+            wrapperCol={{
+              offset: 12,
+              span: 5,
+            }}
+          >
+            <Space size="large">
+              <Button type="primary" disabled={disableBtn} onClick={resetForm}>
+                Đặt lại
+              </Button>
+              <Button type="primary" disabled={disableBtn} htmlType="submit">
+                Cập nhật
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+        <Affix offsetBottom={bottom}>
+          <Button type="primary" onClick={() => navigate(-1)}>
+            <DoubleLeftOutlined /> Quay lại
+          </Button>
+        </Affix>
+      </Space>
     </>
   );
 }

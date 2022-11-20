@@ -28,6 +28,14 @@ const getAll = () => {
 const getApproved = (page, size) => {
   return call('GET', `topic/approved?page=${page}&size=${size}`);
 };
+const getFilteredApproved = (name, organ, manager, page, size) => {
+  return call(
+    'GET',
+    `topic/approved/filtered?page=${page}&size=${size}&name=${encodeURI(
+      name ?? ''
+    )}&organ=${encodeURI(organ ?? '')}&manager=${encodeURI(manager ?? '')}`
+  );
+};
 const create = (body, organId, fieldId, statusId, resultId) => {
   return call(
     'POST',
@@ -42,4 +50,4 @@ const update = (body, topicId) => {
   return call('PUT', `topic/${topicId}`, body);
 };
 
-export { getAll, getById, create, update, getApproved };
+export { getAll, getById, create, update, getApproved, getFilteredApproved };
