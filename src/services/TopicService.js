@@ -22,8 +22,10 @@ const call = async function (method, url, body) {
   }
   return ret;
 };
-const getAll = () => {
-  return call('GET', `topic`);
+
+const getAll = () => {};
+const getAllNoPaging = () => {
+  return call('GET', `topic/nopaging`);
 };
 const getApproved = (page, size) => {
   return call('GET', `topic/approved?page=${page}&size=${size}`);
@@ -49,5 +51,15 @@ const getById = (id) => {
 const update = (body, topicId) => {
   return call('PUT', `topic/${topicId}`, body);
 };
-
-export { getAll, getById, create, update, getApproved, getFilteredApproved };
+const getNonApprovedByOrganId = (organId) => {
+  return call('GET', `organ/${organId}/topic/not_approved`);
+};
+export {
+  getAllNoPaging,
+  getById,
+  create,
+  update,
+  getApproved,
+  getFilteredApproved,
+  getNonApprovedByOrganId,
+};

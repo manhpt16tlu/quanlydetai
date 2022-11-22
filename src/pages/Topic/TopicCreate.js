@@ -13,7 +13,7 @@ import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import { optionSelectFill as optionFill } from 'utils/topicUtil';
-import { uid } from 'utils/uidUtil';
+import { uid } from 'utils/general';
 function TopicCreate() {
   const { TextArea } = Input;
   const [form] = Form.useForm();

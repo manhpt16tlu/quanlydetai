@@ -179,7 +179,7 @@ function TopicDetail() {
           display: 'flex',
         }}
       >
-        <Spin spinning={loading} size="large">
+        <Spin spinning={loading}>
           <Form
             form={form}
             labelCol={{

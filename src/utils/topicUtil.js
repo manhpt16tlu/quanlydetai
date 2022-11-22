@@ -1,3 +1,8 @@
+import { Collapse, Typography } from 'antd';
+import style from 'pages/Topic/TopicApprove.module.scss';
+import TableDataPanel from 'components/Topic/TableDataPanel';
+const { Panel } = Collapse;
+const { Title, Text } = Typography;
 //fill option for organ,field,status,result of topic
 const optionSelectFillOBJ = (data) => {
   //option with value is object
@@ -42,9 +47,30 @@ const pageReducer = (state, action) => {
       return state;
   }
 };
+
+//method for topic approve logic
+const processPanelsData = (organs) => {
+  console.log('process panel data');
+  const panels = organs.map((organ, index) => {
+    return (
+      <Panel
+        style={{
+          border: 'none',
+        }}
+        className={style.panel}
+        header={<Text strong>{organ.name}</Text>}
+        key={organ.id}
+      >
+        <TableDataPanel organId={organ.id} />
+      </Panel>
+    );
+  });
+  return panels;
+};
 export {
   optionSelectFillOBJ,
   optionSelectFill,
   INITIAL_PAGE_STATE,
   pageReducer,
+  processPanelsData,
 };
