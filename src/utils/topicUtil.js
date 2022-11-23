@@ -1,4 +1,4 @@
-import { Collapse, Typography } from 'antd';
+import { Collapse, Typography, Divider } from 'antd';
 import style from 'pages/Topic/TopicApprove.module.scss';
 import TableDataPanel from 'components/Topic/TableDataPanel';
 const { Panel } = Collapse;
@@ -51,12 +51,14 @@ const pageReducer = (state, action) => {
 //method for topic approve logic
 const processPanelsData = (organs) => {
   console.log('process panel data');
-  const panels = organs.map((organ, index) => {
+  const panels = organs.map((organ, index, thisArr) => {
     return (
       <Panel
-        style={{
-          border: 'none',
-        }}
+        style={
+          {
+            // border: 'none',
+          }
+        }
         className={style.panel}
         header={<Text strong>{organ.name}</Text>}
         key={organ.id}
@@ -67,7 +69,17 @@ const processPanelsData = (organs) => {
   });
   return panels;
 };
+const generateDateString = (startDate, endDate) => {
+  const s = new Date(startDate);
+  const e = new Date(endDate);
+  return s.getMonth() == e.getMonth() && s.getFullYear() == e.getFullYear()
+    ? `${s.getMonth() + 1}/${s.getFullYear()}`
+    : `${s.getMonth() + 1}/${s.getFullYear()} - ${
+        e.getMonth() + 1
+      }/${e.getFullYear()}`;
+};
 export {
+  generateDateString,
   optionSelectFillOBJ,
   optionSelectFill,
   INITIAL_PAGE_STATE,

@@ -6,7 +6,11 @@ import { Link } from 'react-router-dom';
 import * as organService from 'services/OrganService';
 import * as topicService from 'services/TopicService';
 import { openNotificationWithIcon } from 'utils/general';
-import { INITIAL_PAGE_STATE, pageReducer } from 'utils/topicUtil';
+import {
+  INITIAL_PAGE_STATE,
+  pageReducer,
+  generateDateString,
+} from 'utils/topicUtil';
 const dataIndexTable = {
   id: 'id',
   uid: 'uid',
@@ -23,15 +27,7 @@ const rowSelection = {
     return {};
   },
 };
-const generateDateString = (startDate, endDate) => {
-  const s = new Date(startDate);
-  const e = new Date(endDate);
-  return s.getMonth() == e.getMonth() && s.getFullYear() == e.getFullYear()
-    ? `${s.getMonth() + 1}/${s.getFullYear()}`
-    : `${s.getMonth() + 1}/${s.getFullYear()} - ${
-        e.getMonth() + 1
-      }/${e.getFullYear()}`;
-};
+
 const generateTableData = (data) => {
   return data.map((topic, index) => ({
     key: index,
