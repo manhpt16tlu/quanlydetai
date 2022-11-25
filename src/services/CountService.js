@@ -10,14 +10,20 @@ const call = async function (method, url, body) {
   }
   return ret;
 };
-const countTopicByStatus = (organId, statusId) => {
+const countTopicByStatusId = (organId, statusId) => {
   return call(
     'GET',
     `count/topic/by/status?organId=${organId}&statusId=${statusId}`
+  );
+};
+const countTopicByStatusName = (organId, statusName) => {
+  return call(
+    'GET',
+    `count/topic/by/status_name?organId=${organId}&statusName=${statusName}`
   );
 };
 const countTopicByName = (name) => {
   return call('GET', `count/topic/by/name?name=${encodeURI(name)}`);
 };
 
-export { countTopicByStatus, countTopicByName };
+export { countTopicByStatusId, countTopicByName, countTopicByStatusName };

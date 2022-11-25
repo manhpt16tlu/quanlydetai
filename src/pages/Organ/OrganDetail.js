@@ -64,25 +64,25 @@ function OrganDetail() {
     setUpdate(true);
   };
   useEffect(() => {
-    countService.countTopicByStatus(organ.id, 1).then((data) => {
+    countService.countTopicByStatusId(organ.id, 1).then((data) => {
       setStatistic((prev) => ({
         ...prev,
         stat1: data.data,
       }));
     });
-    countService.countTopicByStatus(organ.id, 2).then((data) => {
+    countService.countTopicByStatusId(organ.id, 2).then((data) => {
       setStatistic((prev) => ({
         ...prev,
         stat2: data.data,
       }));
     });
-    countService.countTopicByStatus(organ.id, 3).then((data) => {
+    countService.countTopicByStatusId(organ.id, 3).then((data) => {
       setStatistic((prev) => ({
         ...prev,
         stat3: data.data,
       }));
     });
-    countService.countTopicByStatus(organ.id, 4).then((data) => {
+    countService.countTopicByStatusId(organ.id, 4).then((data) => {
       setStatistic((prev) => ({
         ...prev,
         stat4: data.data,

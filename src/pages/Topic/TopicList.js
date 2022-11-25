@@ -174,6 +174,7 @@ function TopicList() {
           }}
         />
       ),
+      // filterMultiple: false, //cho phép lọc theo nhiều hay không
       width: '20%',
     },
     {

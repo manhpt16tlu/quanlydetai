@@ -70,7 +70,11 @@ function AppLayout(props) {
   }
   return (
     <Layout>
-      <Sider breakpoint="lg" collapsedWidth="0">
+      <Sider
+        breakpoint="lg"
+        collapsible
+        collapsedWidth="0" //set width của sider khi collapse,set bằng 0 thì sẽ hiện nút trigger
+      >
         <div className={style.logo}>
           <Title level={4}>
             <Link

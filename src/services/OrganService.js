@@ -28,6 +28,9 @@ const getAll = (page, search) => {
 const getAllNoPaging = () => {
   return call('GET', `organ/nopaging`);
 };
+const getAllWhichNeedApprove = () => {
+  return call('GET', `organ/need_approve`);
+};
 const create = (body) => {
   return call('POST', 'organ', body);
 };
@@ -35,4 +38,4 @@ const update = (body, organId) => {
   return call('PUT', `organ/${organId}`, body);
 };
 
-export { getAll, getAllNoPaging, create, update };
+export { getAll, getAllNoPaging, create, update, getAllWhichNeedApprove };

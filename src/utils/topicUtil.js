@@ -1,4 +1,4 @@
-import { Collapse, Typography, Divider } from 'antd';
+import { Collapse, Typography } from 'antd';
 import style from 'pages/Topic/TopicApprove.module.scss';
 import TableDataPanel from 'components/Topic/TableDataPanel';
 const { Panel } = Collapse;

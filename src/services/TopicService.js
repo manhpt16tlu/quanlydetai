@@ -17,6 +17,11 @@ const call = async function (method, url, body) {
       ret = data;
       break;
     }
+    case 'PATCH': {
+      const data = await api.patch(url, body);
+      ret = data.data;
+      break;
+    }
     default:
       break;
   }
@@ -51,10 +56,16 @@ const getById = (id) => {
 const update = (body, topicId) => {
   return call('PUT', `topic/${topicId}`, body);
 };
+const approve = (topicId, body) => {
+  //special update method
+  return call('PATCH', `approve_topic/${topicId}`, body);
+};
 const getNonApprovedByOrganId = (organId) => {
   return call('GET', `organ/${organId}/topic/not_approved`);
 };
+
 export {
+  approve,
   getAllNoPaging,
   getById,
   create,

@@ -8,9 +8,14 @@ import { routes as routesConfig } from 'configs/general';
 // component for panel collapse
 function TableDataPanel(props) {
   console.log('table data panel render');
+  const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const [selectedData, setSelectedData] = useState([]);
+  const [selectedRows, setSelectedRows] = useState({
+    keys: [],
+    data: [],
+  });
+  // const [selectedRowsKey, setSelectedRowsKey] = useState([]);
   const dataIndexTable = {
     id: 'id',
     name: 'tendetai',
@@ -46,8 +51,12 @@ function TableDataPanel(props) {
   ];
   const rowSelection = {
     type: 'checkbox',
+    selectedRowKeys: selectedRows.keys, // controlled selected row key
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedData(selectedRows);
+      setSelectedRows({
+        keys: selectedRowKeys,
+        data: selectedRows,
+      });
     },
     // getCheckboxProps: (record) => {},
   };
@@ -61,7 +70,56 @@ function TableDataPanel(props) {
       [dataIndexTable.time]: generateDateString(topic.startDate, topic.endDate),
     }));
   };
-  const onApproveClick = () => {};
+  const onApproveClick = async () => {
+    await Promise.all(
+      selectedRows.data.map(async (topicRecord, index) => {
+        await topicService.approve(topicRecord[dataIndexTable.id], {
+          topicStatus: {
+            title: 'Đã duyệt',
+          },
+        });
+      })
+    )
+      .then(() => {
+        openNotificationWithIcon('success', 'Phê duyệt đề tài', 'top');
+        setSelectedRows({
+          keys: [],
+          data: [],
+        }); //reset selected
+
+        setReload((prev) => !prev); //call api again
+      })
+      .catch((error) => {
+        console.log(error);
+        openNotificationWithIcon('error', null, 'top');
+      });
+    // selectedData.forEach((topicRecord, index, thisArr) => {
+    //   topicService
+    //     .approve(topicRecord[dataIndexTable.id], {
+    //       topicStatus: {
+    //         title: 'Đã duyệt',
+    //       },
+    //     })
+    //     .then(() => {
+    //       // console.log(selectedData);
+    //       // setSelectedData((prev) => {
+    //       //   //remove checkbox selected
+    //       //   return prev.filter(
+    //       //     (prevRecord) =>
+    //       //       prevRecord[dataIndexTable.id] !== topicRecord[dataIndexTable.id]
+    //       //   );
+    //       // });
+    //       if (index + 1 === thisArr.length) {
+    //         openNotificationWithIcon('success', 'Phê duyệt đề tài', 'top');
+    //         setReload((prev) => !prev); //call api again
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //       openNotificationWithIcon('error', 'Phê duyệt đề tài', 'top');
+    //     });
+    // });
+  };
   useEffect(() => {
     setLoading(true);
     const getData = async () => {
@@ -78,7 +136,7 @@ function TableDataPanel(props) {
       }
     };
     getData();
-  }, []);
+  }, [reload]);
   return (
     <>
       <Space
@@ -99,7 +157,9 @@ function TableDataPanel(props) {
           <Col>
             <Button
               onClick={onApproveClick}
-              disabled={selectedData.length === 0}
+              disabled={
+                selectedRows.keys.length === 0 || selectedRows.data.length === 0
+              }
               type="primary"
             >
               Phê duyệt
