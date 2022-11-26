@@ -9,6 +9,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import * as organService from 'services/OrganService';
 import * as topicService from 'services/TopicService';
+import * as statusService from 'services/TopicStatusService';
 import { openNotificationWithIcon } from 'utils/general';
 import {
   INITIAL_PAGE_STATE,
@@ -22,6 +23,7 @@ const dataIndexTable = {
   organ: 'coquanchutri',
   manager: 'chunhiem',
   time: 'thoigianthuchien',
+  status: 'trangthai',
 };
 
 const rowSelection = {
@@ -33,12 +35,14 @@ const rowSelection = {
 };
 
 const generateTableData = (data) => {
+  // console.log(data);
   return data.map((topic, index) => ({
     key: index,
     [dataIndexTable.id]: topic.id,
     [dataIndexTable.name]: topic.name,
     [dataIndexTable.organ]: topic.organ.name,
     [dataIndexTable.manager]: topic.manager,
+    [dataIndexTable.status]: topic.topicStatus.title,
     [dataIndexTable.time]: generateDateString(topic.startDate, topic.endDate),
   }));
 };
@@ -48,6 +52,7 @@ function TopicList() {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dataFilterOrgan, setDataFilterOrgan] = useState([]);
+  const [dataFilterStatus, setDataFilterStatus] = useState([]);
   const [filteredInfo, setFilteredInfo] = useState({});
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   useEffect(() => {
@@ -56,8 +61,9 @@ function TopicList() {
     topicService
       .getFilteredApproved(
         filteredInfo[dataIndexTable.name]?.[0],
-        filteredInfo[dataIndexTable.organ]?.[0],
+        filteredInfo[dataIndexTable.organ],
         filteredInfo[dataIndexTable.manager]?.[0],
+        filteredInfo[dataIndexTable.status]?.[0],
         dataPaging.current - 1,
         dataPaging.pageSize
       )
@@ -68,9 +74,15 @@ function TopicList() {
           totalElements: data.data.totalElements,
           pageSize: data.data.size,
         });
+        return statusService.getAll();
       })
-      .then(() => {
-        //process data filter organ
+      .then((data) => {
+        const statusFilter = data.data
+          .filter((status, i) => status.title !== 'Chưa duyệt')
+          .map((status, i) => {
+            return { text: status.title, value: status.title };
+          });
+        setDataFilterStatus(statusFilter);
         return organService.getAllNoPaging();
       })
       .then((data) => {
@@ -194,9 +206,21 @@ function TopicList() {
       width: '20%',
     },
     {
-      title: 'Thời gian thực hiện',
-      dataIndex: dataIndexTable.time,
+      title: 'Trạng thái',
+      dataIndex: dataIndexTable.status,
       align: 'center',
+      filters: dataFilterStatus,
+      filteredValue: filteredInfo[dataIndexTable.status] || null,
+      filterMultiple: false,
+      filterIcon: (filtered) => (
+        <FilterOutlined
+          style={{
+            color: filtered ? '#1890ff' : undefined,
+            fontSize: 18,
+          }}
+        />
+      ),
+      ellipsis: true, // ẩn nếu dài
     },
   ];
   const handleTableChange = (pagination, filters, sorter) => {

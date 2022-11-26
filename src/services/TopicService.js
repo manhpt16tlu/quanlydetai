@@ -35,12 +35,15 @@ const getAllNoPaging = () => {
 const getApproved = (page, size) => {
   return call('GET', `topic/approved?page=${page}&size=${size}`);
 };
-const getFilteredApproved = (name, organ, manager, page, size) => {
+const getFilteredApproved = (name, organ, manager, status, page, size) => {
+  const organUrlPart = organ?.join(',');
   return call(
     'GET',
     `topic/approved/filtered?page=${page}&size=${size}&name=${encodeURI(
       name ?? ''
-    )}&organ=${encodeURI(organ ?? '')}&manager=${encodeURI(manager ?? '')}`
+    )}&organ=${encodeURI(organUrlPart ?? '')}&manager=${encodeURI(
+      manager ?? ''
+    )}&status=${encodeURI(status ?? '')}`
   );
 };
 const create = (body, organId, fieldId, statusId, resultId) => {
