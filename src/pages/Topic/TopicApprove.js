@@ -1,10 +1,11 @@
-import { CheckCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, Col, Result, Row, Spin, Typography } from 'antd';
 import MyCollapse from 'components/Topic/MyCollapse';
 import { useEffect, useMemo, useState } from 'react';
 import * as organService from 'services/OrganService';
 import { openNotificationWithIcon } from 'utils/general';
 import { processPanelsData } from 'utils/topicUtil';
+import { antdIconFontSize } from 'configs/general';
 const { Title } = Typography;
 function TopicApprove() {
   console.log('topic approve render');
@@ -44,6 +45,7 @@ function TopicApprove() {
             }}
             type="primary"
           >
+            <SyncOutlined style={{ fontSize: antdIconFontSize }} />
             Làm mới
           </Button>
         </Col>

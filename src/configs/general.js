@@ -22,7 +22,9 @@ const DEFAULT_TOPIC_VALUES = {
   status: 1,
   result: 5,
 };
+const antdIconFontSize = 16;
 export {
+  antdIconFontSize,
   routes,
   menuBarLeftType,
   MESSAGE_REQUIRE,

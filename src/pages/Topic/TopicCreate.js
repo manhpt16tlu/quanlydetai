@@ -1,5 +1,7 @@
 import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import {
+  antdIconFontSize,
   DATE_FORMAT as dateFormat,
   DATE_FORMAT,
   MESSAGE_REQUIRE as messageRequire,
@@ -12,8 +14,8 @@ import * as fieldService from 'services/TopicFieldService';
 import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
-import { optionSelectFill as optionFill } from 'utils/topicUtil';
 import { uid } from 'utils/general';
+import { optionSelectFill as optionFill } from 'utils/topicUtil';
 function TopicCreate() {
   const { TextArea } = Input;
   const [form] = Form.useForm();
@@ -274,6 +276,11 @@ function TopicCreate() {
           }}
         >
           <Button type="primary" block htmlType="submit">
+            <PlusOutlined
+              style={{
+                fontSize: antdIconFontSize,
+              }}
+            />
             Tạo mới
           </Button>
         </Form.Item>

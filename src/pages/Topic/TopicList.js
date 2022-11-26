@@ -1,6 +1,10 @@
-import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  FilterOutlined,
+  SearchOutlined,
+  ClearOutlined,
+} from '@ant-design/icons';
 import { Button, Col, Divider, Input, Row, Space, Table } from 'antd';
-import { routes as routesConfig } from 'configs/general';
+import { routes as routesConfig, antdIconFontSize } from 'configs/general';
 import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import * as organService from 'services/OrganService';
@@ -224,6 +228,7 @@ function TopicList() {
             }}
             type="primary"
           >
+            <ClearOutlined style={{ fontSize: antdIconFontSize }} />
             Clear all filter
           </Button>
         </Col>
