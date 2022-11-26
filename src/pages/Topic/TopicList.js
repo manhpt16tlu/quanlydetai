@@ -2,7 +2,7 @@ import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Col, Divider, Input, Row, Space, Table } from 'antd';
 import { routes as routesConfig } from 'configs/general';
 import React, { useEffect, useReducer, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import * as organService from 'services/OrganService';
 import * as topicService from 'services/TopicService';
 import { openNotificationWithIcon } from 'utils/general';
@@ -39,6 +39,8 @@ const generateTableData = (data) => {
   }));
 };
 function TopicList() {
+  const location = useLocation();
+  const { pathname } = location;
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dataFilterOrgan, setDataFilterOrgan] = useState([]);
@@ -152,7 +154,10 @@ function TopicList() {
       render: (text, record) => (
         <Link
           to={routesConfig.topicDetail}
-          state={{ [btoa('topicId')]: btoa(record[dataIndexTable.id]) }}
+          state={{
+            [btoa('topicId')]: btoa(record[dataIndexTable.id]),
+            previousPath: pathname,
+          }}
         >
           {text}
         </Link>

@@ -58,16 +58,29 @@ const items = [
 ];
 function AppLayout(props) {
   const location = useLocation();
-  const { pathname } = location;
-  let menuKey = pathname;
-  //hight light menu key
-  if (menuKey.includes('/detail')) {
-    if (menuKey.startsWith('/topic')) {
-      menuKey = routesConfig.topicList;
-    } else if (menuKey.startsWith('/organization')) {
+  const { pathname, state } = location;
+  let menuKey = pathname; //hight light menu key
+  let previousPath = state?.previousPath;
+  switch (pathname) {
+    case routesConfig.topicDetail:
+      menuKey = previousPath ? previousPath : pathname;
+      break;
+    case routesConfig.organDetail:
       menuKey = routesConfig.organList;
-    }
+      break;
+    default:
+      menuKey = pathname;
+      break;
   }
+  // if (pathname.includes('/detail')) {
+  //   if (pathname.startsWith('/topic')) {
+  //     if (previousPath === routesConfig.topicApprove)
+  //       menuKey = routesConfig.topicApprove;
+  //     else menuKey = routesConfig.topicList;
+  //   } else if (pathname.startsWith('/organization')) {
+  //     menuKey = routesConfig.organList;
+  //   }
+  // }
   return (
     <Layout>
       <Sider

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Table, Button, Row, Col, Space } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import * as topicService from 'services/TopicService';
 import { openNotificationWithIcon } from 'utils/general';
 import { generateDateString } from 'utils/topicUtil';
 import { routes as routesConfig } from 'configs/general';
 // component for panel collapse
 function TableDataPanel(props) {
+  const location = useLocation();
+  const { pathname } = location;
   console.log('table data panel render');
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,6 @@ function TableDataPanel(props) {
     keys: [],
     data: [],
   });
-  // const [selectedRowsKey, setSelectedRowsKey] = useState([]);
   const dataIndexTable = {
     id: 'id',
     name: 'tendetai',
@@ -29,7 +30,15 @@ function TableDataPanel(props) {
       title: 'Tên đề tài',
       dataIndex: dataIndexTable.name,
       render: (text, record) => (
-        <Link to={routesConfig.topicDetail}>{text}</Link>
+        <Link
+          to={routesConfig.topicDetail}
+          state={{
+            [btoa('topicId')]: btoa(record[dataIndexTable.id]),
+            previousPath: pathname,
+          }}
+        >
+          {text}
+        </Link>
       ),
       width: '30%',
     },

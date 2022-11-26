@@ -34,6 +34,7 @@ function TopicDetail() {
   const topicId = location.state?.[btoa('topicId')]
     ? atob(location.state?.[btoa('topicId')])
     : null;
+  const previousPath = location.state?.previousPath;
   const navigate = useNavigate();
   const formFieldNames = {
     name: 'tendetai',
@@ -139,10 +140,13 @@ function TopicDetail() {
         }),
         statusService.getAll().then((data) => {
           const temp = optionSelectFill(data.data);
-          const indexNeedRemove = temp.indexOf(
-            temp.find((t, i) => t.label === 'Chưa duyệt')
-          );
-          temp.splice(indexNeedRemove, 1);
+          if (previousPath !== routesConfig.topicApprove) {
+            //topicapprove thì show select status 'chưa duyệt'
+            const indexNeedRemove = temp.indexOf(
+              temp.find((t, i) => t.label === 'Chưa duyệt')
+            );
+            temp.splice(indexNeedRemove, 1);
+          }
           setStatusOptions(temp);
         }),
         resultService.getAll().then((data) => {
@@ -174,7 +178,7 @@ function TopicDetail() {
     <>
       <Space
         direction="vertical"
-        size={100}
+        size={200}
         style={{
           display: 'flex',
         }}
@@ -206,6 +210,7 @@ function TopicDetail() {
               ]}
             >
               <TextArea
+                readOnly={previousPath === routesConfig.topicApprove}
                 autoSize={{
                   minRows: 1,
                   maxRows: 2,
@@ -222,7 +227,11 @@ function TopicDetail() {
                 },
               ]}
             >
-              <Select {...getSelectProps(organOptions)} disabled />
+              <Select
+                readOnly={previousPath === routesConfig.topicApprove}
+                {...getSelectProps(organOptions)}
+                disabled
+              />
             </Form.Item>
             <Form.Item
               label="Chủ nhiệm"
@@ -234,7 +243,7 @@ function TopicDetail() {
                 },
               ]}
             >
-              <Input />
+              <Input readOnly={previousPath === routesConfig.topicApprove} />
             </Form.Item>
             <Form.Item
               label="Lĩnh vực"
@@ -247,6 +256,7 @@ function TopicDetail() {
               ]}
             >
               <Select
+                disabled={previousPath === routesConfig.topicApprove}
                 allowClear
                 showSearch
                 optionFilterProp="children"
@@ -269,6 +279,7 @@ function TopicDetail() {
               ]}
             >
               <RangePicker
+                disabled={previousPath === routesConfig.topicApprove}
                 style={{
                   width: 250,
                 }}
@@ -286,6 +297,7 @@ function TopicDetail() {
               ]}
             >
               <InputNumber
+                readOnly={previousPath === routesConfig.topicApprove}
                 formatter={(value) =>
                   `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 }
@@ -307,7 +319,10 @@ function TopicDetail() {
                 },
               ]}
             >
-              <Select {...getSelectProps(statusOptions)} />
+              <Select
+                disabled={previousPath === routesConfig.topicApprove}
+                {...getSelectProps(statusOptions)}
+              />
             </Form.Item>
             <Form.Item
               noStyle
@@ -333,25 +348,31 @@ function TopicDetail() {
                 ) : null
               }
             </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                offset: 12,
-                span: 5,
-              }}
-            >
-              <Space size="large">
-                <Button
-                  type="primary"
-                  disabled={disableBtn}
-                  onClick={resetForm}
-                >
-                  Đặt lại
-                </Button>
-                <Button type="primary" disabled={disableBtn} htmlType="submit">
-                  Cập nhật
-                </Button>
-              </Space>
-            </Form.Item>
+            {previousPath !== routesConfig.topicApprove ? (
+              <Form.Item
+                wrapperCol={{
+                  offset: 12,
+                  span: 5,
+                }}
+              >
+                <Space size="large">
+                  <Button
+                    type="primary"
+                    disabled={disableBtn}
+                    onClick={resetForm}
+                  >
+                    Đặt lại
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={disableBtn}
+                    htmlType="submit"
+                  >
+                    Cập nhật
+                  </Button>
+                </Space>
+              </Form.Item>
+            ) : null}
           </Form>
         </Spin>
         <Affix offsetBottom={bottom}>
