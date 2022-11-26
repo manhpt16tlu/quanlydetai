@@ -63,7 +63,10 @@ const processPanelsData = (organs) => {
         header={<Text strong>{organ.name}</Text>}
         key={organ.id}
       >
-        <TableDataPanel organId={organ.id} />
+        <TableDataPanel
+          organId={organ.id}
+          numberOfTopic={organ.numberOfTopic} // force render table when after approve
+        />
       </Panel>
     );
   });

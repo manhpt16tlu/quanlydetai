@@ -145,7 +145,7 @@ function TableDataPanel(props) {
       }
     };
     getData();
-  }, [reload]);
+  }, [reload, props.numberOfTopic]);
   return (
     <>
       <Space
