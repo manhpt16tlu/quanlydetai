@@ -47,9 +47,10 @@ const getFilteredApproved = (name, organ, manager, status, page, size) => {
   );
 };
 const create = (body, organId, fieldId, statusId, resultId) => {
+  const resultUrlPart = resultId ? `/result/${resultId}` : '';
   return call(
     'POST',
-    `organ/${organId}/field/${fieldId}/status/${statusId}/result/${resultId}/topic`,
+    `organ/${organId}/field/${fieldId}/status/${statusId}${resultUrlPart}/topic`,
     body
   );
 };

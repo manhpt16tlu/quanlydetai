@@ -1,5 +1,13 @@
-import { Button, DatePicker, Form, Input, InputNumber, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import {
+  Button,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Space,
+} from 'antd';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   antdIconFontSize,
   DATE_FORMAT as dateFormat,
@@ -15,8 +23,9 @@ import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import { uid } from 'utils/general';
-import { optionSelectFill as optionFill } from 'utils/topicUtil';
+import { optionSelectFill, optionSelectFillOBJ } from 'utils/topicUtil';
 function TopicCreate() {
+  console.log('topicCreate render');
   const { TextArea } = Input;
   const [form] = Form.useForm();
   const { RangePicker } = DatePicker;
@@ -34,7 +43,7 @@ function TopicCreate() {
   const [organOptions, setOrganOptions] = useState([]);
   const [resultOptions, setResultOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
-  const [disableSelect, setDisableSelect] = useState(false);
+  const [disableResetBtn, setDisableResetBtn] = useState(true);
   const getSelectProps = (optionsData) => {
     return {
       allowClear: true,
@@ -45,8 +54,15 @@ function TopicCreate() {
       options: optionsData,
     };
   };
-
+  const handleResetForm = () => {
+    form.resetFields();
+    setDisableResetBtn(true);
+  };
+  const handleFormValuesChange = (changedValues, allValues) => {
+    setDisableResetBtn(false);
+  };
   const onFinish = (values) => {
+    console.log('submit form data: ', values);
     countService
       .countTopicByName(values[formFieldNames.name])
       .then((data) => {
@@ -73,7 +89,7 @@ function TopicCreate() {
                 },
                 values[formFieldNames.organ],
                 values[formFieldNames.field],
-                values[formFieldNames.status],
+                JSON.parse(values[formFieldNames.status])?.id,
                 values[formFieldNames.result]
               )
               .then((data) => {
@@ -100,31 +116,31 @@ function TopicCreate() {
   };
   useEffect(() => {
     fieldService.getAll().then((data) => {
-      const temp = optionFill(data.data);
+      const temp = optionSelectFill(data.data);
       setFieldOptions(temp);
     });
     organService.getAllNoPaging().then((data) => {
-      const temp = optionFill(data.data);
+      const temp = optionSelectFill(data.data);
       setOrganOptions(temp);
     });
     statusService.getAll().then((data) => {
-      const temp = optionFill(data.data);
+      const temp = optionSelectFillOBJ(data.data);
       setStatusOptions(temp);
     });
     resultService.getAll().then((data) => {
-      const temp = optionFill(data.data);
+      const temp = optionSelectFill(data.data);
       setResultOptions(temp);
     });
   }, []);
-  const onStatusChange = (value) => {
-    if (value !== 3) {
-      form.setFieldValue(formFieldNames.result, 5);
-      setDisableSelect(true);
-    } else {
-      form.setFieldValue(formFieldNames.result, undefined);
-      setDisableSelect(false);
-    }
-  };
+  // const onStatusChange = (value) => {
+  //   if (value !== 3) {
+  //     form.setFieldValue(formFieldNames.result, 5);
+  //     setDisableSelect(true);
+  //   } else {
+  //     form.setFieldValue(formFieldNames.result, undefined);
+  //     setDisableSelect(false);
+  //   }
+  // };
   return (
     <>
       <Form
@@ -138,8 +154,9 @@ function TopicCreate() {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         layout="horizontal"
-        initialValues={{}}
+        // initialValues={{}}
         size="default"
+        onValuesChange={handleFormValuesChange}
       >
         <Form.Item
           label="Tên đề tài"
@@ -232,9 +249,9 @@ function TopicCreate() {
         >
           <InputNumber
             formatter={(value) =>
-              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             }
-            parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+            parser={(value) => value.replace(/\đ\s?|(,*)/g, '')}
             style={{
               width: 250,
             }}
@@ -254,10 +271,10 @@ function TopicCreate() {
         >
           <Select
             {...getSelectProps(statusOptions)}
-            onChange={onStatusChange}
+            // onChange={onStatusChange}
           />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Kết quả"
           name={formFieldNames.result}
           rules={[
@@ -268,21 +285,65 @@ function TopicCreate() {
           ]}
         >
           <Select disabled={disableSelect} {...getSelectProps(resultOptions)} />
+        </Form.Item> */}
+
+        <Form.Item
+          noStyle
+          shouldUpdate={(prev, curr) =>
+            prev[formFieldNames.status] !== curr[formFieldNames.status]
+          }
+        >
+          {/* check status change */}
+          {({ getFieldValue }) => {
+            const statusSelectObj = JSON.parse(
+              getFieldValue(formFieldNames.status) ?? null
+            );
+            return (statusSelectObj?.title ?? statusSelectObj?.name) ===
+              'Đã nghiệm thu' ? (
+              <Form.Item
+                label="Kết quả"
+                name={formFieldNames.result}
+                rules={[
+                  {
+                    required: true,
+                    message: messageRequire,
+                  },
+                ]}
+              >
+                <Select {...getSelectProps(resultOptions)} />
+              </Form.Item>
+            ) : null;
+          }}
         </Form.Item>
+
         <Form.Item
           wrapperCol={{
-            offset: 13,
-            span: 3,
+            offset: 11,
+            span: 5,
           }}
         >
-          <Button type="primary" block htmlType="submit">
-            <PlusOutlined
-              style={{
-                fontSize: antdIconFontSize,
-              }}
-            />
-            Tạo mới
-          </Button>
+          <Space size="large">
+            <Button
+              type="primary"
+              disabled={disableResetBtn}
+              onClick={handleResetForm}
+            >
+              <DeleteOutlined
+                style={{
+                  fontSize: antdIconFontSize,
+                }}
+              />
+              Đặt lại
+            </Button>
+            <Button type="primary" htmlType="submit">
+              <PlusOutlined
+                style={{
+                  fontSize: antdIconFontSize,
+                }}
+              />
+              Tạo mới
+            </Button>
+          </Space>
         </Form.Item>
       </Form>
       <ToastContainer autoClose={1200} />

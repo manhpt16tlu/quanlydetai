@@ -166,7 +166,7 @@ function TopicDetail() {
   useEffect(() => {
     form.resetFields();
   }, [initFormData]);
-  const onFormDataChange = (values) => {
+  const onFormDataChange = (changedValues, allValues) => {
     setDisableBtn(false);
   };
   const resetForm = () => {
