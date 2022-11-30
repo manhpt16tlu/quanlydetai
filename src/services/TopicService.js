@@ -22,6 +22,11 @@ const call = async function (method, url, body) {
       ret = data.data;
       break;
     }
+    case 'DELETE': {
+      const data = await api.delete(url);
+      ret = data.data;
+      break;
+    }
     default:
       break;
   }
@@ -67,7 +72,9 @@ const approve = (topicId, body) => {
 const getNonApprovedByOrganId = (organId) => {
   return call('GET', `organ/${organId}/topic/not_approved`);
 };
-
+const deleteById = (topicId) => {
+  return call('DELETE', `topic/${topicId}`);
+};
 export {
   approve,
   getAllNoPaging,
@@ -77,4 +84,5 @@ export {
   getApproved,
   getFilteredApproved,
   getNonApprovedByOrganId,
+  deleteById,
 };

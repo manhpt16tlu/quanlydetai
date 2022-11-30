@@ -1,4 +1,9 @@
 import {
+  DeleteOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from '@ant-design/icons';
+import {
   Button,
   DatePicker,
   Form,
@@ -6,23 +11,26 @@ import {
   InputNumber,
   Select,
   Space,
+  Upload,
+  message,
 } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   antdIconFontSize,
   DATE_FORMAT as dateFormat,
   DATE_FORMAT,
   MESSAGE_REQUIRE as messageRequire,
+  MIME_TYPE,
+  MAX_FILE_SIZE,
 } from 'configs/general';
 import { useEffect, useState } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
 import * as countService from 'services/CountService';
 import * as organService from 'services/OrganService';
 import * as fieldService from 'services/TopicFieldService';
 import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
-import { uid } from 'utils/general';
+import * as fileService from 'services/UploadFileService';
+import { openNotificationWithIcon } from 'utils/general';
 import { optionSelectFill, optionSelectFillOBJ } from 'utils/topicUtil';
 function TopicCreate() {
   console.log('topicCreate render');
@@ -38,12 +46,15 @@ function TopicCreate() {
     result: 'ketqua',
     time: 'thoigianthuchien',
     expense: 'kinhphi',
+    file: 'decuong',
   };
   const [fieldOptions, setFieldOptions] = useState([]);
   const [organOptions, setOrganOptions] = useState([]);
   const [resultOptions, setResultOptions] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
   const [disableResetBtn, setDisableResetBtn] = useState(true);
+  let createdTopicId; //for rollback if have error
+
   const getSelectProps = (optionsData) => {
     return {
       allowClear: true,
@@ -58,7 +69,9 @@ function TopicCreate() {
     form.resetFields();
     setDisableResetBtn(true);
   };
+
   const handleFormValuesChange = (changedValues, allValues) => {
+    // console.log(allValues);
     setDisableResetBtn(false);
   };
   const onFinish = (values) => {
@@ -68,47 +81,67 @@ function TopicCreate() {
       .then((data) => {
         if (data.data != 0) {
           // check exist name
-          toast.error('Tên đề tài đã được đăng kí', {
-            position: toast.POSITION.TOP_CENTER,
-          });
+          openNotificationWithIcon(
+            'error',
+            null,
+            'top',
+            'Tên đề tài đã được đăng kí'
+          );
           return;
         } else {
           //insert new record
           const sdate = values[formFieldNames.time][0].format(DATE_FORMAT);
           const edate = values[formFieldNames.time][1].format(DATE_FORMAT);
-          toast.promise(
-            topicService
-              .create(
-                {
-                  uid: uid(),
-                  name: values[formFieldNames.name],
-                  manager: values[formFieldNames.manager],
-                  startDate: sdate,
-                  endDate: edate,
-                  expense: values[formFieldNames.expense],
+
+          topicService
+            .create(
+              {
+                // uid: uid(), //deprecated , create uid in backend
+                name: values[formFieldNames.name],
+                manager: values[formFieldNames.manager],
+                startDate: sdate,
+                endDate: edate,
+                expense: values[formFieldNames.expense],
+              },
+              values[formFieldNames.organ],
+              values[formFieldNames.field],
+              JSON.parse(values[formFieldNames.status])?.id,
+              values[formFieldNames.result]
+            )
+            .then((data) => {
+              createdTopicId = data.data.id;
+              const formData = new FormData();
+              //upload 1 file,viết foreach có thể handle nhiều file
+              values[formFieldNames.file].forEach((file, index) => {
+                formData.append('file', file.originFileObj); // có thể k cần originFileObj
+              });
+              formData.append('type', 'Đề cương');
+              formData.append('topicId', data.data.id);
+
+              return fileService.upload(formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
                 },
-                values[formFieldNames.organ],
-                values[formFieldNames.field],
-                JSON.parse(values[formFieldNames.status])?.id,
-                values[formFieldNames.result]
-              )
-              .then((data) => {
-                form.resetFields(); //clear form
-              }),
-            {
-              pending: 'Pending',
-              success: 'Tạo đề tài thành công',
-              error: 'Có lỗi xảy ra',
-            },
-            { position: toast.POSITION.TOP_CENTER }
-          );
+              });
+            })
+            .then((data) => {
+              openNotificationWithIcon('success', 'Tạo đề tài', 'top');
+              form.resetFields(); //clear form
+              setDisableResetBtn(true); //disable button clear
+            })
+            .catch((err) => {
+              if (createdTopicId) {
+                //delete record topic
+                topicService.deleteById(createdTopicId).catch(() => {});
+              }
+              console.log(err);
+              openNotificationWithIcon('error', 'Tạo đề tài', 'top');
+            });
         }
       })
       .catch((err) => {
         console.log(err);
-        toast.error('Có lỗi xảy ra', {
-          position: toast.POSITION.TOP_CENTER,
-        });
+        openNotificationWithIcon('error', null, 'top');
       });
   };
   const onFinishFailed = (errorInfo) => {
@@ -132,15 +165,31 @@ function TopicCreate() {
       setResultOptions(temp);
     });
   }, []);
-  // const onStatusChange = (value) => {
-  //   if (value !== 3) {
-  //     form.setFieldValue(formFieldNames.result, 5);
-  //     setDisableSelect(true);
-  //   } else {
-  //     form.setFieldValue(formFieldNames.result, undefined);
-  //     setDisableSelect(false);
-  //   }
-  // };
+
+  const getFileList = (e) => {
+    if (Array.isArray(e)) return e;
+    return e?.fileList;
+  };
+  const uploadProps = {
+    beforeUpload: (file) => {
+      //check file type upload
+      if (!Object.values(MIME_TYPE).includes(file.type)) {
+        message.error('Không hỗ trợ loại file này');
+        return Upload.LIST_IGNORE;
+      } else if (file.size > MAX_FILE_SIZE) {
+        //check file zie
+        message.error(
+          `Không thể upload file lớn hơn ${Math.round(
+            MAX_FILE_SIZE / 1000000
+          )}MB`
+        );
+        return Upload.LIST_IGNORE;
+      }
+      return false;
+    },
+    multiple: true,
+    maxCount: 1,
+  };
   return (
     <>
       <Form
@@ -274,19 +323,6 @@ function TopicCreate() {
             // onChange={onStatusChange}
           />
         </Form.Item>
-        {/* <Form.Item
-          label="Kết quả"
-          name={formFieldNames.result}
-          rules={[
-            {
-              required: true,
-              message: messageRequire,
-            },
-          ]}
-        >
-          <Select disabled={disableSelect} {...getSelectProps(resultOptions)} />
-        </Form.Item> */}
-
         <Form.Item
           noStyle
           shouldUpdate={(prev, curr) =>
@@ -314,6 +350,33 @@ function TopicCreate() {
               </Form.Item>
             ) : null;
           }}
+        </Form.Item>
+
+        <Form.Item
+          getValueFromEvent={getFileList} // vì onchange upload return object
+          valuePropName="fileList" // prop của child component chứa value
+          name={formFieldNames.file}
+          label="Đề cương"
+          rules={[
+            {
+              required: true,
+              message: messageRequire,
+            },
+          ]}
+        >
+          <Upload {...uploadProps}>
+            <Button
+              icon={
+                <UploadOutlined
+                  style={{
+                    fontSize: antdIconFontSize,
+                  }}
+                />
+              }
+            >
+              Chọn file
+            </Button>
+          </Upload>
         </Form.Item>
 
         <Form.Item
@@ -346,7 +409,6 @@ function TopicCreate() {
           </Space>
         </Form.Item>
       </Form>
-      <ToastContainer autoClose={1200} />
     </>
   );
 }

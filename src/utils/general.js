@@ -1,8 +1,10 @@
 import { notification } from 'antd';
-const openNotificationWithIcon = (type, action, placement) => {
+const openNotificationWithIcon = (type, action, placement, mess) => {
   notification[type]({
     message: `${capitalizeFirstLetter(type)}`,
-    description: action
+    description: mess
+      ? mess
+      : action
       ? `${action} ${notifiTypes[type]}`
       : type === 'error'
       ? 'Có lỗi xảy ra'

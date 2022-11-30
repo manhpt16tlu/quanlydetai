@@ -23,6 +23,13 @@ const DEFAULT_TOPIC_VALUES = {
   result: 5,
 };
 const antdIconFontSize = 16;
+const MIME_TYPE = {
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  pdf: 'application/pdf',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+};
+const MAX_FILE_SIZE = 10000000; //10mb
 export {
   antdIconFontSize,
   routes,
@@ -30,4 +37,6 @@ export {
   MESSAGE_REQUIRE,
   DATE_FORMAT,
   DEFAULT_TOPIC_VALUES,
+  MIME_TYPE,
+  MAX_FILE_SIZE,
 };
