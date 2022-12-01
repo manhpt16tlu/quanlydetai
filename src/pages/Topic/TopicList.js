@@ -57,6 +57,10 @@ function TopicList() {
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   useEffect(() => {
     console.log('call api');
+
+    //for cleanup funtion
+    const controller = new AbortController();
+
     setLoading(true);
     topicService
       .getFilteredApproved(
@@ -65,7 +69,10 @@ function TopicList() {
         filteredInfo[dataIndexTable.manager]?.[0],
         filteredInfo[dataIndexTable.status]?.[0],
         dataPaging.current - 1,
-        dataPaging.pageSize
+        dataPaging.pageSize,
+        {
+          signal: controller.signal,
+        }
       )
       .then((data) => {
         setTableData(generateTableData(data.data.content));
@@ -97,6 +104,10 @@ function TopicList() {
         console.log(err);
         openNotificationWithIcon('error', null, 'top');
       });
+    //cleanup function
+    return () => {
+      controller.abort();
+    };
   }, [dataPaging.current, filteredInfo]);
   const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
     filterDropdown: ({

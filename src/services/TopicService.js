@@ -1,9 +1,9 @@
 import api from 'configs/api';
-const call = async function (method, url, body) {
+const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
     case 'GET': {
-      const data = await api.get(url);
+      const data = config ? await api.get(url, config) : await api.get(url);
       ret = data.data;
       break;
     }
@@ -40,7 +40,15 @@ const getAllNoPaging = () => {
 const getApproved = (page, size) => {
   return call('GET', `topic/approved?page=${page}&size=${size}`);
 };
-const getFilteredApproved = (name, organ, manager, status, page, size) => {
+const getFilteredApproved = (
+  name,
+  organ,
+  manager,
+  status,
+  page,
+  size,
+  config
+) => {
   const organUrlPart = organ?.join(',');
   return call(
     'GET',
@@ -48,7 +56,9 @@ const getFilteredApproved = (name, organ, manager, status, page, size) => {
       name ?? ''
     )}&organ=${encodeURI(organUrlPart ?? '')}&manager=${encodeURI(
       manager ?? ''
-    )}&status=${encodeURI(status ?? '')}`
+    )}&status=${encodeURI(status ?? '')}`,
+    null,
+    config
   );
 };
 const create = (body, organId, fieldId, statusId, resultId) => {

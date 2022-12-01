@@ -7,6 +7,11 @@ const call = async function (method, url, body, config) {
       ret = data.data;
       break;
     }
+    case 'GET': {
+      const data = await api.get(url);
+      ret = data.data;
+      break;
+    }
     default:
       break;
   }
@@ -15,4 +20,10 @@ const call = async function (method, url, body, config) {
 const upload = (body, config) => {
   return call('POST', 'upload', body, config);
 };
-export { upload };
+const download = (fileCode) => {
+  return call('GET', `download/${fileCode}`);
+};
+const getFilesOfTopic = (topicId) => {
+  return call('GET', `file/topic/${topicId}`);
+};
+export { upload, download, getFilesOfTopic };

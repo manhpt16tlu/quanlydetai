@@ -1,6 +1,5 @@
-import { DoubleLeftOutlined } from '@ant-design/icons';
+import { DoubleLeftOutlined, DownloadOutlined } from '@ant-design/icons';
 import {
-  Spin,
   Affix,
   Button,
   DatePicker,
@@ -9,8 +8,11 @@ import {
   InputNumber,
   Select,
   Space,
+  Spin,
+  message,
 } from 'antd';
 import {
+  antdIconFontSize,
   DATE_FORMAT as dateFormat,
   MESSAGE_REQUIRE as messageRequire,
   routes as routesConfig,
@@ -23,6 +25,7 @@ import * as fieldService from 'services/TopicFieldService';
 import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
+import * as fileService from 'services/UploadFileService';
 import { openNotificationWithIcon } from 'utils/general';
 import { optionSelectFill } from 'utils/topicUtil';
 
@@ -167,13 +170,27 @@ function TopicDetail() {
     form.resetFields();
   }, [initFormData]);
   const onFormDataChange = (changedValues, allValues) => {
+    console.log(allValues);
     setDisableBtn(false);
   };
   const resetForm = () => {
     form.resetFields();
     setDisableBtn(true);
   };
-  console.log('topic detail render');
+  const handleDownloadFile = async () => {
+    const filesOfTopic = (await fileService.getFilesOfTopic(topicId)).data;
+    if (filesOfTopic.length !== 0)
+      //lấy luôn phần tử đầu do có 1 file duy nhất
+      fileService
+        .download(filesOfTopic[0].fileCode)
+        .then((data) => {})
+        .catch((err) => {
+          console.log(err);
+          message.error('Không thể download file');
+        });
+    else message.error('File không tồn tại');
+  };
+
   return (
     <>
       <Space
@@ -347,6 +364,17 @@ function TopicDetail() {
                   </Form.Item>
                 ) : null
               }
+            </Form.Item>
+
+            <Form.Item label="Đề cương">
+              <Button onClick={handleDownloadFile}>
+                <DownloadOutlined
+                  style={{
+                    fontSize: antdIconFontSize,
+                  }}
+                />
+                Tải xuống
+              </Button>
             </Form.Item>
             {previousPath !== routesConfig.topicApprove ? (
               <Form.Item
