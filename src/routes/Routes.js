@@ -9,6 +9,7 @@ import TopicCreate from 'pages/Topic/TopicCreate';
 import TopicApprove from 'pages/Topic/TopicApprove';
 import TopicList from 'pages/Topic/TopicList';
 import TopicDetail from 'pages/Topic/TopicDetail';
+import Statistic from 'pages/Statistic/Statistic';
 const publicRoutes = [
   {
     path: routesConfig.home,
@@ -50,6 +51,10 @@ const publicRoutes = [
   {
     path: routesConfig.form,
     component: <Form />,
+  },
+  {
+    path: routesConfig.statistic,
+    component: <Statistic />,
   },
   {
     path: routesConfig.notFoundRedirect,

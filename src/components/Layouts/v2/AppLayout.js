@@ -53,8 +53,16 @@ const items = [
       <SettingOutlined />
     ),
   ]),
-  getItem('Thống kê', '6', <AreaChartOutlined />),
-  getItem('Biểu mẫu', '7', <FileTextOutlined />),
+  getItem(
+    <Link to={routesConfig.statistic}>Thống kê</Link>,
+    routesConfig.statistic,
+    <AreaChartOutlined />
+  ),
+  getItem(
+    <Link to={routesConfig.form}>Biểu mẫu</Link>,
+    routesConfig.form,
+    <FileTextOutlined />
+  ),
 ];
 function AppLayout(props) {
   const location = useLocation();
