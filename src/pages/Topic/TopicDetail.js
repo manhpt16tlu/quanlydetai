@@ -26,7 +26,10 @@ import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import * as fileService from 'services/UploadFileService';
-import { openNotificationWithIcon } from 'utils/general';
+import {
+  openNotificationWithIcon,
+  getFileNameFromHeaderDisposition,
+} from 'utils/general';
 import { optionSelectFill } from 'utils/topicUtil';
 
 function TopicDetail() {
@@ -170,7 +173,7 @@ function TopicDetail() {
     form.resetFields();
   }, [initFormData]);
   const onFormDataChange = (changedValues, allValues) => {
-    console.log(allValues);
+    // console.log(allValues);
     setDisableBtn(false);
   };
   const resetForm = () => {
@@ -182,8 +185,21 @@ function TopicDetail() {
     if (filesOfTopic.length !== 0)
       //lấy luôn phần tử đầu do có 1 file duy nhất
       fileService
-        .download(filesOfTopic[0].fileCode)
-        .then((data) => {})
+        .download(filesOfTopic[0].fileCode, {
+          responseType: 'blob',
+        })
+        .then((response) => {
+          //get filename from header
+          const disposition = response.headers['content-disposition'];
+          const filename = getFileNameFromHeaderDisposition(disposition);
+
+          const a = document.createElement('a');
+          const url = URL.createObjectURL(response.data);
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+        })
         .catch((err) => {
           console.log(err);
           message.error('Không thể download file');
@@ -316,9 +332,9 @@ function TopicDetail() {
               <InputNumber
                 readOnly={previousPath === routesConfig.topicApprove}
                 formatter={(value) =>
-                  `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                  `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
                 }
-                parser={(value) => value.replace(/$\s?|(,*)/g, '')}
+                parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
                 style={{
                   width: 250,
                 }}

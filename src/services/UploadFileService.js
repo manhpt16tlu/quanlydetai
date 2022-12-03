@@ -3,13 +3,22 @@ const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
     case 'POST': {
-      const data = await api.post(url, body, config);
-      ret = data.data;
+      const axiosResponse = await api.post(url, body, config);
+      ret = axiosResponse.data;
       break;
     }
     case 'GET': {
-      const data = await api.get(url);
-      ret = data.data;
+      const axiosResponse = config
+        ? await api.get(url, config)
+        : await api.get(url);
+      ret = axiosResponse.data;
+      break;
+    }
+    case 'GET_FILE': {
+      const axiosResponse = config
+        ? await api.get(url, config)
+        : await api.get(url);
+      ret = axiosResponse;
       break;
     }
     default:
@@ -20,10 +29,13 @@ const call = async function (method, url, body, config) {
 const upload = (body, config) => {
   return call('POST', 'upload', body, config);
 };
-const download = (fileCode) => {
-  return call('GET', `download/${fileCode}`);
+const download = (fileCode, config) => {
+  return call('GET_FILE', `download/${fileCode}`, null, config);
 };
 const getFilesOfTopic = (topicId) => {
   return call('GET', `file/topic/${topicId}`);
 };
-export { upload, download, getFilesOfTopic };
+const getFilesByType = (fileTypeName) => {
+  return call('GET', `file/type/${encodeURI(fileTypeName)}`);
+};
+export { upload, download, getFilesOfTopic, getFilesByType };

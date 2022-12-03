@@ -13,6 +13,10 @@ import {
   Space,
   Upload,
   message,
+  Typography,
+  Row,
+  Col,
+  Divider,
 } from 'antd';
 import {
   antdIconFontSize,
@@ -32,9 +36,11 @@ import * as statusService from 'services/TopicStatusService';
 import * as fileService from 'services/UploadFileService';
 import { openNotificationWithIcon } from 'utils/general';
 import { optionSelectFill, optionSelectFillOBJ } from 'utils/topicUtil';
+import CustomDivider from 'components/General/CustomDivider';
 function TopicCreate() {
   console.log('topicCreate render');
   const { TextArea } = Input;
+  const { Title } = Typography;
   const [form] = Form.useForm();
   const { RangePicker } = DatePicker;
   const formFieldNames = {
@@ -192,10 +198,11 @@ function TopicCreate() {
   };
   return (
     <>
+      <CustomDivider text={'Tạo đề tài'} />
       <Form
         form={form}
         labelCol={{
-          span: 4,
+          span: 6,
         }}
         wrapperCol={{
           span: 12,
@@ -300,7 +307,7 @@ function TopicCreate() {
             formatter={(value) =>
               `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
             }
-            parser={(value) => value.replace(/\đ\s?|(,*)/g, '')}
+            parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
             style={{
               width: 250,
             }}
@@ -381,11 +388,18 @@ function TopicCreate() {
 
         <Form.Item
           wrapperCol={{
-            offset: 11,
-            span: 5,
+            offset: 6,
           }}
         >
           <Space size="large">
+            <Button type="primary" htmlType="submit">
+              <PlusOutlined
+                style={{
+                  fontSize: antdIconFontSize,
+                }}
+              />
+              Tạo mới
+            </Button>
             <Button
               type="primary"
               disabled={disableResetBtn}
@@ -397,14 +411,6 @@ function TopicCreate() {
                 }}
               />
               Đặt lại
-            </Button>
-            <Button type="primary" htmlType="submit">
-              <PlusOutlined
-                style={{
-                  fontSize: antdIconFontSize,
-                }}
-              />
-              Tạo mới
             </Button>
           </Space>
         </Form.Item>

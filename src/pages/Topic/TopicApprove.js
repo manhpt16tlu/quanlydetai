@@ -1,11 +1,12 @@
 import { CheckCircleOutlined, SyncOutlined } from '@ant-design/icons';
-import { Button, Col, Result, Row, Spin, Typography } from 'antd';
+import { Button, Col, Result, Row, Spin, Typography, Divider } from 'antd';
 import MyCollapse from 'components/Topic/MyCollapse';
 import { useEffect, useMemo, useState } from 'react';
 import * as organService from 'services/OrganService';
 import { openNotificationWithIcon } from 'utils/general';
 import { processPanelsData } from 'utils/topicUtil';
 import { antdIconFontSize } from 'configs/general';
+import CustomDivider from 'components/General/CustomDivider';
 const { Title } = Typography;
 function TopicApprove() {
   console.log('topic approve render');
@@ -36,32 +37,35 @@ function TopicApprove() {
     return processPanelsData(dataOrgan);
   }, [dataOrgan]);
   return (
-    <Spin spinning={loading}>
-      <Row justify="end">
-        <Col>
-          <Button
-            onClick={() => {
-              setRefresh((prev) => !prev);
-            }}
-            type="primary"
-          >
-            <SyncOutlined style={{ fontSize: antdIconFontSize }} />
-            Làm mới
-          </Button>
-        </Col>
-      </Row>
-      {dataOrgan.length ? (
-        <MyCollapse panelsData={panelsData} />
-      ) : (
-        <Result
-          style={{ marginTop: 100 }}
-          status="info"
-          icon={<CheckCircleOutlined />}
-          title="Không có đề tài nào cần phê duyệt !"
-          // extra={<Button type="primary">Next</Button>}
-        />
-      )}
-    </Spin>
+    <>
+      <CustomDivider text={'Danh sách đề tài cần phê duyệt'} />
+      <Spin spinning={loading}>
+        <Row justify="end" style={{ marginBottom: 10 }}>
+          <Col>
+            <Button
+              onClick={() => {
+                setRefresh((prev) => !prev);
+              }}
+              type="primary"
+            >
+              <SyncOutlined style={{ fontSize: antdIconFontSize }} />
+              Làm mới
+            </Button>
+          </Col>
+        </Row>
+        {dataOrgan.length ? (
+          <MyCollapse panelsData={panelsData} />
+        ) : (
+          <Result
+            style={{ marginTop: 100 }}
+            status="info"
+            icon={<CheckCircleOutlined />}
+            title="Không có đề tài nào cần phê duyệt !"
+            // extra={<Button type="primary">Next</Button>}
+          />
+        )}
+      </Spin>
+    </>
   );
 }
 

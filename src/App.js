@@ -1,7 +1,7 @@
 import AppLayout from 'components/Layouts/v2/AppLayout';
 import { Route, Routes } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css'; //css toast
-import 'semantic-ui-css/semantic.min.css'; //css semantic
+// import 'react-toastify/dist/ReactToastify.css'; //css toast
+// import 'semantic-ui-css/semantic.min.css'; //css semantic
 import 'antd/dist/antd.css'; //css antd
 import { publicRoutes } from './routes/Routes';
 function App() {

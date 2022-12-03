@@ -3,7 +3,16 @@ import {
   SearchOutlined,
   ClearOutlined,
 } from '@ant-design/icons';
-import { Button, Col, Divider, Input, Row, Space, Table } from 'antd';
+import {
+  Button,
+  Col,
+  Divider,
+  Input,
+  Row,
+  Space,
+  Table,
+  Typography,
+} from 'antd';
 import { routes as routesConfig, antdIconFontSize } from 'configs/general';
 import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -11,6 +20,7 @@ import * as organService from 'services/OrganService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import { openNotificationWithIcon } from 'utils/general';
+import CustomDivider from 'components/General/CustomDivider';
 import {
   INITIAL_PAGE_STATE,
   pageReducer,
@@ -47,6 +57,7 @@ const generateTableData = (data) => {
   }));
 };
 function TopicList() {
+  const { Title } = Typography;
   const location = useLocation();
   const { pathname } = location;
   const [tableData, setTableData] = useState([]);
@@ -254,8 +265,9 @@ function TopicList() {
     };
   };
   return (
-    <div>
-      <Row justify="end">
+    <>
+      <CustomDivider text={'Danh sách đề tài'} />
+      <Row justify="end" style={{ marginBottom: 20 }}>
         <Col>
           <Button
             onClick={() => {
@@ -268,7 +280,6 @@ function TopicList() {
           </Button>
         </Col>
       </Row>
-      <Divider />
       <Table
         bordered
         rowSelection={{
@@ -280,7 +291,7 @@ function TopicList() {
         loading={loading}
         onChange={handleTableChange}
       />
-    </div>
+    </>
   );
 }
 

@@ -4,7 +4,7 @@ import OrganCreate from 'pages/Organ/OrganCreate';
 import OrganList from 'pages/Organ/OrganList';
 import NotFound from 'pages/NotFound/NotFound';
 import OrganDetail from 'pages/Organ/OrganDetail';
-import Form from 'pages/Form/Form';
+import FormFileList from 'pages/Form/FormFileList';
 import TopicCreate from 'pages/Topic/TopicCreate';
 import TopicApprove from 'pages/Topic/TopicApprove';
 import TopicList from 'pages/Topic/TopicList';
@@ -50,7 +50,7 @@ const publicRoutes = [
   },
   {
     path: routesConfig.form,
-    component: <Form />,
+    component: <FormFileList />,
   },
   {
     path: routesConfig.statistic,

@@ -12,10 +12,6 @@ const routes = {
   notFound: '*',
   notFoundRedirect: '/pagenotfound',
 };
-const menuBarLeftType = {
-  organ: 'organization',
-  topic: 'topic',
-};
 const MESSAGE_REQUIRE = 'Không được để trống';
 const DATE_FORMAT = 'YYYY-MM-DD';
 const DEFAULT_TOPIC_VALUES = {
@@ -24,6 +20,7 @@ const DEFAULT_TOPIC_VALUES = {
 };
 const antdIconFontSize = 16;
 const MIME_TYPE = {
+  doc: 'application/msword',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   pdf: 'application/pdf',
   xls: 'application/vnd.ms-excel',
@@ -33,7 +30,6 @@ const MAX_FILE_SIZE = 10000000; //10mb
 export {
   antdIconFontSize,
   routes,
-  menuBarLeftType,
   MESSAGE_REQUIRE,
   DATE_FORMAT,
   DEFAULT_TOPIC_VALUES,
