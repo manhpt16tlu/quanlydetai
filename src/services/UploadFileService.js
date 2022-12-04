@@ -26,16 +26,24 @@ const call = async function (method, url, body, config) {
   }
   return ret;
 };
-const upload = (body, config) => {
-  return call('POST', 'upload', body, config);
+const uploadTopicFile = (body, config) => {
+  return call('POST', 'upload/topic', body, config);
 };
-const download = (fileCode, config) => {
-  return call('GET_FILE', `download/${fileCode}`, null, config);
+const download = (fileType, fileCode, config) => {
+  return call('GET_FILE', `download/${fileType}/${fileCode}`, null, config);
 };
-const getFilesOfTopic = (topicId) => {
-  return call('GET', `file/topic/${topicId}`);
+const getTopicFilesByTopicIdAndTopicFileType = (topicId, topicFileType) => {
+  return call(
+    'GET',
+    `topicFile/topicId/${topicId}/topicFileType/${encodeURI(topicFileType)}`
+  );
 };
 const getFilesByType = (fileTypeName) => {
   return call('GET', `file/type/${encodeURI(fileTypeName)}`);
 };
-export { upload, download, getFilesOfTopic, getFilesByType };
+export {
+  uploadTopicFile,
+  download,
+  getTopicFilesByTopicIdAndTopicFileType,
+  getFilesByType,
+};

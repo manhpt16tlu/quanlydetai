@@ -119,12 +119,12 @@ function TopicCreate() {
               const formData = new FormData();
               //upload 1 file,viết foreach có thể handle nhiều file
               values[formFieldNames.file].forEach((file, index) => {
-                formData.append('file', file.originFileObj); // có thể k cần originFileObj
+                formData.append('fileUpload', file.originFileObj); // có thể k cần originFileObj
               });
-              formData.append('type', 'Đề cương');
-              formData.append('topicId', data.data.id);
+              formData.append('topicFileType', 'Đề cương');
+              formData.append('topic', data.data.id);
 
-              return fileService.upload(formData, {
+              return fileService.uploadTopicFile(formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data',
                 },

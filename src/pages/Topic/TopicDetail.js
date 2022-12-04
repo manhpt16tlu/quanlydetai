@@ -181,18 +181,21 @@ function TopicDetail() {
     setDisableBtn(true);
   };
   const handleDownloadFile = async () => {
-    const filesOfTopic = (await fileService.getFilesOfTopic(topicId)).data;
-    if (filesOfTopic.length !== 0)
-      //lấy luôn phần tử đầu do có 1 file duy nhất
+    const filesOfTopic = (
+      await fileService.getTopicFilesByTopicIdAndTopicFileType(
+        topicId,
+        'Đề cương'
+      )
+    ).data;
+    if (filesOfTopic)
       fileService
-        .download(filesOfTopic[0].fileCode, {
+        .download('topic', filesOfTopic[0]?.fileCode ?? filesOfTopic.fileCode, {
           responseType: 'blob',
         })
         .then((response) => {
           //get filename from header
           const disposition = response.headers['content-disposition'];
           const filename = getFileNameFromHeaderDisposition(disposition);
-
           const a = document.createElement('a');
           const url = URL.createObjectURL(response.data);
           a.href = url;
@@ -202,7 +205,7 @@ function TopicDetail() {
         })
         .catch((err) => {
           console.log(err);
-          message.error('Không thể download file');
+          message.error('File không tồn tại');
         });
     else message.error('File không tồn tại');
   };
