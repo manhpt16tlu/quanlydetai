@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined, ClearOutlined } from '@ant-design/icons';
 import {
   Button,
   DatePicker,
@@ -13,10 +9,6 @@ import {
   Space,
   Upload,
   message,
-  Typography,
-  Row,
-  Col,
-  Divider,
 } from 'antd';
 import {
   antdIconFontSize,
@@ -40,7 +32,7 @@ import CustomDivider from 'components/General/CustomDivider';
 function TopicCreate() {
   console.log('topicCreate render');
   const { TextArea } = Input;
-  const { Title } = Typography;
+
   const [form] = Form.useForm();
   const { RangePicker } = DatePicker;
   const formFieldNames = {
@@ -405,7 +397,7 @@ function TopicCreate() {
               disabled={disableResetBtn}
               onClick={handleResetForm}
             >
-              <DeleteOutlined
+              <ClearOutlined
                 style={{
                   fontSize: antdIconFontSize,
                 }}

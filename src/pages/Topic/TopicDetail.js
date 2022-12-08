@@ -1,6 +1,10 @@
-import { DoubleLeftOutlined, DownloadOutlined } from '@ant-design/icons';
 import {
-  Affix,
+  ClearOutlined,
+  DoubleLeftOutlined,
+  DownloadOutlined,
+  EditOutlined,
+} from '@ant-design/icons';
+import {
   Button,
   DatePicker,
   Form,
@@ -74,7 +78,7 @@ function TopicDetail() {
       endDate: values[formFieldNames.time][1].format(dateFormat),
     };
   };
-  const [bottom, setBottom] = useState(20);
+
   const [loading, setLoading] = useState(false);
   const [fieldOptions, setFieldOptions] = useState([]);
   const [organOptions, setOrganOptions] = useState([]);
@@ -416,16 +420,29 @@ function TopicDetail() {
             {previousPath !== routesConfig.topicApprove ? (
               <Form.Item
                 wrapperCol={{
-                  offset: 12,
-                  span: 5,
+                  offset: 6,
+                  span: 12,
                 }}
               >
                 <Space size="large">
+                  <Button type="primary" onClick={() => navigate(-1)}>
+                    <DoubleLeftOutlined
+                      style={{
+                        fontSize: antdIconFontSize,
+                      }}
+                    />
+                    Quay lại
+                  </Button>
                   <Button
                     type="primary"
                     disabled={disableBtn}
                     onClick={resetForm}
                   >
+                    <ClearOutlined
+                      style={{
+                        fontSize: antdIconFontSize,
+                      }}
+                    />
                     Đặt lại
                   </Button>
                   <Button
@@ -433,6 +450,11 @@ function TopicDetail() {
                     disabled={disableBtn}
                     htmlType="submit"
                   >
+                    <EditOutlined
+                      style={{
+                        fontSize: antdIconFontSize,
+                      }}
+                    />
                     Cập nhật
                   </Button>
                 </Space>
@@ -440,11 +462,6 @@ function TopicDetail() {
             ) : null}
           </Form>
         </Spin>
-        <Affix offsetBottom={bottom}>
-          <Button type="primary" onClick={() => navigate(-1)}>
-            <DoubleLeftOutlined /> Quay lại
-          </Button>
-        </Affix>
       </Space>
     </>
   );
