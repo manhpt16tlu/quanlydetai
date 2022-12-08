@@ -1,27 +1,78 @@
-import { Button, Space, Checkbox, Form, Input, Upload, message } from 'antd';
+import { ClearOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Form, Input, message, Select, Space, Upload } from 'antd';
 import {
-  DeleteOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
-import {
-  MESSAGE_REQUIRE,
   antdIconFontSize,
   MAX_FILE_SIZE,
+  MESSAGE_REQUIRE,
   MIME_TYPE,
 } from 'configs/general';
-import { openNotificationWithIcon } from 'utils/general';
+import { useEffect, useMemo, useState, memo } from 'react';
+import * as countService from 'services/CountService';
+import * as uploadService from 'services/UploadFileService';
 import { getFileList } from 'utils/fileUtil';
-import { useState } from 'react';
-function FormUpload() {
+import { optionSelectFillOBJ } from 'utils/formUtil';
+import { openNotificationWithIcon } from 'utils/general';
+function FormUpload(props) {
   const [form] = Form.useForm();
   const { TextArea } = Input;
   const [disableResetBtn, setDisableResetBtn] = useState(true);
+  const [formTypes, setFormTypes] = useState([]);
   const formFieldNames = {
-    title: 'tenbieumau',
+    name: 'tenbieumau',
+    type: 'loaibieumau',
     file: 'tepdinhkem',
   };
-  const onFinish = async (values) => {};
+  const onFinish = async (values) => {
+    const numberFormExist = (
+      await countService
+        .countFormByName(values[formFieldNames.name])
+        .catch((err) => {
+          console.log(err);
+          openNotificationWithIcon('error', null, 'top');
+        })
+    )?.data;
+
+    if (!numberFormExist) {
+      const createdForm = (
+        await uploadService
+          .createForm({
+            name: values[formFieldNames.name],
+            type: JSON.parse(values[formFieldNames.type]),
+          })
+          .catch((err) => {
+            console.log(err);
+            openNotificationWithIcon('error', null, 'top');
+          })
+      )?.data;
+
+      if (createdForm) {
+        const formData = new FormData();
+        //upload 1 file,viết foreach có thể handle nhiều file
+        values[formFieldNames.file].forEach((file, index) => {
+          formData.append('fileUpload', file.originFileObj); // có thể k cần originFileObj
+        });
+        formData.append('formId', createdForm.id);
+        uploadService
+          .uploadFormFile(formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then(() => {
+            handleResetForm();
+            openNotificationWithIcon('success', 'Tạo biểu mẫu', 'top');
+            props?.onRefresh();
+          })
+          .catch((err) => {
+            //delete form in db
+            uploadService.deleteForm(createdForm.id).catch(() => {});
+            console.log(err);
+            openNotificationWithIcon('error', null, 'top');
+          });
+      }
+    } else
+      openNotificationWithIcon('error', null, 'top', 'Biểu mẫu đã tồn tại');
+  };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
@@ -30,7 +81,7 @@ function FormUpload() {
     setDisableResetBtn(true);
   };
   const handleFormValuesChange = (changedValues, allValues) => {
-    console.log(allValues);
+    // console.log(allValues);
     setDisableResetBtn(false);
   };
   const uploadProps = {
@@ -52,6 +103,31 @@ function FormUpload() {
     multiple: true,
     maxCount: 1,
   };
+  useEffect(() => {
+    console.log('formupload render');
+  });
+  useEffect(() => {
+    console.log('formupload call api');
+    uploadService
+      .getAllFormType()
+      .then((response) => {
+        setFormTypes(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        openNotificationWithIcon('error', null, 'top');
+      });
+  }, []);
+
+  //dùng memo tránh call nhiều lần
+  const optionsFormTypes = useMemo(() => {
+    return optionSelectFillOBJ(formTypes);
+  }, [formTypes]);
+
+  const getFormTypeSelectProps = (optionsData) => ({
+    allowClear: true,
+    options: optionsFormTypes,
+  });
   return (
     <>
       <Form
@@ -70,7 +146,7 @@ function FormUpload() {
       >
         <Form.Item
           label="Tên biểu mẫu"
-          name={formFieldNames.title}
+          name={formFieldNames.name}
           rules={[
             {
               required: true,
@@ -83,6 +159,21 @@ function FormUpload() {
               minRows: 1,
               maxRows: 2,
             }}
+          />
+        </Form.Item>
+        <Form.Item
+          label="Loại biểu mẫu"
+          name={formFieldNames.type}
+          rules={[
+            {
+              required: true,
+              message: MESSAGE_REQUIRE,
+            },
+          ]}
+        >
+          <Select
+            {...getFormTypeSelectProps(formTypes)}
+            // onChange={onStatusChange}
           />
         </Form.Item>
         <Form.Item
@@ -112,6 +203,7 @@ function FormUpload() {
             </Button>
           </Upload>
         </Form.Item>
+
         <Form.Item
           wrapperCol={{
             offset: 3,
@@ -127,7 +219,7 @@ function FormUpload() {
               onClick={handleResetForm}
               disabled={disableResetBtn}
             >
-              <DeleteOutlined
+              <ClearOutlined
                 style={{
                   fontSize: antdIconFontSize,
                 }}
@@ -149,4 +241,4 @@ function FormUpload() {
   );
 }
 
-export default FormUpload;
+export default memo(FormUpload);

@@ -26,7 +26,7 @@ const optionSelectFill = (data) => {
 };
 const INITIAL_PAGE_STATE = {
   current: 1,
-  pageSize: 2,
+  pageSize: 7,
   totalElements: null,
 };
 const pageReducer = (state, action) => {

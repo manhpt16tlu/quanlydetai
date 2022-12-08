@@ -12,6 +12,7 @@ import {
   message,
 } from 'antd';
 import {
+  TIMESTAMP_FORMAT,
   antdIconFontSize,
   DATE_FORMAT as dateFormat,
   MESSAGE_REQUIRE as messageRequire,
@@ -26,6 +27,7 @@ import * as resultService from 'services/TopicResultService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import * as fileService from 'services/UploadFileService';
+import CustomDivider from 'components/General/CustomDivider';
 import {
   openNotificationWithIcon,
   getFileNameFromHeaderDisposition,
@@ -51,6 +53,7 @@ function TopicDetail() {
     result: 'ketqua',
     time: 'thoigianthuchien',
     expense: 'kinhphi',
+    createDate: 'ngaytao',
   };
   const getNewData = async (values) => {
     const newField = await fieldService.getById(values[formFieldNames.field]);
@@ -90,6 +93,7 @@ function TopicDetail() {
   const [disableBtn, setDisableBtn] = useState(true);
   const [reload, setReload] = useState(false);
   const onFinish = async (values) => {
+    console.log(values);
     const body = await getNewData(values);
     topicService
       .update(body, topicId)
@@ -133,6 +137,9 @@ function TopicDetail() {
           [formFieldNames.status]: topic.topicStatus.id,
           [formFieldNames.result]: topic.topicResult.id,
           [formFieldNames.expense]: topic.expense,
+          [formFieldNames.createDate]: moment(topic.createDate).format(
+            TIMESTAMP_FORMAT
+          ),
         });
       });
       Promise.all([
@@ -212,6 +219,7 @@ function TopicDetail() {
 
   return (
     <>
+      <CustomDivider text={'Chi tiết đề tài'} />
       <Space
         direction="vertical"
         size={200}
@@ -223,7 +231,7 @@ function TopicDetail() {
           <Form
             form={form}
             labelCol={{
-              span: 4,
+              span: 6,
             }}
             wrapperCol={{
               span: 12,
@@ -383,6 +391,16 @@ function TopicDetail() {
                   </Form.Item>
                 ) : null
               }
+            </Form.Item>
+
+            <Form.Item
+              wrapperCol={{
+                span: 6,
+              }}
+              label="Ngày tạo"
+              name={formFieldNames.createDate}
+            >
+              <Input readOnly />
             </Form.Item>
 
             <Form.Item label="Đề cương">

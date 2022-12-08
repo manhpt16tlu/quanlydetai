@@ -9,6 +9,7 @@ const routes = {
   organDetail: '/organization/detail',
   form: '/form',
   statistic: '/statistic',
+  setup: '/setup',
   notFound: '*',
   notFoundRedirect: '/pagenotfound',
 };
@@ -27,7 +28,9 @@ const MIME_TYPE = {
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 };
 const MAX_FILE_SIZE = 10000000; //10mb
+const TIMESTAMP_FORMAT = 'MMMM DD YYYY, h:mm:ss a';
 export {
+  TIMESTAMP_FORMAT,
   antdIconFontSize,
   routes,
   MESSAGE_REQUIRE,

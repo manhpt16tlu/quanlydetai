@@ -26,4 +26,12 @@ const countTopicByName = (name) => {
   return call('GET', `count/topic/by/name?name=${encodeURI(name)}`);
 };
 
-export { countTopicByStatusId, countTopicByName, countTopicByStatusName };
+const countFormByName = (name) => {
+  return call('GET', `count/form/byName?name=${encodeURI(name)}`);
+};
+export {
+  countFormByName,
+  countTopicByStatusId,
+  countTopicByName,
+  countTopicByStatusName,
+};

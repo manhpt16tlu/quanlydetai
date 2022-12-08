@@ -6,6 +6,7 @@ import {
   FolderOutlined,
   PlusOutlined,
   SettingOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Typography } from 'antd';
 import { routes as routesConfig } from 'configs/general';
@@ -62,6 +63,11 @@ const items = [
     <Link to={routesConfig.form}>Biểu mẫu</Link>,
     routesConfig.form,
     <FileTextOutlined />
+  ),
+  getItem(
+    <Link to={routesConfig.setup}>Thiết lập</Link>,
+    routesConfig.setup,
+    <ApiOutlined />
   ),
 ];
 function AppLayout(props) {
@@ -143,7 +149,7 @@ function AppLayout(props) {
             textAlign: 'center',
           }}
         >
-          Ant Design ©2022 Sở Khoa học và công nghệ Phú Thọ
+          Ant Design ©2022 Sở Khoa học và công nghệ
         </Footer>
       </Layout>
     </Layout>
