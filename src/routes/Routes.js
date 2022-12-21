@@ -1,70 +1,97 @@
 import { routes as routesConfig } from 'configs/general';
-import Home from 'pages/Home/Home';
-import OrganCreate from 'pages/Organ/OrganCreate';
-import OrganList from 'pages/Organ/OrganList';
-import NotFound from 'pages/NotFound/NotFound';
-import OrganDetail from 'pages/Organ/OrganDetail';
-import FormFileList from 'pages/Form/FormFileList';
-import TopicCreate from 'pages/Topic/TopicCreate';
-import TopicApprove from 'pages/Topic/TopicApprove';
-import TopicList from 'pages/Topic/TopicList';
-import TopicDetail from 'pages/Topic/TopicDetail';
-import Statistic from 'pages/Statistic/Statistic';
-import Setup from 'pages/Setup/Setup';
+import OrganCreate from 'pages/Admin/Organ/OrganCreate';
+import OrganList from 'pages/Admin/Organ/OrganList';
+import NotFound from 'pages/Shared/NotFound/NotFound';
+import OrganDetail from 'pages/Admin/Organ/OrganDetail';
+import { ROLES } from 'configs/general';
+import TopicApprove from 'pages/Admin/Topic/TopicApprove';
+import TopicList from 'pages/Admin/Topic/TopicList';
+import FormFileList from 'pages/Admin/Form/FormFileList';
+import TopicDetail from 'pages/Admin/Topic/TopicDetail';
+import Login from 'pages/Public/Login/Login';
+import Register from 'pages/Public/Register/Register';
+import Setup from 'pages/Admin/Setup/Setup';
+import Home from 'pages/Admin/Home/Home';
+import EmployeeHome from 'pages/Employee/Home/Home';
+import EmployeeTopicCreate from 'pages/Employee/Topic/TopicCreate';
+import EmployeeTopicList from 'pages/Employee/Topic/TopicList';
+import EmployeeForm from 'pages/Employee/Form/FormFileList';
+const privateRoutes = {
+  [ROLES.admin]: [
+    {
+      path: routesConfig[ROLES.admin].organCreate,
+      component: <OrganCreate />,
+    },
+    {
+      path: routesConfig[ROLES.admin].organList,
+      component: <OrganList />,
+    },
+    {
+      path: routesConfig[ROLES.admin].organDetail,
+      component: <OrganDetail />,
+    },
+    {
+      path: routesConfig[ROLES.admin].topicApprove,
+      component: <TopicApprove />,
+    },
+    {
+      path: routesConfig[ROLES.admin].topicList,
+      component: <TopicList />,
+    },
+    {
+      path: routesConfig[ROLES.admin].topicDetail,
+      component: <TopicDetail />,
+    },
+    {
+      path: routesConfig[ROLES.admin].form,
+      component: <FormFileList />,
+    },
+    {
+      path: routesConfig[ROLES.admin].setup,
+      component: <Setup />,
+    },
+    {
+      path: routesConfig[ROLES.admin].home,
+      component: <Home />,
+    },
+  ],
+  [ROLES.employee]: [
+    {
+      path: routesConfig[ROLES.employee].home,
+      component: <EmployeeHome />,
+    },
+    {
+      path: routesConfig[ROLES.employee].topicCreate,
+      component: <EmployeeTopicCreate />,
+    },
+    {
+      path: routesConfig[ROLES.employee].topicList,
+      component: <EmployeeTopicList />,
+    },
+    {
+      path: routesConfig[ROLES.employee].form,
+      component: <EmployeeForm />,
+    },
+  ],
+  shared: [
+    {
+      path: routesConfig.notFound,
+      component: <NotFound />,
+    },
+    {
+      path: routesConfig.notFoundNavigate,
+      component: <NotFound />,
+    },
+  ],
+};
 const publicRoutes = [
   {
-    path: routesConfig.home,
-    component: <Home />,
-  },
-
-  {
-    path: routesConfig.organCreate,
-    component: <OrganCreate />,
+    path: routesConfig.login,
+    component: <Login />,
   },
   {
-    path: routesConfig.organList,
-    component: <OrganList />,
-  },
-  {
-    path: routesConfig.organDetail,
-    component: <OrganDetail />,
-  },
-  {
-    path: routesConfig.topicCreate,
-    component: <TopicCreate />,
-  },
-  {
-    path: routesConfig.topicApprove,
-    component: <TopicApprove />,
-  },
-  {
-    path: routesConfig.topicList,
-    component: <TopicList />,
-  },
-  {
-    path: routesConfig.topicDetail,
-    component: <TopicDetail />,
-  },
-  {
-    path: routesConfig.notFound,
-    component: <NotFound />,
-  },
-  {
-    path: routesConfig.form,
-    component: <FormFileList />,
-  },
-  {
-    path: routesConfig.statistic,
-    component: <Statistic />,
-  },
-  {
-    path: routesConfig.setup,
-    component: <Setup />,
-  },
-  {
-    path: routesConfig.notFoundRedirect,
-    component: <NotFound />,
+    path: routesConfig.register,
+    component: <Register />,
   },
 ];
-const privateRoutes = [];
 export { publicRoutes, privateRoutes };

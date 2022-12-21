@@ -1,5 +1,5 @@
 import { Collapse, Typography } from 'antd';
-import style from 'pages/Topic/TopicApprove.module.scss';
+import style from 'pages/Admin/Topic/TopicApprove.module.scss';
 import TableDataPanel from 'components/Topic/TableDataPanel';
 const { Panel } = Collapse;
 const { Title, Text } = Typography;
@@ -8,9 +8,9 @@ const optionSelectFillOBJ = (data) => {
   //option with value is object
   return data.map((v, i) => {
     return {
-      title: v.description ?? v.name,
+      title: v.description ?? v.name ?? v.title, //hiển thị khi hover
       value: JSON.stringify(v),
-      label: v.title ?? v.name,
+      label: v.title ?? v.name, // hiển thị ra giao diện
     };
   });
 };
@@ -26,7 +26,7 @@ const optionSelectFill = (data) => {
 };
 const INITIAL_PAGE_STATE = {
   current: 1,
-  pageSize: 7,
+  pageSize: 3,
   totalElements: null,
 };
 const pageReducer = (state, action) => {

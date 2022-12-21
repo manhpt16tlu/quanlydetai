@@ -20,7 +20,7 @@ const optionSelectFillOBJ = (data) => {
 };
 const INITIAL_PAGE_STATE = {
   current: 1,
-  pageSize: 3,
+  pageSize: 7,
   totalElements: null,
   tableData: [],
 };

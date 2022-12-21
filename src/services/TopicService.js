@@ -3,13 +3,15 @@ const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
     case 'GET': {
-      const data = config ? await api.get(url, config) : await api.get(url);
-      ret = data.data;
+      const axiosResponse = config
+        ? await api.get(url, config)
+        : await api.get(url);
+      ret = axiosResponse.data;
       break;
     }
     case 'POST': {
-      const data = await api.post(url, body);
-      ret = data.data;
+      const axiosResponse = await api.post(url, body);
+      ret = axiosResponse.data;
       break;
     }
     case 'PUT': {
@@ -61,6 +63,17 @@ const getFilteredApproved = (
     config
   );
 };
+
+const getAllByUsernameWithFilter = (username, page, size, params) => {
+  return call(
+    'GET',
+    `topic/getAllByUser/${username}?page=${page}&size=${size}`,
+    undefined,
+    {
+      params,
+    }
+  );
+};
 const create = (body, organId, fieldId, statusId, resultId) => {
   const resultUrlPart = resultId ? `/result/${resultId}` : '';
   return call(
@@ -68,6 +81,9 @@ const create = (body, organId, fieldId, statusId, resultId) => {
     `organ/${organId}/field/${fieldId}/status/${statusId}${resultUrlPart}/topic`,
     body
   );
+};
+const employeeCreate = (body) => {
+  return call('POST', `topic/employeeCreate`, body);
 };
 const getById = (id) => {
   return call('GET', `topic/${id}`);
@@ -85,7 +101,14 @@ const getNonApprovedByOrganId = (organId) => {
 const deleteById = (topicId) => {
   return call('DELETE', `topic/${topicId}`);
 };
+
+const existByName = (topicName) => {
+  return call('GET', `topic/existByName?name=${encodeURI(topicName)}`);
+};
 export {
+  getAllByUsernameWithFilter,
+  employeeCreate,
+  existByName,
   approve,
   getAllNoPaging,
   getById,

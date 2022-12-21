@@ -20,6 +20,15 @@ const notifiTypes = {
 const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
+const capitalizeFirstLetterEachWord = (string) => {
+  return string
+    .toLowerCase()
+    .split(' ')
+    .map((word) => {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+};
 //get filename from header
 const getFileNameFromHeaderDisposition = (disposition) => {
   //áp dụng cho disposition có dạng: attachment; filename="SdsXQoJB-topic.xlsx"
@@ -38,7 +47,13 @@ const uid = () =>
     /\./g,
     ''
   );
+const getMessageValidateLength = (lengthType, length) => {
+  if (lengthType === 'min') return `Không được nhỏ hơn ${length} kí tự`;
+  else if (lengthType === 'max') return `Không được lớn hơn ${length} kí tự`;
+};
 export {
+  getMessageValidateLength,
+  capitalizeFirstLetterEachWord,
   getFileNameFromHeaderDisposition,
   openNotificationWithIcon,
   capitalizeFirstLetter,

@@ -7,8 +7,8 @@ import {
   MIME_TYPE,
 } from 'configs/general';
 import { useEffect, useMemo, useState, memo } from 'react';
-import * as countService from 'services/CountService';
 import * as uploadService from 'services/UploadFileService';
+import * as formService from 'services/FormService';
 import { getFileList } from 'utils/fileUtil';
 import { optionSelectFillOBJ } from 'utils/formUtil';
 import { openNotificationWithIcon } from 'utils/general';
@@ -23,16 +23,16 @@ function FormUpload(props) {
     file: 'tepdinhkem',
   };
   const onFinish = async (values) => {
-    const numberFormExist = (
-      await countService
-        .countFormByName(values[formFieldNames.name])
+    const existForm = (
+      await formService
+        .existByFormName(values[formFieldNames.name])
         .catch((err) => {
           console.log(err);
           openNotificationWithIcon('error', null, 'top');
         })
     )?.data;
 
-    if (!numberFormExist) {
+    if (!existForm) {
       const createdForm = (
         await uploadService
           .createForm({
@@ -41,7 +41,7 @@ function FormUpload(props) {
           })
           .catch((err) => {
             console.log(err);
-            openNotificationWithIcon('error', null, 'top');
+            openNotificationWithIcon('error', 'Tạo biểu mẫu', 'top');
           })
       )?.data;
 
@@ -67,7 +67,7 @@ function FormUpload(props) {
             //delete form in db
             uploadService.deleteForm(createdForm.id).catch(() => {});
             console.log(err);
-            openNotificationWithIcon('error', null, 'top');
+            openNotificationWithIcon('error', 'Tạo biểu mẫu', 'top');
           });
       }
     } else
@@ -218,13 +218,14 @@ function FormUpload(props) {
               type="primary"
               onClick={handleResetForm}
               disabled={disableResetBtn}
+              danger
             >
               <ClearOutlined
                 style={{
                   fontSize: antdIconFontSize,
                 }}
               />
-              Đặt lại
+              Hủy
             </Button>
             <Button type="primary" htmlType="submit">
               <PlusOutlined

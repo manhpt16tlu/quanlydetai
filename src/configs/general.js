@@ -1,17 +1,31 @@
+const ROLES = {
+  admin: 'ADMIN',
+  employee: 'EMPLOYEE',
+};
 const routes = {
-  home: '/',
-  topicCreate: '/topic/create',
-  topicList: '/topic/list',
-  topicApprove: '/topic/approve',
-  topicDetail: '/topic/detail',
-  organCreate: '/organization/create',
-  organList: '/organization/list',
-  organDetail: '/organization/detail',
-  form: '/form',
-  statistic: '/statistic',
-  setup: '/setup',
+  [ROLES.employee]: {
+    topicCreate: '/topic/create',
+    topicList: '/topic/list',
+    topicDetail: '/topic/detail',
+    form: '/form',
+    home: '/',
+  },
+  [ROLES.admin]: {
+    topicCreate: '/admin/topic/create',
+    topicList: '/admin/topic/list',
+    topicApprove: '/admin/topic/approve',
+    topicDetail: '/admin/topic/detail',
+    organCreate: '/admin/organization/create',
+    organList: '/admin/organization/list',
+    organDetail: '/admin/organization/detail',
+    form: '/admin/form',
+    setup: '/admin/setup',
+    home: '/admin',
+  },
+  notFoundNavigate: '/notfound',
   notFound: '*',
-  notFoundRedirect: '/pagenotfound',
+  register: '/register',
+  login: '/login',
 };
 const MESSAGE_REQUIRE = 'Không được để trống';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -29,7 +43,16 @@ const MIME_TYPE = {
 };
 const MAX_FILE_SIZE = 10000000; //10mb
 const TIMESTAMP_FORMAT = 'MMMM DD YYYY, h:mm:ss a';
+const TOPIC_FILE_TYPE = {
+  outline: 'Đề cương',
+  report: 'Báo cáo',
+};
+const LOCALSTORAGE_KEY = {
+  currentUser: 'user',
+};
 export {
+  LOCALSTORAGE_KEY,
+  TOPIC_FILE_TYPE,
   TIMESTAMP_FORMAT,
   antdIconFontSize,
   routes,
@@ -38,4 +61,5 @@ export {
   DEFAULT_TOPIC_VALUES,
   MIME_TYPE,
   MAX_FILE_SIZE,
+  ROLES,
 };
