@@ -1,4 +1,5 @@
 import { Breadcrumb, Divider } from 'antd';
+import CustomDivider from 'components/General/CustomDivider';
 import OrganCreate from 'components/Organ/OrganCreate';
 import OrganList from 'components/Organ/OrganList';
 import { ROLES, routes as routesConfig } from 'configs/general';
@@ -19,13 +20,9 @@ function Organ() {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Cơ quan</Breadcrumb.Item>
       </Breadcrumb>
-      <Divider style={{ marginTop: 30 }} orientation="left">
-        Tạo mới
-      </Divider>
+      <CustomDivider text="Tạo mới" orientation="left" />
       <OrganCreate onRefresh={handleRefresh} />
-      <Divider style={{ marginTop: 30 }} orientation="left">
-        Danh sách cơ quan
-      </Divider>
+      <CustomDivider text="Danh sách cơ quan" orientation="left" />
       <OrganList refresh={refresh} />
     </>
   );

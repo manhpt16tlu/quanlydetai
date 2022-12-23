@@ -15,6 +15,9 @@ import EmployeeSetup from 'pages/Employee/Setup/Setup';
 import Login from 'pages/Public/Login/Login';
 import Register from 'pages/Public/Register/Register';
 import NotFound from 'pages/Shared/NotFound/NotFound';
+import Account from 'pages/Admin/Account/Account';
+import MyAccount from 'pages/Shared/MyAccount/MyAccount';
+import TopicSetup from 'pages/Admin/Setup/TopicSetup';
 
 const privateRoutes = {
   [ROLES.admin]: [
@@ -44,7 +47,7 @@ const privateRoutes = {
     },
     {
       path: routesConfig[ROLES.admin].topicSetup,
-      component: null,
+      component: <TopicSetup />,
     },
     {
       path: routesConfig[ROLES.admin].home,
@@ -52,7 +55,7 @@ const privateRoutes = {
     },
     {
       path: routesConfig[ROLES.admin].accounts,
-      component: null,
+      component: <Account />,
     },
   ],
   [ROLES.employee]: [
@@ -85,14 +88,17 @@ const privateRoutes = {
     {
       path: routesConfig.notFound,
       component: <NotFound />,
+      // differentLayout: true,
     },
     {
       path: routesConfig.notFoundNavigate,
       component: <NotFound />,
+      // differentLayout: true,
     },
     {
       path: routesConfig.myAccount,
-      component: null,
+      component: <MyAccount />,
+      differentLayout: true, // chung route nhưng khác layout
     },
   ],
 };

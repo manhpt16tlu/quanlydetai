@@ -10,7 +10,7 @@ import {
   ROLES,
   routes as routesConfig,
 } from 'configs/general';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import * as authService from 'services/AuthService';
 import * as topicService from 'services/TopicService';
@@ -19,6 +19,7 @@ import * as fieldService from 'services/TopicFieldService';
 import { openNotificationWithIcon } from 'utils/general';
 import { generateDateString } from 'utils/topicUtil';
 import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
+import { AntdSettingContext } from 'context/AntdSettingContext';
 const dataIndexTable = {
   id: 'id',
   name: 'tendetai',
@@ -53,6 +54,8 @@ const convertFilterToParams = (filterData) => {
   };
 };
 function TopicList() {
+  const { tableStyle } = useContext(AntdSettingContext);
+  const [tableBorder] = tableStyle;
   const location = useLocation();
   const userStorage = authService.getCurrentUser();
   const { pathname } = location;
@@ -287,7 +290,7 @@ function TopicList() {
         </Col>
       </Row>
       <Table
-        bordered
+        bordered={tableBorder}
         rowSelection={{
           ...rowSelection,
         }}

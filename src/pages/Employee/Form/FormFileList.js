@@ -1,5 +1,6 @@
 import { DownloadOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Divider, message, Spin, Table } from 'antd';
+import CustomDivider from 'components/General/CustomDivider';
 import {
   antdIconFontSize,
   TIMESTAMP_FORMAT,
@@ -7,14 +8,17 @@ import {
   ROLES,
   FILE_TYPE,
 } from 'configs/general';
+import { AntdSettingContext } from 'context/AntdSettingContext';
 import moment from 'moment';
-import { useEffect, useReducer, useState } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as formService from 'services/FormService';
 import * as uploadSerivce from 'services/UploadFileService';
 import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 import { getFileNameFromHeaderDisposition } from 'utils/general';
 function FormFileList() {
+  const { tableStyle } = useContext(AntdSettingContext);
+  const [tableBorder] = tableStyle;
   const [loading, setLoading] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   const dataIndexTable = {
@@ -148,10 +152,11 @@ function FormFileList() {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Biểu mẫu</Breadcrumb.Item>
       </Breadcrumb>
-      <Divider>Danh sách biểu mẫu</Divider>
+
+      <CustomDivider orientation="center" text="Danh sách biểu mẫu" />
       <Spin spinning={loading}>
         <Table
-          bordered
+          bordered={tableBorder}
           rowSelection={rowSelection}
           columns={tableColumn}
           dataSource={dataPaging?.tableData}

@@ -25,14 +25,11 @@ import { generateDateString } from 'utils/topicUtil';
 import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 const dataIndexTable = {
   id: 'id',
-  uid: 'uid',
   name: 'tendetai',
-  organ: 'coquanchutri',
   manager: 'chunhiem',
   time: 'thoigianthuchien',
   status: 'trangthai',
 };
-
 const rowSelection = {
   type: 'checkbox',
   onChange: (selectedRowKeys, selectedRows) => {},

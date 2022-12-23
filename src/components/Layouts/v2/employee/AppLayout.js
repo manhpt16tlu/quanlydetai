@@ -6,6 +6,7 @@ import {
   OrderedListOutlined,
   PlusOutlined,
   UserOutlined,
+  AntDesignOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -57,7 +58,14 @@ const sidebarItems = [
     <ApiOutlined />
   ),
 ];
-const userItems = [getItem('Đăng xuất', 'logout', <LogoutOutlined />)];
+const userItems = [
+  getItem(
+    <Link to={routesConfig.myAccount}>Tài khoản của tôi</Link>,
+    'myaccount',
+    <UserOutlined />
+  ),
+  getItem('Đăng xuất', 'logout', <LogoutOutlined />),
+];
 function AppLayout(props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -125,7 +133,7 @@ function AppLayout(props) {
                   placement="bottomRight"
                   arrow
                 >
-                  <Avatar size="default" icon={<UserOutlined />} />
+                  <Avatar size="large" icon={<AntDesignOutlined />} />
                 </Dropdown>
               </Space>
             </Col>

@@ -1,5 +1,5 @@
 import { ConfigProvider } from 'antd';
-
+import { LOCALSTORAGE_KEY } from 'configs/general';
 const { createContext, useState, useEffect } = require('react');
 
 const AntdSettingContext = createContext();
@@ -15,11 +15,12 @@ const TABLE_TYPE_BORDER = {
 };
 function AntdSettingProvider({ children }) {
   const [size, setSize] = useState(
-    localStorage.getItem('componentSize') ?? COMPONENT_SIZE.small
+    localStorage.getItem(LOCALSTORAGE_KEY.componentSize) ?? COMPONENT_SIZE.small
   );
   let tableStyleStore = null;
-  if (localStorage.getItem('tableStyle') != null) {
-    tableStyleStore = localStorage.getItem('tableStyle') === 'true';
+  if (localStorage.getItem(LOCALSTORAGE_KEY.tableStyle) != null) {
+    tableStyleStore =
+      localStorage.getItem(LOCALSTORAGE_KEY.tableStyle) === 'true';
   }
   const [tableBorder, setTableBorder] = useState(
     tableStyleStore ?? TABLE_TYPE_BORDER.border

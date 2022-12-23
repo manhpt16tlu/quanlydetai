@@ -6,6 +6,8 @@ import { publicRoutes, privateRoutes } from './routes/Routes';
 import ProtectedRoute from 'components/General/ProtectedRoute';
 import { ROLES } from 'configs/general';
 import { AntdSettingProvider } from 'context/AntdSettingContext';
+import CurrentRoleLayout from 'components/General/CurrentRoleLayout';
+
 function App() {
   return (
     <AntdSettingProvider>
@@ -37,17 +39,30 @@ function App() {
           );
         })}
         {privateRoutes.shared.map((route, index) => {
-          return (
-            <Route
-              key={index}
-              path={route.path}
-              element={
-                <ProtectedRoute roles={[ROLES.employee, ROLES.admin]}>
-                  {route.component}
-                </ProtectedRoute>
-              }
-            />
-          );
+          if (route.differentLayout)
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <ProtectedRoute roles={[ROLES.employee, ROLES.admin]}>
+                    <CurrentRoleLayout>{route.component}</CurrentRoleLayout>
+                  </ProtectedRoute>
+                }
+              />
+            );
+          else
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <ProtectedRoute roles={[ROLES.employee, ROLES.admin]}>
+                    {route.component}
+                  </ProtectedRoute>
+                }
+              />
+            );
         })}
         {publicRoutes.map((route, index) => {
           return (

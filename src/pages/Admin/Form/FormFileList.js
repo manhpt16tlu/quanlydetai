@@ -37,6 +37,7 @@ import {
   routes as routesConfig,
 } from 'configs/general';
 import { AntdSettingContext } from 'context/AntdSettingContext';
+import CustomDivider from 'components/General/CustomDivider';
 function FormFileList() {
   const { tableStyle } = useContext(AntdSettingContext);
   const [tableBorder] = tableStyle;
@@ -211,16 +212,9 @@ function FormFileList() {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Biểu mẫu</Breadcrumb.Item>
       </Breadcrumb>
-      <Divider
-        style={{
-          marginTop: 30,
-        }}
-        orientation="left"
-      >
-        Tạo mới
-      </Divider>
+      <CustomDivider text="Tạo mới" orientation="left" />
       <FormUpload onRefresh={handleRefresh} />
-      <Divider orientation="left">Danh sách biểu mẫu</Divider>
+      <CustomDivider text="Danh sách biểu mẫu" orientation="left" />
       <Spin spinning={loading}>
         <Table
           bordered={tableBorder}

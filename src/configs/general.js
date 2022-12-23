@@ -55,6 +55,8 @@ const FILE_TYPE = {
 };
 const LOCALSTORAGE_KEY = {
   currentUser: 'user',
+  componentSize: 'componentSize',
+  tableStyle: 'tableStyle',
 };
 export {
   FILE_TYPE,

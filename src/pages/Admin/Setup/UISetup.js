@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import {
   antdIconFontSize,
+  LOCALSTORAGE_KEY,
   ROLES,
   routes as routesConfig,
 } from 'configs/general';
@@ -60,12 +61,12 @@ function UISetup() {
     let change = false;
     if (newComponentSize !== initFormData[formFieldName.componentSize]) {
       change = true;
-      localStorage.setItem('componentSize', newComponentSize);
+      localStorage.setItem(LOCALSTORAGE_KEY.componentSize, newComponentSize);
       setSize(newComponentSize);
     }
     if (newTableStyle !== initFormData[formFieldName.tableStyle]) {
       change = true;
-      localStorage.setItem('tableStyle', newTableStyle);
+      localStorage.setItem(LOCALSTORAGE_KEY.tableStyle, newTableStyle);
       setTableBorder(newTableStyle);
     }
     if (change) openNotificationWithIcon('success', 'Thiết lập', 'top');
