@@ -190,7 +190,6 @@ function FormUpload(props) {
         >
           <Upload {...uploadProps}>
             <Button
-              size="middle"
               icon={
                 <UploadOutlined
                   style={{

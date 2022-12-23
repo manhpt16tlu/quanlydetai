@@ -3,9 +3,13 @@ import {
   FilterOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { Button, Col, Input, Row, Space, Table } from 'antd';
+import { Button, Col, Input, Row, Space, Table, Breadcrumb } from 'antd';
 import CustomDivider from 'components/General/CustomDivider';
-import { antdIconFontSize, routes as routesConfig } from 'configs/general';
+import {
+  antdIconFontSize,
+  ROLES,
+  routes as routesConfig,
+} from 'configs/general';
 import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import * as authService from 'services/AuthService';
@@ -13,11 +17,8 @@ import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import * as fieldService from 'services/TopicFieldService';
 import { openNotificationWithIcon } from 'utils/general';
-import {
-  generateDateString,
-  INITIAL_PAGE_STATE,
-  pageReducer,
-} from 'utils/topicUtil';
+import { generateDateString } from 'utils/topicUtil';
+import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 const dataIndexTable = {
   id: 'id',
   name: 'tendetai',
@@ -191,11 +192,12 @@ function TopicList() {
       width: '40%',
       render: (text, record) => (
         <Link
-          to={routesConfig.topicDetail}
+          to={routesConfig[ROLES.employee].topicDetail}
           state={{
             topicId: record[dataIndexTable.id],
             previousPath: pathname,
           }}
+          replace={true}
         >
           {text}
         </Link>
@@ -263,6 +265,13 @@ function TopicList() {
   };
   return (
     <>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.employee].home}>Trang chủ</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Đề tài</Breadcrumb.Item>
+        <Breadcrumb.Item>Danh sách</Breadcrumb.Item>
+      </Breadcrumb>
       <CustomDivider text={'Danh sách đề tài'} />
       <Row justify="end" style={{ marginBottom: 20 }}>
         <Col>

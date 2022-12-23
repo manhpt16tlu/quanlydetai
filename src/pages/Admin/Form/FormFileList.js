@@ -3,20 +3,43 @@ import {
   DownloadOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { Divider, Space, Table, Button, Popconfirm, Spin, message } from 'antd';
+import {
+  Divider,
+  Space,
+  Table,
+  Button,
+  Popconfirm,
+  Spin,
+  message,
+  Breadcrumb,
+} from 'antd';
 import moment from 'moment';
-import { useEffect, useState, useReducer, useCallback } from 'react';
+import {
+  useEffect,
+  useState,
+  useReducer,
+  useCallback,
+  useContext,
+} from 'react';
 import { Link } from 'react-router-dom';
 import * as uploadSerivce from 'services/UploadFileService';
 import * as formService from 'services/FormService';
 import FormUpload from 'components/Form/FormUpload';
-import { INITIAL_PAGE_STATE, pageReducer } from 'utils/formUtil';
+import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 import {
   openNotificationWithIcon,
   getFileNameFromHeaderDisposition,
 } from 'utils/general';
-import { antdIconFontSize, TIMESTAMP_FORMAT } from 'configs/general';
+import {
+  antdIconFontSize,
+  ROLES,
+  TIMESTAMP_FORMAT,
+  routes as routesConfig,
+} from 'configs/general';
+import { AntdSettingContext } from 'context/AntdSettingContext';
 function FormFileList() {
+  const { tableStyle } = useContext(AntdSettingContext);
+  const [tableBorder] = tableStyle;
   const [loading, setLoading] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   const [refresh, setRefresh] = useState(false);
@@ -182,12 +205,25 @@ function FormFileList() {
   }, [dataPaging.current, refresh]);
   return (
     <>
-      <Divider orientation="left">Tạo mới</Divider>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.admin].home}>Trang chủ</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Biểu mẫu</Breadcrumb.Item>
+      </Breadcrumb>
+      <Divider
+        style={{
+          marginTop: 30,
+        }}
+        orientation="left"
+      >
+        Tạo mới
+      </Divider>
       <FormUpload onRefresh={handleRefresh} />
       <Divider orientation="left">Danh sách biểu mẫu</Divider>
       <Spin spinning={loading}>
         <Table
-          bordered
+          bordered={tableBorder}
           rowSelection={rowSelection}
           columns={tableColumn}
           dataSource={dataPaging?.tableData}

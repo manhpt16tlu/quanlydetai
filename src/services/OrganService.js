@@ -1,5 +1,5 @@
 import api from 'configs/api';
-const call = async function (method, url, body) {
+const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
     case 'GET': {
@@ -25,6 +25,9 @@ const call = async function (method, url, body) {
 const getAll = (page, search) => {
   return call('GET', `organ?page=${page}&search=${search}`);
 };
+const getAllWithFilter = (page, size) => {
+  return call('GET', `organ?page=${page}&size=${size}`);
+};
 const getAllNoPaging = () => {
   return call('GET', `organ/nopaging`);
 };
@@ -34,8 +37,18 @@ const getAllWhichNeedApprove = () => {
 const create = (body) => {
   return call('POST', 'organ', body);
 };
-const update = (body, organId) => {
+const update = (organId, body) => {
   return call('PUT', `organ/${organId}`, body);
 };
-
-export { getAll, getAllNoPaging, create, update, getAllWhichNeedApprove };
+const existByName = (organName) => {
+  return call('GET', `organ/existByName/${encodeURI(organName)}`);
+};
+export {
+  getAllWithFilter,
+  existByName,
+  getAll,
+  getAllNoPaging,
+  create,
+  update,
+  getAllWhichNeedApprove,
+};

@@ -4,9 +4,9 @@ import {
   CheckCircleOutlined,
   FileTextOutlined,
   FolderOutlined,
+  FontColorsOutlined,
   LogoutOutlined,
-  PlusOutlined,
-  SettingOutlined,
+  OrderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
@@ -21,7 +21,6 @@ import {
   Typography,
 } from 'antd';
 import { ROLES, routes as routesConfig } from 'configs/general';
-import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as authService from 'services/AuthService';
 import style from './AppLayout.module.scss';
@@ -40,14 +39,9 @@ function getItem(label, key, icon, children, type) {
 const sidebarItems = [
   getItem('Đề tài', 'sub1', <FolderOutlined />, [
     getItem(
-      <Link to={routesConfig[ROLES.admin].topicCreate}>Tạo mới</Link>,
-      routesConfig[ROLES.admin].topicCreate,
-      <PlusOutlined />
-    ),
-    getItem(
-      <Link to={routesConfig[ROLES.admin].topicList}>Xem và chỉnh sửa</Link>,
+      <Link to={routesConfig[ROLES.admin].topicList}>Danh sách đề tài</Link>,
       routesConfig[ROLES.admin].topicList,
-      <SettingOutlined />
+      <OrderedListOutlined />
     ),
     getItem(
       <Link to={routesConfig[ROLES.admin].topicApprove}>Phê duyệt</Link>,
@@ -55,28 +49,28 @@ const sidebarItems = [
       <CheckCircleOutlined />
     ),
   ]),
-  getItem('Cơ quan', 'sub2', <BankOutlined />, [
-    getItem(
-      <Link to={routesConfig[ROLES.admin].organCreate}>Tạo mới</Link>,
-      routesConfig[ROLES.admin].organCreate,
-      <PlusOutlined />
-    ),
-    getItem(
-      <Link to={routesConfig[ROLES.admin].organList}>Xem và chỉnh sửa</Link>,
-      routesConfig[ROLES.admin].organList,
-      <SettingOutlined />
-    ),
-  ]),
+  getItem(
+    <Link to={routesConfig[ROLES.admin].organ}>Cơ quan</Link>,
+    routesConfig[ROLES.admin].organ,
+    <BankOutlined />
+  ),
   getItem(
     <Link to={routesConfig[ROLES.admin].form}>Biểu mẫu</Link>,
     routesConfig[ROLES.admin].form,
     <FileTextOutlined />
   ),
-  getItem(
-    <Link to={routesConfig[ROLES.admin].setup}>Thiết lập</Link>,
-    routesConfig[ROLES.admin].setup,
-    <ApiOutlined />
-  ),
+  getItem('Thiết lập', 'sub2', <ApiOutlined />, [
+    getItem(
+      <Link to={routesConfig[ROLES.admin].uiSetup}>Giao diện</Link>,
+      routesConfig[ROLES.admin].uiSetup,
+      <FontColorsOutlined />
+    ),
+    getItem(
+      <Link to={routesConfig[ROLES.admin].topicSetup}>Đề tài</Link>,
+      routesConfig[ROLES.admin].topicSetup,
+      <FolderOutlined />
+    ),
+  ]),
 ];
 const userItems = [getItem('Đăng xuất', 'logout', <LogoutOutlined />)];
 

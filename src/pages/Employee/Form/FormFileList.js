@@ -1,12 +1,18 @@
 import { DownloadOutlined } from '@ant-design/icons';
-import { Button, Divider, message, Spin, Table } from 'antd';
-import { antdIconFontSize, TIMESTAMP_FORMAT } from 'configs/general';
+import { Breadcrumb, Button, Divider, message, Spin, Table } from 'antd';
+import {
+  antdIconFontSize,
+  TIMESTAMP_FORMAT,
+  routes as routesConfig,
+  ROLES,
+  FILE_TYPE,
+} from 'configs/general';
 import moment from 'moment';
 import { useEffect, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as formService from 'services/FormService';
 import * as uploadSerivce from 'services/UploadFileService';
-import { INITIAL_PAGE_STATE, pageReducer } from 'utils/formUtil';
+import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 import { getFileNameFromHeaderDisposition } from 'utils/general';
 function FormFileList() {
   const [loading, setLoading] = useState(false);
@@ -35,7 +41,7 @@ function FormFileList() {
     )?.data;
     if (form && formFile) {
       uploadSerivce
-        .download('form', formFile.code, {
+        .download(FILE_TYPE.form, formFile.code, {
           responseType: 'blob',
         })
         .then((response) => {
@@ -78,7 +84,6 @@ function FormFileList() {
       render: (_, record) => {
         return (
           <Button
-            size="middle"
             type="primary"
             onClick={() => handleDownloadForm(record[dataIndexTable.id])}
           >
@@ -137,6 +142,12 @@ function FormFileList() {
   }, [dataPaging.current]);
   return (
     <>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.employee].home}>Trang chủ</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Biểu mẫu</Breadcrumb.Item>
+      </Breadcrumb>
       <Divider>Danh sách biểu mẫu</Divider>
       <Spin spinning={loading}>
         <Table

@@ -1,8 +1,9 @@
 import {
-  EyeOutlined,
+  ApiOutlined,
   FileTextOutlined,
   FolderOutlined,
   LogoutOutlined,
+  OrderedListOutlined,
   PlusOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -18,7 +19,6 @@ import {
   Typography,
 } from 'antd';
 import { ROLES, routes as routesConfig } from 'configs/general';
-import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as authService from 'services/AuthService';
 import style from './AppLayout.module.scss';
@@ -41,15 +41,20 @@ const sidebarItems = [
       <PlusOutlined />
     ),
     getItem(
-      <Link to={routesConfig[ROLES.employee].topicList}>Xem và tra cứu</Link>,
+      <Link to={routesConfig[ROLES.employee].topicList}>Danh sách đề tài</Link>,
       routesConfig[ROLES.employee].topicList,
-      <EyeOutlined />
+      <OrderedListOutlined />
     ),
   ]),
   getItem(
     <Link to={routesConfig[ROLES.employee].form}>Biểu mẫu</Link>,
     routesConfig[ROLES.employee].form,
     <FileTextOutlined />
+  ),
+  getItem(
+    <Link to={routesConfig[ROLES.employee].setup}>Thiết lập</Link>,
+    routesConfig[ROLES.employee].setup,
+    <ApiOutlined />
   ),
 ];
 const userItems = [getItem('Đăng xuất', 'logout', <LogoutOutlined />)];
@@ -61,11 +66,8 @@ function AppLayout(props) {
   let menuKey = pathname; //hight light menu key
   let previousPath = state?.previousPath;
   switch (pathname) {
-    case routesConfig.topicDetail:
+    case routesConfig[ROLES.employee].topicDetail:
       menuKey = previousPath ? previousPath : pathname;
-      break;
-    case routesConfig.organDetail:
-      menuKey = routesConfig.organList;
       break;
     default:
       menuKey = pathname;

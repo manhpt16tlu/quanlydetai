@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import produce from 'immer';
 const openNotificationWithIcon = (type, action, placement, mess) => {
   notification[type]({
     message: `${capitalizeFirstLetter(type)}`,
@@ -51,7 +52,32 @@ const getMessageValidateLength = (lengthType, length) => {
   if (lengthType === 'min') return `Không được nhỏ hơn ${length} kí tự`;
   else if (lengthType === 'max') return `Không được lớn hơn ${length} kí tự`;
 };
+const INITIAL_PAGE_STATE = {
+  current: 1,
+  pageSize: 3,
+  totalElements: null,
+  tableData: [],
+};
+const pageReducer = (state, action) => {
+  switch (action.type) {
+    case 'PAGE_CHANGE':
+      return produce(state, (draft) => {
+        draft.current = action.current;
+        draft.pageSize = action.pageSize;
+      });
+    case 'FETCH':
+      return produce(state, (draft) => {
+        draft.totalElements = action.totalElements;
+        draft.pageSize = action.pageSize;
+        draft.tableData = action.tableData;
+      });
+    default:
+      return state;
+  }
+};
 export {
+  INITIAL_PAGE_STATE,
+  pageReducer,
   getMessageValidateLength,
   capitalizeFirstLetterEachWord,
   getFileNameFromHeaderDisposition,

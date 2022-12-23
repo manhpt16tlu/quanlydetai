@@ -18,35 +18,5 @@ const optionSelectFillOBJ = (data) => {
     };
   });
 };
-const INITIAL_PAGE_STATE = {
-  current: 1,
-  pageSize: 7,
-  totalElements: null,
-  tableData: [],
-};
-const pageReducer = (state, action) => {
-  switch (action.type) {
-    case 'PAGE_CHANGE':
-      return {
-        ...state,
-        current: action.current,
-        pageSize: action.pageSize,
-      };
-    case 'FETCH':
-      return {
-        ...state,
-        totalElements: action.totalElements,
-        pageSize: action.pageSize,
-        tableData: action.tableData,
-      };
-    default:
-      return state;
-  }
-};
 
-export {
-  optionSelectFill,
-  optionSelectFillOBJ,
-  INITIAL_PAGE_STATE,
-  pageReducer,
-};
+export { optionSelectFill, optionSelectFillOBJ };

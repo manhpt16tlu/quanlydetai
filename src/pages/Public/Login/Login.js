@@ -115,7 +115,7 @@ function Login() {
               </a>
             </Form.Item>
             <Form.Item>
-              <Button block type="primary" size="large" htmlType="submit">
+              <Button block type="primary" htmlType="submit">
                 Đăng nhập
               </Button>
             </Form.Item>

@@ -21,11 +21,8 @@ import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import { openNotificationWithIcon } from 'utils/general';
 import CustomDivider from 'components/General/CustomDivider';
-import {
-  INITIAL_PAGE_STATE,
-  pageReducer,
-  generateDateString,
-} from 'utils/topicUtil';
+import { generateDateString } from 'utils/topicUtil';
+import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 const dataIndexTable = {
   id: 'id',
   uid: 'uid',

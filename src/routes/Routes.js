@@ -1,34 +1,26 @@
-import { routes as routesConfig } from 'configs/general';
-import OrganCreate from 'pages/Admin/Organ/OrganCreate';
-import OrganList from 'pages/Admin/Organ/OrganList';
-import NotFound from 'pages/Shared/NotFound/NotFound';
-import OrganDetail from 'pages/Admin/Organ/OrganDetail';
-import { ROLES } from 'configs/general';
-import TopicApprove from 'pages/Admin/Topic/TopicApprove';
-import TopicList from 'pages/Admin/Topic/TopicList';
+import { ROLES, routes as routesConfig } from 'configs/general';
 import FormFileList from 'pages/Admin/Form/FormFileList';
-import TopicDetail from 'pages/Admin/Topic/TopicDetail';
-import Login from 'pages/Public/Login/Login';
-import Register from 'pages/Public/Register/Register';
-import Setup from 'pages/Admin/Setup/Setup';
 import Home from 'pages/Admin/Home/Home';
+import Organ from 'pages/Admin/Organ/Organ';
+import UISetup from 'pages/Admin/Setup/UISetup';
+import TopicApprove from 'pages/Admin/Topic/TopicApprove';
+import TopicDetail from 'pages/Admin/Topic/TopicDetail';
+import TopicList from 'pages/Admin/Topic/TopicList';
+import EmployeeForm from 'pages/Employee/Form/FormFileList';
 import EmployeeHome from 'pages/Employee/Home/Home';
 import EmployeeTopicCreate from 'pages/Employee/Topic/TopicCreate';
+import EmployeeTopicDetail from 'pages/Employee/Topic/TopicDetail';
 import EmployeeTopicList from 'pages/Employee/Topic/TopicList';
-import EmployeeForm from 'pages/Employee/Form/FormFileList';
+import EmployeeSetup from 'pages/Employee/Setup/Setup';
+import Login from 'pages/Public/Login/Login';
+import Register from 'pages/Public/Register/Register';
+import NotFound from 'pages/Shared/NotFound/NotFound';
+
 const privateRoutes = {
   [ROLES.admin]: [
     {
-      path: routesConfig[ROLES.admin].organCreate,
-      component: <OrganCreate />,
-    },
-    {
-      path: routesConfig[ROLES.admin].organList,
-      component: <OrganList />,
-    },
-    {
-      path: routesConfig[ROLES.admin].organDetail,
-      component: <OrganDetail />,
+      path: routesConfig[ROLES.admin].organ,
+      component: <Organ />,
     },
     {
       path: routesConfig[ROLES.admin].topicApprove,
@@ -47,15 +39,27 @@ const privateRoutes = {
       component: <FormFileList />,
     },
     {
-      path: routesConfig[ROLES.admin].setup,
-      component: <Setup />,
+      path: routesConfig[ROLES.admin].uiSetup,
+      component: <UISetup />,
+    },
+    {
+      path: routesConfig[ROLES.admin].topicSetup,
+      component: null,
     },
     {
       path: routesConfig[ROLES.admin].home,
       component: <Home />,
     },
+    {
+      path: routesConfig[ROLES.admin].accounts,
+      component: null,
+    },
   ],
   [ROLES.employee]: [
+    {
+      path: routesConfig[ROLES.employee].topicDetail,
+      component: <EmployeeTopicDetail />,
+    },
     {
       path: routesConfig[ROLES.employee].home,
       component: <EmployeeHome />,
@@ -72,6 +76,10 @@ const privateRoutes = {
       path: routesConfig[ROLES.employee].form,
       component: <EmployeeForm />,
     },
+    {
+      path: routesConfig[ROLES.employee].setup,
+      component: <EmployeeSetup />,
+    },
   ],
   shared: [
     {
@@ -81,6 +89,10 @@ const privateRoutes = {
     {
       path: routesConfig.notFoundNavigate,
       component: <NotFound />,
+    },
+    {
+      path: routesConfig.myAccount,
+      component: null,
     },
   ],
 };

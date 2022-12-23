@@ -9,6 +9,7 @@ import {
   Space,
   Upload,
   message,
+  Breadcrumb,
 } from 'antd';
 import {
   antdIconFontSize,
@@ -18,6 +19,8 @@ import {
   MIME_TYPE,
   MAX_FILE_SIZE,
   TOPIC_FILE_TYPE,
+  routes as routesConfig,
+  ROLES,
 } from 'configs/general';
 import { useEffect, useReducer, useState } from 'react';
 import * as countService from 'services/CountService';
@@ -37,6 +40,7 @@ import CustomDivider from 'components/General/CustomDivider';
 import * as authService from 'services/AuthService';
 import produce from 'immer';
 import style from 'pages/Employee/Topic/Topic.module.scss';
+import { Link } from 'react-router-dom';
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const formFieldNames = {
@@ -101,16 +105,6 @@ function TopicCreate() {
     };
   };
   const handleResetForm = () => {
-    // const fieldsNeedReset = Object.values(formFieldNames).filter(
-    //   (name, index) =>
-    //     ![
-    //       formFieldNames.manager,
-    //       // formFieldNames.,
-    //       formFieldNames.status,
-    //     ].includes(name)
-    // );
-
-    // form.resetFields([...fieldsNeedReset]);
     form.resetFields();
     setDisableResetBtn(true);
   };
@@ -258,6 +252,15 @@ function TopicCreate() {
   };
   return (
     <>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.employee].home}>Trang chủ</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Đề tài</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.employee].topicList}>Đề xuất</Link>
+        </Breadcrumb.Item>
+      </Breadcrumb>
       <CustomDivider text={'Đề xuất đề tài'} />
       <Form
         form={form}

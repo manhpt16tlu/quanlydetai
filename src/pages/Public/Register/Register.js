@@ -290,7 +290,7 @@ function Register() {
             //   marginBottom: 0,
             // }}
             >
-              <Button type="primary" block size="large" htmlType="submit">
+              <Button type="primary" block htmlType="submit">
                 Đăng kí
               </Button>
             </Form.Item>
