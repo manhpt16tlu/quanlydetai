@@ -53,12 +53,26 @@ const FILE_TYPE = {
   topic: 'topic',
   form: 'form',
 };
+
+// khớp với backend
+const TOPIC_STATUS_DEFAULT = {
+  CHUA_DUYET: 'Chưa duyệt',
+  DA_PHE_DUYET: 'Đã phê duyệt',
+  DANG_THUC_HIEN: 'Đang thực hiện',
+  DA_NGHIEM_THU: 'Đã nghiệm thu',
+};
 const LOCALSTORAGE_KEY = {
   currentUser: 'user',
   componentSize: 'componentSize',
   tableStyle: 'tableStyle',
 };
+const MESSAGE_RESPONSE = {
+  USER_DISABLED: 'User is disabled', // lấy từ backend response để check
+  USER_UNAUTHORIZED: 'Can not authenticate user',
+};
 export {
+  TOPIC_STATUS_DEFAULT,
+  MESSAGE_RESPONSE,
   FILE_TYPE,
   LOCALSTORAGE_KEY,
   TOPIC_FILE_TYPE,

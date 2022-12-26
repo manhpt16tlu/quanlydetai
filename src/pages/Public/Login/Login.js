@@ -12,6 +12,7 @@ import {
 import {
   LOCALSTORAGE_KEY,
   MESSAGE_REQUIRE,
+  MESSAGE_RESPONSE,
   ROLES,
   routes as routesConfig,
 } from 'configs/general';
@@ -24,7 +25,11 @@ import BackgroundLogo from 'components/General/BackgroundLogo';
 const { Text } = Typography;
 function Login() {
   const [form] = Form.useForm();
-  const [loginFail, setLoginFail] = useState(false);
+  const [loginStatus, setLoginStatus] = useState({
+    fail: false,
+    message: null,
+  });
+
   const navigate = useNavigate();
   const formFieldNames = {
     username: 'tentaikhoan',
@@ -48,15 +53,27 @@ function Login() {
       })
       .catch((err) => {
         console.log(err);
+        if (err?.response?.data?.message === MESSAGE_RESPONSE.USER_DISABLED) {
+          setLoginStatus({
+            fail: true,
+            message: 'Tài khoản đã bị vô hiệu hóa',
+          });
+        } else
+          setLoginStatus({
+            fail: true,
+            message: 'Tài khoản hoặc mật khẩu không chính xác',
+          });
         form.resetFields();
-        setLoginFail(true);
       });
   };
   const onFinishFailed = (errorInfo) => {
     console.log(errorInfo);
   };
   const handleFormValuesChange = (changedValues, allValues) => {
-    setLoginFail(false);
+    setLoginStatus({
+      fail: false,
+      message: null,
+    });
   };
   return (
     <>
@@ -121,10 +138,10 @@ function Login() {
             </Form.Item>
             <Form.Item shouldUpdate noStyle>
               {() => {
-                return loginFail ? (
+                return loginStatus.fail ? (
                   <Form.Item>
                     <Alert
-                      message="Tài khoản hoặc mật khẩu không chính xác"
+                      message={loginStatus.message}
                       type="error"
                       showIcon
                     />

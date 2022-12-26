@@ -189,7 +189,7 @@ function AppLayout(props) {
               marginLeft: 10,
             }}
           >
-            Ant Design ©2022 Sở Khoa học và công nghệ
+            ©2022 Sở Khoa học và công nghệ
           </Text>
         </Footer>
       </Layout>

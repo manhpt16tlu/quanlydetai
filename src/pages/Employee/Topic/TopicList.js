@@ -67,9 +67,8 @@ function TopicList() {
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
 
   useEffect(() => {
-    console.log('call api');
     //for cleanup funtion
-    const controller = new AbortController();
+    // const controller = new AbortController();
 
     setLoading(true);
     topicService
@@ -77,10 +76,10 @@ function TopicList() {
         userStorage.username,
         dataPaging.current - 1,
         dataPaging.pageSize,
-        convertFilterToParams(filteredInfo),
-        {
-          signal: controller.signal,
-        }
+        convertFilterToParams(filteredInfo)
+        // {
+        //   signal: controller.signal,
+        // }
       )
       .then((data) => {
         setTableData(generateTableData(data.data.content));
@@ -96,9 +95,9 @@ function TopicList() {
         openNotificationWithIcon('error', null, 'top');
       });
     //cleanup function
-    return () => {
-      controller.abort();
-    };
+    // return () => {
+    //   controller.abort();
+    // };
   }, [dataPaging.current, filteredInfo]);
 
   useEffect(() => {
@@ -252,7 +251,7 @@ function TopicList() {
     //control filter reset
     setFilteredInfo(filters);
   };
-  const paginationProps = () => {
+  const getPaginationProps = () => {
     return {
       current: dataPaging.current,
       pageSize: dataPaging.pageSize,
@@ -294,7 +293,7 @@ function TopicList() {
         rowSelection={{
           ...rowSelection,
         }}
-        pagination={paginationProps()}
+        pagination={getPaginationProps()}
         columns={columns}
         dataSource={tableData}
         loading={loading}

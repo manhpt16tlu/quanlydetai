@@ -2,31 +2,45 @@ import {
   FilterOutlined,
   SearchOutlined,
   ClearOutlined,
+  WarningOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import {
+  Breadcrumb,
   Button,
   Col,
   Divider,
   Input,
+  Popconfirm,
   Row,
   Space,
   Table,
   Typography,
 } from 'antd';
-import { routes as routesConfig, antdIconFontSize } from 'configs/general';
-import React, { useEffect, useReducer, useState } from 'react';
+import {
+  routes as routesConfig,
+  antdIconFontSize,
+  ROLES,
+  TOPIC_STATUS_DEFAULT,
+} from 'configs/general';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import * as organService from 'services/OrganService';
 import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
-import { openNotificationWithIcon } from 'utils/general';
+import {
+  capitalizeFirstLetterEachWord,
+  openNotificationWithIcon,
+} from 'utils/general';
 import CustomDivider from 'components/General/CustomDivider';
 import { generateDateString } from 'utils/topicUtil';
 import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
+import { AntdSettingContext } from 'context/AntdSettingContext';
 const dataIndexTable = {
   id: 'id',
   name: 'tendetai',
   manager: 'chunhiem',
+  organ: 'coquanchutri',
   time: 'thoigianthuchien',
   status: 'trangthai',
 };
@@ -44,76 +58,86 @@ const generateTableData = (data) => {
     key: index,
     [dataIndexTable.id]: topic.id,
     [dataIndexTable.name]: topic.name,
-    [dataIndexTable.organ]: topic.organ.name,
-    [dataIndexTable.manager]: topic.manager,
+    [dataIndexTable.organ]: topic.manager.organ.name,
+    [dataIndexTable.manager]: `${
+      topic.manager?.rank?.name ?? ''
+    }. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
     [dataIndexTable.status]: topic.topicStatus.title,
     [dataIndexTable.time]: generateDateString(topic.startDate, topic.endDate),
   }));
 };
+const convertFilterToParams = (filterData) => {
+  return {
+    name: filterData[dataIndexTable.name]?.[0],
+    organ: filterData[dataIndexTable.organ]?.[0],
+    manager: filterData[dataIndexTable.manager]?.[0],
+    status: filterData[dataIndexTable.status]?.[0],
+  };
+};
 function TopicList() {
-  const { Title } = Typography;
   const location = useLocation();
   const { pathname } = location;
-  const [tableData, setTableData] = useState([]);
+  const { tableStyle } = useContext(AntdSettingContext);
+  const [tableBorder] = tableStyle;
   const [loading, setLoading] = useState(false);
   const [dataFilterOrgan, setDataFilterOrgan] = useState([]);
   const [dataFilterStatus, setDataFilterStatus] = useState([]);
   const [filteredInfo, setFilteredInfo] = useState({});
+  const [reload, setReload] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   useEffect(() => {
-    console.log('call api');
-
-    //for cleanup funtion
-    const controller = new AbortController();
-
     setLoading(true);
     topicService
-      .getFilteredApproved(
-        filteredInfo[dataIndexTable.name]?.[0],
-        filteredInfo[dataIndexTable.organ],
-        filteredInfo[dataIndexTable.manager]?.[0],
-        filteredInfo[dataIndexTable.status]?.[0],
+      .getAllByAdminWithFilter(
         dataPaging.current - 1,
         dataPaging.pageSize,
-        {
-          signal: controller.signal,
-        }
+        convertFilterToParams(filteredInfo)
       )
-      .then((data) => {
-        setTableData(generateTableData(data.data.content));
+      .then((response) => {
         dispatch({
           type: 'FETCH',
-          totalElements: data.data.totalElements,
-          pageSize: data.data.size,
+          totalElements: response.data.totalElements,
+          pageSize: response.data.size,
+          tableData: generateTableData(response.data?.content ?? []),
         });
-        return statusService.getAll();
-      })
-      .then((data) => {
-        const statusFilter = data.data
-          .filter((status, i) => status.title !== 'Chưa duyệt')
-          .map((status, i) => {
-            return { text: status.title, value: status.title };
-          });
-        setDataFilterStatus(statusFilter);
-        return organService.getAllNoPaging();
-      })
-      .then((data) => {
-        const organFilter = data.data.map((organ, i) => {
-          return { text: organ.name, value: organ.name };
-        });
-        setDataFilterOrgan(organFilter);
-        //finish loading in last then function
         setLoading(false);
       })
       .catch((err) => {
         console.log(err);
         openNotificationWithIcon('error', null, 'top');
       });
-    //cleanup function
-    return () => {
-      controller.abort();
+  }, [dataPaging.current, filteredInfo, reload]);
+
+  useEffect(() => {
+    const callApi = () => {
+      setLoading(true);
+      statusService
+        .getAll()
+        .then((data) => {
+          const statusFilter = data.data
+            .filter(
+              (status, i) => status.title !== TOPIC_STATUS_DEFAULT.CHUA_DUYET
+            )
+            .map((status, i) => {
+              return { text: status.title, value: JSON.stringify(status) };
+            });
+          setDataFilterStatus(statusFilter);
+          return organService.getAllNoPaging();
+        })
+        .then((data) => {
+          const organFilter = data.data.map((organ, i) => {
+            return {
+              text: organ.name ?? organ.title,
+              value: JSON.stringify(organ),
+            };
+          });
+          setDataFilterOrgan(organFilter);
+          setLoading(false);
+        });
     };
-  }, [dataPaging.current, filteredInfo]);
+    callApi();
+  }, []);
+
   const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -178,18 +202,32 @@ function TopicList() {
     ),
   });
 
+  const confirmDeleteTopic = (topicId) => {
+    topicService
+      .deleteById(topicId)
+      .then(() => {
+        openNotificationWithIcon('success', 'Xóa đề tài', 'top');
+        setReload((prev) => !prev);
+      })
+      .catch((err) => {
+        console.log(err);
+        openNotificationWithIcon('error', 'Xóa đề tài', 'top');
+      });
+  };
+
   const columns = [
     {
       title: 'Tên đề tài',
       dataIndex: dataIndexTable.name,
-      width: '40%',
+      width: '30%',
       render: (text, record) => (
         <Link
-          to={routesConfig.topicDetail}
+          to={routesConfig[ROLES.admin].topicDetail}
           state={{
-            [btoa('topicId')]: btoa(record[dataIndexTable.id]),
+            topicId: record[dataIndexTable.id],
             previousPath: pathname,
           }}
+          replace={true}
         >
           {text}
         </Link>
@@ -203,6 +241,7 @@ function TopicList() {
       filters: dataFilterOrgan,
       filteredValue: filteredInfo[dataIndexTable.organ] || null,
       filterSearch: true,
+      filterMultiple: false,
       filterIcon: (filtered) => (
         <FilterOutlined
           style={{
@@ -212,14 +251,18 @@ function TopicList() {
         />
       ),
       // filterMultiple: false, //cho phép lọc theo nhiều hay không
-      width: '20%',
+      // width: '20%',
     },
     {
       title: 'Chủ nhiệm',
       dataIndex: dataIndexTable.manager,
       filteredValue: filteredInfo[dataIndexTable.manager] || null,
       ...getColumnSearchProps(dataIndexTable.manager, 'tên chủ nhiệm'),
-      width: '20%',
+      // width: '20%',
+    },
+    {
+      title: 'Thời gian thực hiện',
+      dataIndex: dataIndexTable.time,
     },
     {
       title: 'Trạng thái',
@@ -236,7 +279,37 @@ function TopicList() {
           }}
         />
       ),
-      ellipsis: true, // ẩn nếu dài
+      // ellipsis: true, // ẩn nếu dài
+    },
+    {
+      title: 'Hành động',
+      align: 'center',
+      render: (_, record) => {
+        return (
+          <>
+            <Space size={10}>
+              <Popconfirm
+                placement="topLeft"
+                title="Bạn chắc chắn muốn xóa đề tài này ?"
+                onConfirm={() => confirmDeleteTopic(record[dataIndexTable.id])}
+                onCancel={() => {}}
+                okText="Có"
+                cancelText="Không"
+                icon={<WarningOutlined />}
+              >
+                <Button type="primary" danger>
+                  <DeleteOutlined
+                    style={{
+                      fontSize: antdIconFontSize,
+                    }}
+                  />
+                  Xóa
+                </Button>
+              </Popconfirm>
+            </Space>
+          </>
+        );
+      },
     },
   ];
   const handleTableChange = (pagination, filters, sorter) => {
@@ -244,7 +317,7 @@ function TopicList() {
     //control filter reset
     setFilteredInfo(filters);
   };
-  const paginationProps = () => {
+  const getPaginationProps = () => {
     return {
       current: dataPaging.current,
       pageSize: dataPaging.pageSize,
@@ -260,6 +333,13 @@ function TopicList() {
   };
   return (
     <>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.admin].home}>Trang chủ</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Đề tài</Breadcrumb.Item>
+        <Breadcrumb.Item>Danh sách</Breadcrumb.Item>
+      </Breadcrumb>
       <CustomDivider text={'Danh sách đề tài'} />
       <Row justify="end" style={{ marginBottom: 20 }}>
         <Col>
@@ -270,18 +350,18 @@ function TopicList() {
             type="primary"
           >
             <ClearOutlined style={{ fontSize: antdIconFontSize }} />
-            Clear all filter
+            Xóa bộ lọc
           </Button>
         </Col>
       </Row>
       <Table
-        bordered
+        bordered={tableBorder}
         rowSelection={{
           ...rowSelection,
         }}
-        pagination={paginationProps()}
+        pagination={getPaginationProps()}
         columns={columns}
-        dataSource={tableData}
+        dataSource={dataPaging?.tableData}
         loading={loading}
         onChange={handleTableChange}
       />

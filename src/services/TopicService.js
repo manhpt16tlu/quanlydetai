@@ -25,8 +25,8 @@ const call = async function (method, url, body, config) {
       break;
     }
     case 'DELETE': {
-      const data = await api.delete(url);
-      ret = data.data;
+      const axiosResponse = await api.delete(url);
+      ret = axiosResponse.data;
       break;
     }
     default:
@@ -74,6 +74,17 @@ const getAllByUsernameWithFilter = (username, page, size, params) => {
     }
   );
 };
+
+const getAllByAdminWithFilter = (page, size, params) => {
+  return call(
+    'GET',
+    `topic/adminGetTopics/?page=${page}&size=${size}`,
+    undefined,
+    {
+      params,
+    }
+  );
+};
 const create = (body, organId, fieldId, statusId, resultId) => {
   const resultUrlPart = resultId ? `/result/${resultId}` : '';
   return call(
@@ -106,6 +117,7 @@ const existByName = (topicName) => {
   return call('GET', `topic/existByName?name=${encodeURI(topicName)}`);
 };
 export {
+  getAllByAdminWithFilter,
   getAllByUsernameWithFilter,
   employeeCreate,
   existByName,
