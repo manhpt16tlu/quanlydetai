@@ -31,10 +31,7 @@ const routes = {
 };
 const MESSAGE_REQUIRE = 'Không được để trống';
 const DATE_FORMAT = 'YYYY-MM-DD';
-const DEFAULT_TOPIC_VALUES = {
-  status: 1,
-  result: 5,
-};
+
 const antdIconFontSize = 14;
 const MIME_TYPE = {
   doc: 'application/msword',
@@ -61,6 +58,13 @@ const TOPIC_STATUS_DEFAULT = {
   DANG_THUC_HIEN: 'Đang thực hiện',
   DA_NGHIEM_THU: 'Đã nghiệm thu',
 };
+const TOPIC_RESULT_DEFAULT = {
+  DAT: 'Đạt',
+  KHONG_DAT: 'Không đạt',
+  TOT: 'Tốt',
+  XUAT_SAC: 'Xuất sắc',
+  KHONG_XAC_DINH: 'Không xác định',
+};
 const LOCALSTORAGE_KEY = {
   currentUser: 'user',
   componentSize: 'componentSize',
@@ -71,6 +75,7 @@ const MESSAGE_RESPONSE = {
   USER_UNAUTHORIZED: 'Can not authenticate user',
 };
 export {
+  TOPIC_RESULT_DEFAULT,
   TOPIC_STATUS_DEFAULT,
   MESSAGE_RESPONSE,
   FILE_TYPE,
@@ -81,7 +86,6 @@ export {
   routes,
   MESSAGE_REQUIRE,
   DATE_FORMAT,
-  DEFAULT_TOPIC_VALUES,
   MIME_TYPE,
   MAX_FILE_SIZE,
   ROLES,

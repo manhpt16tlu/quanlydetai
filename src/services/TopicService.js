@@ -15,8 +15,8 @@ const call = async function (method, url, body, config) {
       break;
     }
     case 'PUT': {
-      const data = await api.put(url, body);
-      ret = data;
+      const axiosResponse = await api.put(url, body);
+      ret = axiosResponse;
       break;
     }
     case 'PATCH': {

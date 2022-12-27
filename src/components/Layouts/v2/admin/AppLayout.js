@@ -9,6 +9,7 @@ import {
   OrderedListOutlined,
   UserOutlined,
   AntDesignOutlined,
+  UsergroupAddOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -59,6 +60,11 @@ const sidebarItems = [
     <Link to={routesConfig[ROLES.admin].form}>Biểu mẫu</Link>,
     routesConfig[ROLES.admin].form,
     <FileTextOutlined />
+  ),
+  getItem(
+    <Link to={routesConfig[ROLES.admin].accounts}>Tài khoản</Link>,
+    routesConfig[ROLES.admin].accounts,
+    <UsergroupAddOutlined />
   ),
   getItem('Thiết lập', 'sub2', <ApiOutlined />, [
     getItem(
@@ -189,7 +195,7 @@ function AppLayout(props) {
               marginLeft: 10,
             }}
           >
-            ©2022 Sở Khoa học và công nghệ
+            ©2022 Sở Khoa học và Công nghệ
           </Text>
         </Footer>
       </Layout>

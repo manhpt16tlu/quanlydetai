@@ -1,90 +1,67 @@
 import {
   ClearOutlined,
-  DoubleLeftOutlined,
   DownloadOutlined,
   EditOutlined,
 } from '@ant-design/icons';
 import {
+  Breadcrumb,
   Button,
   DatePicker,
   Form,
   Input,
   InputNumber,
+  message,
   Select,
   Space,
   Spin,
-  message,
 } from 'antd';
-import {
-  TIMESTAMP_FORMAT,
-  antdIconFontSize,
-  DATE_FORMAT as dateFormat,
-  MESSAGE_REQUIRE as messageRequire,
-  routes as routesConfig,
-} from 'configs/general';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import * as organService from 'services/OrganService';
-import * as fieldService from 'services/TopicFieldService';
-import * as resultService from 'services/TopicResultService';
-import * as topicService from 'services/TopicService';
-import * as statusService from 'services/TopicStatusService';
-import * as fileService from 'services/UploadFileService';
 import CustomDivider from 'components/General/CustomDivider';
 import {
-  openNotificationWithIcon,
+  antdIconFontSize,
+  DATE_FORMAT as dateFormat,
+  FILE_TYPE,
+  MESSAGE_REQUIRE as messageRequire,
+  ROLES,
+  routes as routesConfig,
+  TIMESTAMP_FORMAT,
+  TOPIC_FILE_TYPE,
+  TOPIC_RESULT_DEFAULT,
+  TOPIC_STATUS_DEFAULT,
+} from 'configs/general';
+
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import * as fileService from 'services/UploadFileService';
+import * as topicService from 'services/TopicService';
+import * as statusService from 'services/TopicStatusService';
+import * as resultService from 'services/TopicResultService';
+import {
+  capitalizeFirstLetterEachWord,
   getFileNameFromHeaderDisposition,
+  openNotificationWithIcon,
 } from 'utils/general';
-import { optionSelectFill } from 'utils/topicUtil';
+import moment from 'moment';
 
-function TopicDetail() {
-  const { TextArea } = Input;
-  const { RangePicker } = DatePicker;
-  const [form] = Form.useForm();
-  const location = useLocation();
-  const topicId = location.state?.[btoa('topicId')]
-    ? atob(location.state?.[btoa('topicId')])
-    : null;
-  const previousPath = location.state?.previousPath;
-  const navigate = useNavigate();
-  const formFieldNames = {
-    name: 'tendetai',
-    organ: 'coquanchutri',
-    manager: 'chunhiem',
-    field: 'linhvuc',
-    status: 'trangthai',
-    result: 'ketqua',
-    time: 'thoigianthuchien',
-    expense: 'kinhphi',
-    createDate: 'ngaytao',
-  };
-  const getNewData = async (values) => {
-    const newField = await fieldService.getById(values[formFieldNames.field]);
-    const newStatus = await statusService.getById(
-      values[formFieldNames.status]
-    );
-    const newResult = await resultService.getById(
-      values[formFieldNames.result] ?? 5
-    );
-    return {
-      topicField: newField.data, // must .data because newField include status,message,...
-      topicStatus: newStatus.data,
-      topicResult: newResult.data,
-      name: values[formFieldNames.name],
-      manager: values[formFieldNames.manager],
-      expense: values[formFieldNames.expense],
-      startDate: values[formFieldNames.time][0].format(dateFormat),
-      endDate: values[formFieldNames.time][1].format(dateFormat),
-    };
-  };
+import style from 'pages/Admin/Topic/Topic.module.scss';
+import produce from 'immer';
+import { useReducer } from 'react';
+import { optionSelectFillOBJ } from 'utils/topicUtil';
+const { TextArea } = Input;
+const { RangePicker } = DatePicker;
 
-  const [loading, setLoading] = useState(false);
-  const [fieldOptions, setFieldOptions] = useState([]);
-  const [organOptions, setOrganOptions] = useState([]);
-  const [resultOptions, setResultOptions] = useState([]);
-  const [statusOptions, setStatusOptions] = useState([]);
-  const [initFormData, setInitFormData] = useState({
+const formFieldNames = {
+  name: 'tendetai',
+  organ: 'coquanchutri',
+  manager: 'chunhiem',
+  field: 'linhvuc',
+  status: 'trangthai',
+  result: 'ketqua',
+  time: 'thoigianthuchien',
+  expense: 'kinhphi',
+  createDate: 'ngaytao',
+};
+const initFormData = {
+  data: {
     [formFieldNames.name]: undefined,
     [formFieldNames.organ]: undefined,
     [formFieldNames.manager]: undefined,
@@ -93,20 +70,67 @@ function TopicDetail() {
     [formFieldNames.result]: undefined,
     [formFieldNames.time]: undefined,
     [formFieldNames.expense]: undefined,
-  });
-  const [disableBtn, setDisableBtn] = useState(true);
+  },
+  option: {
+    [formFieldNames.status]: [],
+    [formFieldNames.result]: [],
+  },
+};
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH':
+      // prettier-ignore
+      return produce(state, (draft) => {
+        //dùng immer nên có thể mutate state
+        draft.data[formFieldNames.organ] = action.payload.data[formFieldNames.organ];
+        draft.data[formFieldNames.time] = action.payload.data[formFieldNames.time];
+        draft.data[formFieldNames.createDate] = action.payload.data[formFieldNames.createDate];
+        draft.data[formFieldNames.field] = action.payload.data[formFieldNames.field];
+        draft.data[formFieldNames.name] = action.payload.data[formFieldNames.name];
+        draft.data[formFieldNames.manager] = action.payload.data[formFieldNames.manager];
+        draft.data[formFieldNames.expense] = action.payload.data[formFieldNames.expense];
+        draft.data[formFieldNames.status] = action.payload.data[formFieldNames.status];
+        draft.data[formFieldNames.result] = action.payload.data[formFieldNames.result];
+        
+        draft.option[formFieldNames.result] = action.payload.option[formFieldNames.result];
+        draft.option[formFieldNames.status] = action.payload.option[formFieldNames.status];
+      
+      });
+    default:
+      return state;
+  }
+};
+const generateTopicRequestBody = (data) => {
+  return {
+    name: data[formFieldNames.name],
+    startDate: data[formFieldNames.time][0],
+    endDate: data[formFieldNames.time][1],
+    expense: data[formFieldNames.expense],
+    topicStatus: JSON.parse(data[formFieldNames.status]),
+    topicResult: JSON.parse(data[formFieldNames.result] ?? null),
+  };
+};
+function TopicDetail() {
+  const [form] = Form.useForm();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const topicId = location.state?.['topicId'] ?? null;
+
+  const [loading, setLoading] = useState(false);
+
+  const [formData, dispatch] = useReducer(reducer, initFormData);
+  const [disableResetBtn, setDisableResetBtn] = useState(true);
   const [reload, setReload] = useState(false);
-  const onFinish = async (values) => {
-    console.log(values);
-    const body = await getNewData(values);
+  const onFinish = (values) => {
     topicService
-      .update(body, topicId)
+      .update(generateTopicRequestBody(values), topicId)
       .then(() => {
-        setDisableBtn(true);
-        setReload(true);
+        setReload((prev) => !prev);
+        setDisableResetBtn(true);
         openNotificationWithIcon('success', 'Cập nhật đề tài', 'top');
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
         openNotificationWithIcon('error', 'Cập nhật đề tài', 'top');
       });
   };
@@ -117,90 +141,88 @@ function TopicDetail() {
     return {
       allowClear: true,
       showSearch: true,
-      optionFilterProp: 'label',
       filterOption: (input, option) =>
         (option?.label ?? '').toLowerCase().includes(input.toLowerCase()),
       options: optionsData,
     };
   };
   useEffect(() => {
-    if (topicId) {
-      console.log('call api');
-      setLoading(true); // display loading icon
-      topicService.getById(topicId).then((data) => {
-        const topic = data.data;
-        setInitFormData({
-          [formFieldNames.name]: topic.name,
-          [formFieldNames.time]: [
-            moment(topic.startDate, dateFormat),
-            moment(topic.endDate, dateFormat),
-          ],
-          [formFieldNames.organ]: topic.organ.id,
-          [formFieldNames.manager]: topic.manager,
-          [formFieldNames.field]: topic.topicField.id,
-          [formFieldNames.status]: topic.topicStatus.id,
-          [formFieldNames.result]: topic.topicResult.id,
-          [formFieldNames.expense]: topic.expense,
-          [formFieldNames.createDate]: moment(topic.createDate).format(
-            TIMESTAMP_FORMAT
-          ),
-        });
-      });
-      Promise.all([
-        fieldService.getAll().then((data) => {
-          const temp = optionSelectFill(data.data);
-          setFieldOptions(temp);
-        }),
-        organService.getAllNoPaging().then((data) => {
-          const temp = optionSelectFill(data.data);
-          setOrganOptions(temp);
-        }),
-        statusService.getAll().then((data) => {
-          const temp = optionSelectFill(data.data);
-          if (previousPath !== routesConfig.topicApprove) {
-            //topicapprove thì show select status 'chưa duyệt'
-            const indexNeedRemove = temp.indexOf(
-              temp.find((t, i) => t.label === 'Chưa duyệt')
+    const callApi = async () => {
+      try {
+        if (topicId) {
+          setLoading(true);
+          const topic = (await topicService.getById(topicId))?.data;
+          if (topic) {
+            const statusList = (await statusService.getAll())?.data;
+            const statusReallyNeed = statusList.filter(
+              (status, i) =>
+                ![TOPIC_STATUS_DEFAULT.CHUA_DUYET].includes(status.title)
             );
-            temp.splice(indexNeedRemove, 1);
+            const statusOptions = optionSelectFillOBJ(statusReallyNeed);
+
+            const resultList = (await resultService.getAll())?.data;
+            const resultOptions = optionSelectFillOBJ(resultList).map(
+              (resultOption, i) => {
+                if (resultOption.label === TOPIC_RESULT_DEFAULT.KHONG_XAC_DINH)
+                  return produce(resultOption, (draft) => {
+                    draft.label = 'Đề tài chưa được đánh giá';
+                  });
+                else return resultOption;
+              }
+            );
+
+            // prettier-ignore
+            dispatch({
+              type: 'FETCH',
+              payload: {
+                data: {
+                  [formFieldNames.name]: topic.name,
+                  [formFieldNames.time]: [moment(topic.startDate, dateFormat),moment(topic.endDate, dateFormat)],
+                  [formFieldNames.organ]: topic.manager.organ.name,
+                  [formFieldNames.manager]: `${topic.manager.rank.name ?? ''}. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
+                  [formFieldNames.field]: topic.topicField.title,
+                  [formFieldNames.status]: JSON.stringify(topic.topicStatus),
+                  [formFieldNames.result]:JSON.stringify(topic.topicResult),
+                  [formFieldNames.expense]: topic.expense,
+                  [formFieldNames.createDate]: moment(topic.createDate).format(TIMESTAMP_FORMAT),
+                },
+                option: {
+                  [formFieldNames.status]:statusOptions,
+                  [formFieldNames.result]:resultOptions
+                },
+              },
+            });
+            setLoading(false);
           }
-          setStatusOptions(temp);
-        }),
-        resultService.getAll().then((data) => {
-          const temp = optionSelectFill(data.data);
-          setResultOptions(temp);
-        }),
-      ])
-        .then(() => {
-          setLoading(false); // hide icon after fetch
-        })
-        .catch((err) => {
-          console.log(err);
-          openNotificationWithIcon('error', null, 'top');
-        });
-    } else navigate(routesConfig.notFoundRedirect);
+        } else navigate(routesConfig.notFoundNavigate, { replace: true });
+      } catch (error) {
+        console.log(error);
+        message.error('Có lỗi xảy ra');
+      }
+    };
+    callApi();
   }, [reload]);
   useEffect(() => {
     form.resetFields();
-  }, [initFormData]);
-  const onFormDataChange = (changedValues, allValues) => {
-    // console.log(allValues);
-    setDisableBtn(false);
+  }, [formData]);
+  const handleFormValuesChange = (changedValues, allValues) => {
+    setDisableResetBtn(false);
   };
-  const resetForm = () => {
+  const handleResetForm = () => {
     form.resetFields();
-    setDisableBtn(true);
+    setDisableResetBtn(true);
   };
-  const handleDownloadFile = async () => {
-    const filesOfTopic = (
+  const handleDownloadFile = async (topicFileType) => {
+    const fileNeedDownload = (
       await fileService.getTopicFilesByTopicIdAndTopicFileType(
         topicId,
-        'Đề cương'
+        topicFileType
       )
     ).data;
-    if (filesOfTopic)
+
+    if (fileNeedDownload)
       fileService
-        .download('topic', filesOfTopic[0]?.fileCode ?? filesOfTopic.fileCode, {
+        .download(FILE_TYPE.topic, fileNeedDownload.fileCode, {
           responseType: 'blob',
         })
         .then((response) => {
@@ -223,246 +245,204 @@ function TopicDetail() {
 
   return (
     <>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.admin].home}>Trang chủ</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Đề tài</Breadcrumb.Item>
+        <Breadcrumb.Item>
+          <Link to={routesConfig[ROLES.admin].topicList}>Danh sách</Link>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>Chi tiết</Breadcrumb.Item>
+      </Breadcrumb>
       <CustomDivider text={'Chi tiết đề tài'} />
-      <Space
-        direction="vertical"
-        size={200}
-        style={{
-          display: 'flex',
-        }}
-      >
-        <Spin spinning={loading}>
-          <Form
-            form={form}
-            labelCol={{
+
+      <Spin spinning={loading}>
+        <Form
+          labelAlign="left"
+          form={form}
+          labelCol={{
+            offset: 3,
+            span: 3,
+          }}
+          wrapperCol={{
+            span: 12,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          layout="horizontal"
+          initialValues={formData.data}
+          size="default"
+          onValuesChange={handleFormValuesChange}
+        >
+          <Form.Item
+            label="Tên đề tài"
+            name={formFieldNames.name}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <TextArea
+              autoSize={{
+                minRows: 1,
+                maxRows: 2,
+              }}
+            />
+          </Form.Item>
+          <Form.Item label="Cơ quan chủ trì" name={formFieldNames.organ}>
+            <Input className={style.disableInput} readOnly />
+          </Form.Item>
+          <Form.Item label="Chủ nhiệm" name={formFieldNames.manager}>
+            <Input className={style.disableInput} readOnly />
+          </Form.Item>
+          <Form.Item label="Lĩnh vực" name={formFieldNames.field}>
+            <Input className={style.disableInput} readOnly />
+          </Form.Item>
+          <Form.Item
+            label="Thời gian thực hiện"
+            name={formFieldNames.time}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <RangePicker
+              style={{
+                width: 250,
+              }}
+              format={dateFormat}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Kinh phí"
+            name={formFieldNames.expense}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <InputNumber
+              formatter={(value) =>
+                `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
+              parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
+              style={{
+                width: 250,
+              }}
+              step="500000"
+              min="0"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Trạng thái"
+            name={formFieldNames.status}
+            rules={[
+              {
+                required: true,
+                message: messageRequire,
+              },
+            ]}
+          >
+            <Select
+              {...getSelectProps(formData.option[formFieldNames.status])}
+            />
+          </Form.Item>
+          <Form.Item
+            noStyle
+            shouldUpdate={(prev, curr) => {
+              return (
+                prev[formFieldNames.status] !== curr[formFieldNames.status]
+              );
+            }}
+          >
+            {/* check status change */}
+            {({ getFieldValue }) => {
+              // prettier-ignore
+              const currentStatus = JSON.parse(getFieldValue(formFieldNames.status) ?? null);
+              return currentStatus?.title ===
+                TOPIC_STATUS_DEFAULT.DA_NGHIEM_THU ? (
+                <Form.Item
+                  label="Kết quả"
+                  name={formFieldNames.result}
+                  rules={[
+                    {
+                      required: true,
+                      message: messageRequire,
+                    },
+                  ]}
+                >
+                  <Select
+                    {...getSelectProps(formData.option[formFieldNames.result])}
+                  />
+                </Form.Item>
+              ) : null;
+            }}
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
               span: 6,
             }}
+            label="Ngày tạo"
+            name={formFieldNames.createDate}
+          >
+            <Input className={style.disableInput} readOnly />
+          </Form.Item>
+
+          <Form.Item label="Đề cương">
+            <Button onClick={() => handleDownloadFile(TOPIC_FILE_TYPE.outline)}>
+              <DownloadOutlined
+                style={{
+                  fontSize: antdIconFontSize,
+                }}
+              />
+              Tải xuống
+            </Button>
+          </Form.Item>
+
+          <Form.Item
             wrapperCol={{
+              offset: 6,
               span: 12,
             }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            layout="horizontal"
-            initialValues={initFormData}
-            size="default"
-            onValuesChange={onFormDataChange}
           >
-            <Form.Item
-              label="Tên đề tài"
-              name={formFieldNames.name}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <TextArea
-                readOnly={previousPath === routesConfig.topicApprove}
-                autoSize={{
-                  minRows: 1,
-                  maxRows: 2,
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Cơ quan chủ trì"
-              name={formFieldNames.organ}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <Select
-                readOnly={previousPath === routesConfig.topicApprove}
-                {...getSelectProps(organOptions)}
-                disabled
-              />
-            </Form.Item>
-            <Form.Item
-              label="Chủ nhiệm"
-              name={formFieldNames.manager}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <Input readOnly={previousPath === routesConfig.topicApprove} />
-            </Form.Item>
-            <Form.Item
-              label="Lĩnh vực"
-              name={formFieldNames.field}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <Select
-                disabled={previousPath === routesConfig.topicApprove}
-                allowClear
-                showSearch
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label ?? '')
-                    .toLowerCase()
-                    .includes(input.toLowerCase())
-                }
-                options={fieldOptions}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Thời gian thực hiện"
-              name={formFieldNames.time}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <RangePicker
-                disabled={previousPath === routesConfig.topicApprove}
-                style={{
-                  width: 250,
-                }}
-                format={dateFormat}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Kinh phí"
-              name={formFieldNames.expense}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <InputNumber
-                readOnly={previousPath === routesConfig.topicApprove}
-                formatter={(value) =>
-                  `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                }
-                parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
-                style={{
-                  width: 250,
-                }}
-                step="500000"
-                min="0"
-              />
-            </Form.Item>
-            <Form.Item
-              label="Trạng thái"
-              name={formFieldNames.status}
-              rules={[
-                {
-                  required: true,
-                  message: messageRequire,
-                },
-              ]}
-            >
-              <Select
-                disabled={previousPath === routesConfig.topicApprove}
-                {...getSelectProps(statusOptions)}
-              />
-            </Form.Item>
-            <Form.Item
-              noStyle
-              shouldUpdate={(prev, curr) =>
-                prev[formFieldNames.status] !== curr[formFieldNames.status]
-              }
-            >
-              {/* check status change */}
-              {({ getFieldValue }) =>
-                getFieldValue(formFieldNames.status) === 3 ? (
-                  <Form.Item
-                    label="Kết quả"
-                    name={formFieldNames.result}
-                    rules={[
-                      {
-                        required: true,
-                        message: messageRequire,
-                      },
-                    ]}
-                  >
-                    <Select {...getSelectProps(resultOptions)} />
-                  </Form.Item>
-                ) : null
-              }
-            </Form.Item>
-
-            <Form.Item
-              wrapperCol={{
-                span: 6,
-              }}
-              label="Ngày tạo"
-              name={formFieldNames.createDate}
-            >
-              <Input readOnly />
-            </Form.Item>
-
-            <Form.Item label="Đề cương">
-              <Button onClick={handleDownloadFile}>
-                <DownloadOutlined
+            <Space size="large">
+              <Button
+                danger
+                type="primary"
+                disabled={disableResetBtn}
+                onClick={handleResetForm}
+              >
+                <ClearOutlined
                   style={{
                     fontSize: antdIconFontSize,
                   }}
                 />
-                Tải xuống
+                Hủy
               </Button>
-            </Form.Item>
-            {previousPath !== routesConfig.topicApprove ? (
-              <Form.Item
-                wrapperCol={{
-                  offset: 6,
-                  span: 12,
-                }}
+              <Button
+                type="primary"
+                disabled={disableResetBtn}
+                htmlType="submit"
               >
-                <Space size="large">
-                  <Button type="primary" onClick={() => navigate(-1)}>
-                    <DoubleLeftOutlined
-                      style={{
-                        fontSize: antdIconFontSize,
-                      }}
-                    />
-                    Quay lại
-                  </Button>
-                  <Button
-                    type="primary"
-                    disabled={disableBtn}
-                    onClick={resetForm}
-                  >
-                    <ClearOutlined
-                      style={{
-                        fontSize: antdIconFontSize,
-                      }}
-                    />
-                    Đặt lại
-                  </Button>
-                  <Button
-                    type="primary"
-                    disabled={disableBtn}
-                    htmlType="submit"
-                  >
-                    <EditOutlined
-                      style={{
-                        fontSize: antdIconFontSize,
-                      }}
-                    />
-                    Cập nhật
-                  </Button>
-                </Space>
-              </Form.Item>
-            ) : null}
-          </Form>
-        </Spin>
-      </Space>
+                <EditOutlined
+                  style={{
+                    fontSize: antdIconFontSize,
+                  }}
+                />
+                Cập nhật
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Spin>
     </>
   );
 }

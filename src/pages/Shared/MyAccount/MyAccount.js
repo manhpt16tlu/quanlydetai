@@ -19,8 +19,10 @@ function MyAccount() {
       </Breadcrumb>
       <CustomDivider size={5} text="Thông tin tài khoản" orientation="left" />
       <Form
+        labelAlign="left"
         labelCol={{
           span: 4,
+          offset: 1,
         }}
         wrapperCol={{
           span: 8,
@@ -113,7 +115,7 @@ function MyAccount() {
         </Form.Item>
         <Form.Item
           wrapperCol={{
-            offset: 4,
+            offset: 5,
             span: 8,
           }}
         >

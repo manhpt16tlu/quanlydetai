@@ -1,49 +1,35 @@
+import { DownloadOutlined } from '@ant-design/icons';
 import {
-  ClearOutlined,
-  DoubleLeftOutlined,
-  DownloadOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
-import {
+  Breadcrumb,
   Button,
   DatePicker,
   Form,
   Input,
   InputNumber,
-  Select,
-  Space,
-  Spin,
   message,
-  Breadcrumb,
+  Spin,
 } from 'antd';
-import {
-  TIMESTAMP_FORMAT,
-  antdIconFontSize,
-  DATE_FORMAT as dateFormat,
-  MESSAGE_REQUIRE as messageRequire,
-  routes as routesConfig,
-  ROLES,
-  TOPIC_FILE_TYPE,
-  FILE_TYPE,
-} from 'configs/general';
-import moment from 'moment';
-import { useEffect, useReducer, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import * as organService from 'services/OrganService';
-import * as fieldService from 'services/TopicFieldService';
-import * as resultService from 'services/TopicResultService';
-import * as topicService from 'services/TopicService';
-import * as statusService from 'services/TopicStatusService';
-import * as fileService from 'services/UploadFileService';
 import CustomDivider from 'components/General/CustomDivider';
 import {
-  openNotificationWithIcon,
-  getFileNameFromHeaderDisposition,
-  capitalizeFirstLetterEachWord,
-} from 'utils/general';
+  antdIconFontSize,
+  DATE_FORMAT as dateFormat,
+  FILE_TYPE,
+  ROLES,
+  routes as routesConfig,
+  TIMESTAMP_FORMAT,
+  TOPIC_FILE_TYPE,
+} from 'configs/general';
 import produce from 'immer';
-import { optionSelectFill } from 'utils/topicUtil';
+import moment from 'moment';
 import style from 'pages/Employee/Topic/Topic.module.scss';
+import { useEffect, useReducer, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import * as topicService from 'services/TopicService';
+import * as fileService from 'services/UploadFileService';
+import {
+  capitalizeFirstLetterEachWord,
+  getFileNameFromHeaderDisposition,
+} from 'utils/general';
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 
@@ -210,16 +196,17 @@ function TopicDetail() {
                 minRows: 1,
                 maxRows: 2,
               }}
+              readOnly
             />
           </Form.Item>
           <Form.Item label="Cơ quan chủ trì" name={formFieldNames.organ}>
-            <Input className={style.disableInput} />
+            <Input className={style.disableInput} readOnly />
           </Form.Item>
           <Form.Item label="Chủ nhiệm" name={formFieldNames.manager}>
-            <Input className={style.disableInput} />
+            <Input className={style.disableInput} readOnly />
           </Form.Item>
           <Form.Item label="Lĩnh vực" name={formFieldNames.field}>
-            <Input className={style.disableInput} />
+            <Input className={style.disableInput} readOnly />
           </Form.Item>
           <Form.Item label="Thời gian thực hiện" name={formFieldNames.time}>
             <RangePicker
@@ -228,10 +215,12 @@ function TopicDetail() {
                 width: 250,
               }}
               format={dateFormat}
+              inputReadOnly
             />
           </Form.Item>
           <Form.Item label="Kinh phí" name={formFieldNames.expense}>
             <InputNumber
+              readOnly
               className={style.disableInput}
               formatter={(value) =>
                 `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -245,15 +234,15 @@ function TopicDetail() {
             />
           </Form.Item>
           <Form.Item label="Trạng thái" name={formFieldNames.status}>
-            <Input className={style.disableInput} />
+            <Input className={style.disableInput} readOnly />
           </Form.Item>
 
           <Form.Item label="Kết quả" name={formFieldNames.result}>
-            <Input className={style.disableInput} />
+            <Input className={style.disableInput} readOnly />
           </Form.Item>
 
           <Form.Item label="Ngày tạo" name={formFieldNames.createDate}>
-            <Input className={style.disableInput} />
+            <Input className={style.disableInput} readOnly />
           </Form.Item>
 
           <Form.Item label="Đề cương">
