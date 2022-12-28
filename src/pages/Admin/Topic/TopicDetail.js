@@ -37,6 +37,7 @@ import * as statusService from 'services/TopicStatusService';
 import * as resultService from 'services/TopicResultService';
 import {
   capitalizeFirstLetterEachWord,
+  generateManagerName,
   getFileNameFromHeaderDisposition,
   openNotificationWithIcon,
 } from 'utils/general';
@@ -180,7 +181,7 @@ function TopicDetail() {
                   [formFieldNames.name]: topic.name,
                   [formFieldNames.time]: [moment(topic.startDate, dateFormat),moment(topic.endDate, dateFormat)],
                   [formFieldNames.organ]: topic.manager.organ.name,
-                  [formFieldNames.manager]: `${topic.manager.rank.name ?? ''}. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
+                  [formFieldNames.manager]: generateManagerName(topic.manager),
                   [formFieldNames.field]: topic.topicField.title,
                   [formFieldNames.status]: JSON.stringify(topic.topicStatus),
                   [formFieldNames.result]:JSON.stringify(topic.topicResult),

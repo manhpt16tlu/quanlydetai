@@ -16,6 +16,11 @@ const call = async function (method, url, body, config) {
       ret = axiosResponse.data;
       break;
     }
+    case 'PATCH': {
+      const data = body ? await api.patch(url, body) : await api.patch(url);
+      ret = data.data;
+      break;
+    }
     default:
       break;
   }
@@ -27,4 +32,10 @@ const getUserByUsername = (username) => {
 const existByUserName = (username) => {
   return call('GET', `user/existByUsername/${username}`);
 };
-export { getUserByUsername, existByUserName };
+const getAllUser = (page, size, params) => {
+  return call('GET', `user?page=${page}&size=${size}`, null, { params });
+};
+const disableUser = (userId) => {
+  return call('PATCH', `user/disable/${userId}`, null);
+};
+export { getUserByUsername, existByUserName, getAllUser, disableUser };

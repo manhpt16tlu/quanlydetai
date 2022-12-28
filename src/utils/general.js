@@ -76,7 +76,13 @@ const pageReducer = (state, action) => {
       return state;
   }
 };
+const generateManagerName = (manager) => {
+  return `${
+    manager.rank?.name ? `${manager.rank.name}. ` : ''
+  }${capitalizeFirstLetterEachWord(manager.name)}`;
+};
 export {
+  generateManagerName,
   INITIAL_PAGE_STATE,
   pageReducer,
   getMessageValidateLength,

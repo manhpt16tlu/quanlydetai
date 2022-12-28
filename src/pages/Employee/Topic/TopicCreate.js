@@ -21,6 +21,7 @@ import {
   TOPIC_FILE_TYPE,
   routes as routesConfig,
   ROLES,
+  TOPIC_STATUS_DEFAULT,
 } from 'configs/general';
 import { useEffect, useReducer, useState } from 'react';
 import * as countService from 'services/CountService';
@@ -34,6 +35,7 @@ import * as userService from 'services/UserService';
 import {
   openNotificationWithIcon,
   capitalizeFirstLetterEachWord,
+  generateManagerName,
 } from 'utils/general';
 import { optionSelectFill, optionSelectFillOBJ } from 'utils/topicUtil';
 import CustomDivider from 'components/General/CustomDivider';
@@ -196,10 +198,8 @@ function TopicCreate() {
             user: userData,
             data: {
               [formFieldNames.organ]: userData?.organ?.name,
-              [formFieldNames.manager]: `${
-                userData?.rank?.name ?? ''
-              }. ${capitalizeFirstLetterEachWord(userData.name)}`,
-              [formFieldNames.status]: 'Chưa duyệt',
+              [formFieldNames.manager]: generateManagerName(userData),
+              [formFieldNames.status]: TOPIC_STATUS_DEFAULT.CHUA_DUYET,
             },
             option: {
               [formFieldNames.field]: optionSelectFillOBJ(fieldList),

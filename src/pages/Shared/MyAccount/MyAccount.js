@@ -1,6 +1,7 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Button, Form, Input, Space } from 'antd';
 import CustomDivider from 'components/General/CustomDivider';
+import { MESSAGE_REQUIRE } from 'configs/general';
 import { Link } from 'react-router-dom';
 function MyAccount() {
   const onFinish = (values) => {
@@ -40,7 +41,7 @@ function MyAccount() {
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: MESSAGE_REQUIRE,
             },
           ]}
         >
@@ -53,55 +54,19 @@ function MyAccount() {
           <Input />
         </Form.Item>
 
-        <Form.Item
-          label="Địa chỉ"
-          name=""
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-        >
+        <Form.Item label="Địa chỉ">
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Số điện thoại"
-          name=""
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-        >
+        <Form.Item label="Số điện thoại">
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Email"
-          name=""
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-        >
+        <Form.Item label="Email">
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Bằng cấp"
-          name=""
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-        >
+        <Form.Item label="Bằng cấp" name="">
           <Input />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="Password"
           name="password"
           rules={[
@@ -112,7 +77,7 @@ function MyAccount() {
           ]}
         >
           <Input.Password />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           wrapperCol={{
             offset: 5,

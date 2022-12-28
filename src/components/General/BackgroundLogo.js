@@ -8,7 +8,7 @@ function BackgroundLogo() {
         backgroundImage: `url(${bg})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
-        backgroundSize: 'contain',
+        backgroundSize: '60%',
       }}
     ></div>
   );
