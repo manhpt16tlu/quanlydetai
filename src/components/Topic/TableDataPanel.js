@@ -33,9 +33,10 @@ function TableDataPanel(props) {
         <Link
           to={routesConfig.topicDetail}
           state={{
-            [btoa('topicId')]: btoa(record[dataIndexTable.id]),
+            topicId: record[dataIndexTable.id],
             previousPath: pathname,
           }}
+          replace={true}
         >
           {text}
         </Link>
@@ -80,28 +81,27 @@ function TableDataPanel(props) {
     }));
   };
   const onApproveClick = async () => {
-    await Promise.all(
-      selectedRows.data.map(async (topicRecord, index) => {
-        await topicService.approve(topicRecord[dataIndexTable.id], {
-          topicStatus: {
-            title: 'Đã duyệt',
-          },
-        });
-      })
-    )
-      .then(() => {
-        openNotificationWithIcon('success', 'Phê duyệt đề tài', 'top');
-        setSelectedRows({
-          keys: [],
-          data: [],
-        }); //reset selected
-
-        setReload((prev) => !prev); //call api again
-      })
-      .catch((error) => {
-        console.log(error);
-        openNotificationWithIcon('error', null, 'top');
-      });
+    // await Promise.all(
+    //   selectedRows.data.map(async (topicRecord, index) => {
+    //     await topicService.approve(topicRecord[dataIndexTable.id], {
+    //       topicStatus: {
+    //         title: 'Đã duyệt',
+    //       },
+    //     });
+    //   })
+    // )
+    //   .then(() => {
+    //     openNotificationWithIcon('success', 'Phê duyệt đề tài', 'top');
+    //     setSelectedRows({
+    //       keys: [],
+    //       data: [],
+    //     }); //reset selected
+    //     setReload((prev) => !prev); //call api again
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     openNotificationWithIcon('error', null, 'top');
+    //   });
     // selectedData.forEach((topicRecord, index, thisArr) => {
     //   topicService
     //     .approve(topicRecord[dataIndexTable.id], {

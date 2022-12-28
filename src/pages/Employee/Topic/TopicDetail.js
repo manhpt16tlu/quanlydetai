@@ -178,16 +178,17 @@ function TopicDetail() {
       <CustomDivider text={'Chi tiết đề tài'} />
       <Spin spinning={loading}>
         <Form
+          labelAlign="left"
           form={form}
           labelCol={{
-            span: 6,
+            offset: 3,
+            span: 3,
           }}
           wrapperCol={{
             span: 12,
           }}
           layout="horizontal"
           initialValues={formData.data}
-          size="default"
         >
           <Form.Item label="Tên đề tài" name={formFieldNames.name}>
             <TextArea

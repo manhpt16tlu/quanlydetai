@@ -2,6 +2,7 @@ import {
   ClearOutlined,
   FilterOutlined,
   SearchOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Col, Input, Row, Space, Table, Breadcrumb } from 'antd';
 import CustomDivider from 'components/General/CustomDivider';
@@ -64,6 +65,7 @@ function TopicList() {
   const [dataFilterStatus, setDataFilterStatus] = useState([]);
   const [dataFilterField, setDataFilterField] = useState([]);
   const [filteredInfo, setFilteredInfo] = useState({});
+  const [refresh, setRefresh] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
 
   useEffect(() => {
@@ -98,7 +100,7 @@ function TopicList() {
     // return () => {
     //   controller.abort();
     // };
-  }, [dataPaging.current, filteredInfo]);
+  }, [dataPaging.current, filteredInfo, refresh]);
 
   useEffect(() => {
     const callApi = () => {
@@ -277,15 +279,26 @@ function TopicList() {
       <CustomDivider text={'Danh sách đề tài'} />
       <Row justify="end" style={{ marginBottom: 20 }}>
         <Col>
-          <Button
-            onClick={() => {
-              if (Object.keys(filteredInfo).length !== 0) setFilteredInfo({});
-            }}
-            type="primary"
-          >
-            <ClearOutlined style={{ fontSize: antdIconFontSize }} />
-            Xóa bộ lọc
-          </Button>
+          <Space>
+            <Button
+              onClick={() => {
+                if (Object.keys(filteredInfo).length !== 0) setFilteredInfo({});
+              }}
+              type="primary"
+            >
+              <ClearOutlined style={{ fontSize: antdIconFontSize }} />
+              Xóa bộ lọc
+            </Button>
+            <Button
+              onClick={() => {
+                setRefresh((prev) => !prev);
+              }}
+              type="primary"
+            >
+              <SyncOutlined style={{ fontSize: antdIconFontSize }} />
+              Làm mới
+            </Button>
+          </Space>
         </Col>
       </Row>
       <Table

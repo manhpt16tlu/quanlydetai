@@ -263,9 +263,11 @@ function TopicCreate() {
       </Breadcrumb>
       <CustomDivider text={'Đề xuất đề tài'} />
       <Form
+        labelAlign="left"
         form={form}
         labelCol={{
-          span: 6,
+          offset: 3,
+          span: 3,
         }}
         wrapperCol={{
           span: 12,
@@ -273,7 +275,6 @@ function TopicCreate() {
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         layout="horizontal"
-        size="default"
         onValuesChange={handleFormValuesChange}
         initialValues={formData.data}
       >
@@ -295,10 +296,10 @@ function TopicCreate() {
           />
         </Form.Item>
         <Form.Item label="Cơ quan chủ trì" name={formFieldNames.organ}>
-          <Input className={style.disableInput} />
+          <Input className={style.disableInput} readOnly />
         </Form.Item>
         <Form.Item label="Chủ nhiệm" name={formFieldNames.manager}>
-          <Input className={style.disableInput} />
+          <Input className={style.disableInput} readOnly />
         </Form.Item>
         <Form.Item
           label="Lĩnh vực"
@@ -361,7 +362,7 @@ function TopicCreate() {
           />
         </Form.Item>
         <Form.Item label="Trạng thái" name={formFieldNames.status}>
-          <Input className={style.disableInput} />
+          <Input className={style.disableInput} readOnly />
         </Form.Item>
         <Form.Item
           getValueFromEvent={getFileList} // vì onchange upload return object

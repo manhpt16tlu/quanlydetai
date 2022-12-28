@@ -97,11 +97,8 @@ function AppLayout(props) {
   let previousPath = state?.previousPath;
 
   switch (pathname) {
-    case routesConfig.topicDetail:
-      menuKey = previousPath ? previousPath : pathname;
-      break;
-    case routesConfig.organDetail:
-      menuKey = routesConfig.organList;
+    case routesConfig[ROLES.admin].topicDetail:
+      menuKey = previousPath ?? pathname;
       break;
     default:
       menuKey = pathname;

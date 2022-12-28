@@ -1,5 +1,14 @@
-import { DownloadOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Divider, message, Spin, Table } from 'antd';
+import { DownloadOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  Breadcrumb,
+  Button,
+  Col,
+  Divider,
+  message,
+  Row,
+  Spin,
+  Table,
+} from 'antd';
 import CustomDivider from 'components/General/CustomDivider';
 import {
   antdIconFontSize,
@@ -20,6 +29,7 @@ function FormFileList() {
   const { tableStyle } = useContext(AntdSettingContext);
   const [tableBorder] = tableStyle;
   const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   const dataIndexTable = {
     id: 'ma',
@@ -143,7 +153,7 @@ function FormFileList() {
       setLoading(false);
     };
     callApi();
-  }, [dataPaging.current]);
+  }, [dataPaging.current, refresh]);
   return (
     <>
       <Breadcrumb>
@@ -154,6 +164,19 @@ function FormFileList() {
       </Breadcrumb>
 
       <CustomDivider orientation="center" text="Danh sách biểu mẫu" />
+      <Row justify="end" style={{ marginBottom: 20 }}>
+        <Col>
+          <Button
+            onClick={() => {
+              setRefresh((prev) => !prev);
+            }}
+            type="primary"
+          >
+            <SyncOutlined style={{ fontSize: antdIconFontSize }} />
+            Làm mới
+          </Button>
+        </Col>
+      </Row>
       <Spin spinning={loading}>
         <Table
           bordered={tableBorder}

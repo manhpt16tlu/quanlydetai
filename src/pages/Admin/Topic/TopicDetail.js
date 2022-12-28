@@ -115,6 +115,7 @@ function TopicDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const topicId = location.state?.['topicId'] ?? null;
+  const previousPath = location.state?.['previousPath'] ?? null;
 
   const [loading, setLoading] = useState(false);
 
@@ -251,197 +252,295 @@ function TopicDetail() {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Đề tài</Breadcrumb.Item>
         <Breadcrumb.Item>
-          <Link to={routesConfig[ROLES.admin].topicList}>Danh sách</Link>
+          {previousPath === routesConfig[ROLES.admin].topicList ? (
+            <Link to={routesConfig[ROLES.admin].topicList}>Danh sách</Link>
+          ) : (
+            <Link to={routesConfig[ROLES.admin].topicApprove}>Phê duyệt</Link>
+          )}
         </Breadcrumb.Item>
         <Breadcrumb.Item>Chi tiết</Breadcrumb.Item>
       </Breadcrumb>
       <CustomDivider text={'Chi tiết đề tài'} />
 
       <Spin spinning={loading}>
-        <Form
-          labelAlign="left"
-          form={form}
-          labelCol={{
-            offset: 3,
-            span: 3,
-          }}
-          wrapperCol={{
-            span: 12,
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          layout="horizontal"
-          initialValues={formData.data}
-          size="default"
-          onValuesChange={handleFormValuesChange}
-        >
-          <Form.Item
-            label="Tên đề tài"
-            name={formFieldNames.name}
-            rules={[
-              {
-                required: true,
-                message: messageRequire,
-              },
-            ]}
-          >
-            <TextArea
-              autoSize={{
-                minRows: 1,
-                maxRows: 2,
-              }}
-            />
-          </Form.Item>
-          <Form.Item label="Cơ quan chủ trì" name={formFieldNames.organ}>
-            <Input className={style.disableInput} readOnly />
-          </Form.Item>
-          <Form.Item label="Chủ nhiệm" name={formFieldNames.manager}>
-            <Input className={style.disableInput} readOnly />
-          </Form.Item>
-          <Form.Item label="Lĩnh vực" name={formFieldNames.field}>
-            <Input className={style.disableInput} readOnly />
-          </Form.Item>
-          <Form.Item
-            label="Thời gian thực hiện"
-            name={formFieldNames.time}
-            rules={[
-              {
-                required: true,
-                message: messageRequire,
-              },
-            ]}
-          >
-            <RangePicker
-              style={{
-                width: 250,
-              }}
-              format={dateFormat}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Kinh phí"
-            name={formFieldNames.expense}
-            rules={[
-              {
-                required: true,
-                message: messageRequire,
-              },
-            ]}
-          >
-            <InputNumber
-              formatter={(value) =>
-                `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              }
-              parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
-              style={{
-                width: 250,
-              }}
-              step="500000"
-              min="0"
-            />
-          </Form.Item>
-          <Form.Item
-            label="Trạng thái"
-            name={formFieldNames.status}
-            rules={[
-              {
-                required: true,
-                message: messageRequire,
-              },
-            ]}
-          >
-            <Select
-              {...getSelectProps(formData.option[formFieldNames.status])}
-            />
-          </Form.Item>
-          <Form.Item
-            noStyle
-            shouldUpdate={(prev, curr) => {
-              return (
-                prev[formFieldNames.status] !== curr[formFieldNames.status]
-              );
+        {previousPath === routesConfig[ROLES.admin].topicList ? (
+          <Form
+            labelAlign="left"
+            form={form}
+            labelCol={{
+              offset: 3,
+              span: 3,
             }}
-          >
-            {/* check status change */}
-            {({ getFieldValue }) => {
-              // prettier-ignore
-              const currentStatus = JSON.parse(getFieldValue(formFieldNames.status) ?? null);
-              return currentStatus?.title ===
-                TOPIC_STATUS_DEFAULT.DA_NGHIEM_THU ? (
-                <Form.Item
-                  label="Kết quả"
-                  name={formFieldNames.result}
-                  rules={[
-                    {
-                      required: true,
-                      message: messageRequire,
-                    },
-                  ]}
-                >
-                  <Select
-                    {...getSelectProps(formData.option[formFieldNames.result])}
-                  />
-                </Form.Item>
-              ) : null;
-            }}
-          </Form.Item>
-
-          <Form.Item
             wrapperCol={{
-              span: 6,
-            }}
-            label="Ngày tạo"
-            name={formFieldNames.createDate}
-          >
-            <Input className={style.disableInput} readOnly />
-          </Form.Item>
-
-          <Form.Item label="Đề cương">
-            <Button onClick={() => handleDownloadFile(TOPIC_FILE_TYPE.outline)}>
-              <DownloadOutlined
-                style={{
-                  fontSize: antdIconFontSize,
-                }}
-              />
-              Tải xuống
-            </Button>
-          </Form.Item>
-
-          <Form.Item
-            wrapperCol={{
-              offset: 6,
               span: 12,
             }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            layout="horizontal"
+            initialValues={formData.data}
+            onValuesChange={handleFormValuesChange}
           >
-            <Space size="large">
+            <Form.Item
+              label="Tên đề tài"
+              name={formFieldNames.name}
+              rules={[
+                {
+                  required: true,
+                  message: messageRequire,
+                },
+              ]}
+            >
+              <TextArea
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 2,
+                }}
+              />
+            </Form.Item>
+            <Form.Item label="Cơ quan chủ trì" name={formFieldNames.organ}>
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+            <Form.Item label="Chủ nhiệm" name={formFieldNames.manager}>
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+            <Form.Item label="Lĩnh vực" name={formFieldNames.field}>
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+            <Form.Item
+              label="Thời gian thực hiện"
+              name={formFieldNames.time}
+              rules={[
+                {
+                  required: true,
+                  message: messageRequire,
+                },
+              ]}
+            >
+              <RangePicker
+                style={{
+                  width: 250,
+                }}
+                format={dateFormat}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Kinh phí"
+              name={formFieldNames.expense}
+              rules={[
+                {
+                  required: true,
+                  message: messageRequire,
+                },
+              ]}
+            >
+              <InputNumber
+                formatter={(value) =>
+                  `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                }
+                parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
+                style={{
+                  width: 250,
+                }}
+                step="500000"
+                min="0"
+              />
+            </Form.Item>
+            <Form.Item
+              label="Trạng thái"
+              name={formFieldNames.status}
+              rules={[
+                {
+                  required: true,
+                  message: messageRequire,
+                },
+              ]}
+            >
+              <Select
+                {...getSelectProps(formData.option[formFieldNames.status])}
+              />
+            </Form.Item>
+            <Form.Item
+              noStyle
+              shouldUpdate={(prev, curr) => {
+                return (
+                  prev[formFieldNames.status] !== curr[formFieldNames.status]
+                );
+              }}
+            >
+              {/* check status change */}
+              {({ getFieldValue }) => {
+                // prettier-ignore
+                const currentStatus = JSON.parse(getFieldValue(formFieldNames.status) ?? null);
+                return currentStatus?.title ===
+                  TOPIC_STATUS_DEFAULT.DA_NGHIEM_THU ? (
+                  <Form.Item
+                    label="Kết quả"
+                    name={formFieldNames.result}
+                    rules={[
+                      {
+                        required: true,
+                        message: messageRequire,
+                      },
+                    ]}
+                  >
+                    <Select
+                      {...getSelectProps(
+                        formData.option[formFieldNames.result]
+                      )}
+                    />
+                  </Form.Item>
+                ) : null;
+              }}
+            </Form.Item>
+
+            <Form.Item
+              wrapperCol={{
+                span: 6,
+              }}
+              label="Ngày tạo"
+              name={formFieldNames.createDate}
+            >
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+
+            <Form.Item label="Đề cương">
               <Button
-                danger
-                type="primary"
-                disabled={disableResetBtn}
-                onClick={handleResetForm}
+                onClick={() => handleDownloadFile(TOPIC_FILE_TYPE.outline)}
               >
-                <ClearOutlined
+                <DownloadOutlined
                   style={{
                     fontSize: antdIconFontSize,
                   }}
                 />
-                Hủy
+                Tải xuống
               </Button>
+            </Form.Item>
+
+            <Form.Item
+              wrapperCol={{
+                offset: 6,
+                span: 12,
+              }}
+            >
+              <Space size="large">
+                <Button
+                  danger
+                  type="primary"
+                  disabled={disableResetBtn}
+                  onClick={handleResetForm}
+                >
+                  <ClearOutlined
+                    style={{
+                      fontSize: antdIconFontSize,
+                    }}
+                  />
+                  Hủy
+                </Button>
+                <Button
+                  type="primary"
+                  disabled={disableResetBtn}
+                  htmlType="submit"
+                >
+                  <EditOutlined
+                    style={{
+                      fontSize: antdIconFontSize,
+                    }}
+                  />
+                  Cập nhật
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        ) : (
+          <Form
+            labelAlign="left"
+            form={form}
+            labelCol={{
+              offset: 3,
+              span: 3,
+            }}
+            wrapperCol={{
+              span: 12,
+            }}
+            layout="horizontal"
+            initialValues={formData.data}
+          >
+            <Form.Item label="Tên đề tài" name={formFieldNames.name}>
+              <TextArea
+                className={style.disableInput}
+                autoSize={{
+                  minRows: 1,
+                  maxRows: 2,
+                }}
+                readOnly
+              />
+            </Form.Item>
+            <Form.Item label="Cơ quan chủ trì" name={formFieldNames.organ}>
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+            <Form.Item label="Chủ nhiệm" name={formFieldNames.manager}>
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+            <Form.Item label="Lĩnh vực" name={formFieldNames.field}>
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+            <Form.Item label="Thời gian thực hiện" name={formFieldNames.time}>
+              <RangePicker
+                className={style.disableInput}
+                style={{
+                  width: 250,
+                }}
+                format={dateFormat}
+                inputReadOnly
+              />
+            </Form.Item>
+            <Form.Item label="Kinh phí" name={formFieldNames.expense}>
+              <InputNumber
+                readOnly
+                className={style.disableInput}
+                formatter={(value) =>
+                  `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                }
+                parser={(value) => value.replace(/đ\s?|(,*)/g, '')}
+                style={{
+                  width: 250,
+                }}
+                step="500000"
+                min="0"
+              />
+            </Form.Item>
+            <Form.Item label="Trạng thái">
+              <Input
+                className={style.disableInput}
+                readOnly
+                defaultValue={TOPIC_STATUS_DEFAULT.CHUA_DUYET}
+              />
+            </Form.Item>
+
+            <Form.Item
+              wrapperCol={{
+                span: 6,
+              }}
+              label="Ngày tạo"
+              name={formFieldNames.createDate}
+            >
+              <Input className={style.disableInput} readOnly />
+            </Form.Item>
+
+            <Form.Item label="Đề cương">
               <Button
-                type="primary"
-                disabled={disableResetBtn}
-                htmlType="submit"
+                onClick={() => handleDownloadFile(TOPIC_FILE_TYPE.outline)}
               >
-                <EditOutlined
+                <DownloadOutlined
                   style={{
                     fontSize: antdIconFontSize,
                   }}
                 />
-                Cập nhật
+                Tải xuống
               </Button>
-            </Space>
-          </Form.Item>
-        </Form>
+            </Form.Item>
+          </Form>
+        )}
       </Spin>
     </>
   );

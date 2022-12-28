@@ -4,6 +4,7 @@ import {
   ClearOutlined,
   WarningOutlined,
   DeleteOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 import {
   Breadcrumb,
@@ -343,15 +344,26 @@ function TopicList() {
       <CustomDivider text={'Danh sách đề tài'} />
       <Row justify="end" style={{ marginBottom: 20 }}>
         <Col>
-          <Button
-            onClick={() => {
-              if (Object.keys(filteredInfo).length !== 0) setFilteredInfo({});
-            }}
-            type="primary"
-          >
-            <ClearOutlined style={{ fontSize: antdIconFontSize }} />
-            Xóa bộ lọc
-          </Button>
+          <Space>
+            <Button
+              onClick={() => {
+                if (Object.keys(filteredInfo).length !== 0) setFilteredInfo({});
+              }}
+              type="primary"
+            >
+              <ClearOutlined style={{ fontSize: antdIconFontSize }} />
+              Xóa bộ lọc
+            </Button>
+            <Button
+              onClick={() => {
+                setReload((prev) => !prev);
+              }}
+              type="primary"
+            >
+              <SyncOutlined style={{ fontSize: antdIconFontSize }} />
+              Làm mới
+            </Button>
+          </Space>
         </Col>
       </Row>
       <Table

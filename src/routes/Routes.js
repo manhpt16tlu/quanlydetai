@@ -18,6 +18,7 @@ import NotFound from 'pages/Shared/NotFound/NotFound';
 import Account from 'pages/Admin/Account/Account';
 import MyAccount from 'pages/Shared/MyAccount/MyAccount';
 import TopicSetup from 'pages/Admin/Setup/TopicSetup';
+import TopicApproveV2 from 'pages/Admin/Topic/TopicApprove_v2';
 
 const privateRoutes = {
   [ROLES.admin]: [
@@ -27,7 +28,7 @@ const privateRoutes = {
     },
     {
       path: routesConfig[ROLES.admin].topicApprove,
-      component: <TopicApprove />,
+      component: <TopicApproveV2 />,
     },
     {
       path: routesConfig[ROLES.admin].topicList,

@@ -51,6 +51,7 @@ const FILE_TYPE = {
   form: 'form',
 };
 
+const TABLE_PAGE_SIZE = 3;
 // khớp với backend
 const TOPIC_STATUS_DEFAULT = {
   CHUA_DUYET: 'Chưa duyệt',
@@ -75,6 +76,7 @@ const MESSAGE_RESPONSE = {
   USER_UNAUTHORIZED: 'Can not authenticate user',
 };
 export {
+  TABLE_PAGE_SIZE,
   TOPIC_RESULT_DEFAULT,
   TOPIC_STATUS_DEFAULT,
   MESSAGE_RESPONSE,

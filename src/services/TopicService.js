@@ -20,7 +20,7 @@ const call = async function (method, url, body, config) {
       break;
     }
     case 'PATCH': {
-      const data = await api.patch(url, body);
+      const data = body ? await api.patch(url, body) : await api.patch(url);
       ret = data.data;
       break;
     }
@@ -85,6 +85,17 @@ const getAllByAdminWithFilter = (page, size, params) => {
     }
   );
 };
+
+const getNotApproveTopicList = (page, size, params) => {
+  return call(
+    'GET',
+    `topic/adminGetTopics/not_approved/?page=${page}&size=${size}`,
+    undefined,
+    {
+      params,
+    }
+  );
+};
 const create = (body, organId, fieldId, statusId, resultId) => {
   const resultUrlPart = resultId ? `/result/${resultId}` : '';
   return call(
@@ -102,9 +113,8 @@ const getById = (id) => {
 const update = (body, topicId) => {
   return call('PUT', `topic/${topicId}`, body);
 };
-const approve = (topicId, body) => {
-  //special update method
-  return call('PATCH', `approve_topic/${topicId}`, body);
+const approve = (topicId) => {
+  return call('PATCH', `approve_topic/${topicId}`, null);
 };
 const getNonApprovedByOrganId = (organId) => {
   return call('GET', `organ/${organId}/topic/not_approved`);
@@ -117,6 +127,7 @@ const existByName = (topicName) => {
   return call('GET', `topic/existByName?name=${encodeURI(topicName)}`);
 };
 export {
+  getNotApproveTopicList,
   getAllByAdminWithFilter,
   getAllByUsernameWithFilter,
   employeeCreate,

@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import { TABLE_PAGE_SIZE } from 'configs/general';
 import produce from 'immer';
 const openNotificationWithIcon = (type, action, placement, mess) => {
   notification[type]({
@@ -54,7 +55,7 @@ const getMessageValidateLength = (lengthType, length) => {
 };
 const INITIAL_PAGE_STATE = {
   current: 1,
-  pageSize: 3,
+  pageSize: TABLE_PAGE_SIZE,
   totalElements: null,
   tableData: [],
 };

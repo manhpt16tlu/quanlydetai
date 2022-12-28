@@ -3,8 +3,8 @@ const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
     case 'GET': {
-      const data = await api.get(url);
-      ret = data.data;
+      const axiosResponse = await api.get(url);
+      ret = axiosResponse.data;
       break;
     }
     case 'POST': {
