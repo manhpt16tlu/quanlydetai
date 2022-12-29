@@ -13,6 +13,7 @@ import {
   Divider,
   Input,
   Popconfirm,
+  Popover,
   Row,
   Space,
   Table,
@@ -37,6 +38,7 @@ import CustomDivider from 'components/General/CustomDivider';
 import { generateDateString } from 'utils/topicUtil';
 import { INITIAL_PAGE_STATE, pageReducer } from 'utils/general';
 import { AntdSettingContext } from 'context/AntdSettingContext';
+import UserCard from 'components/Account/UserCard';
 const dataIndexTable = {
   id: 'id',
   name: 'tendetai',
@@ -44,6 +46,7 @@ const dataIndexTable = {
   organ: 'coquanchutri',
   time: 'thoigianthuchien',
   status: 'trangthai',
+  accountDetail: 'thongtinchitiettaikhoan',
 };
 const rowSelection = {
   type: 'checkbox',
@@ -55,16 +58,16 @@ const rowSelection = {
 
 const generateTableData = (data) => {
   // console.log(data);
+  // prettier-ignore
   return data.map((topic, index) => ({
     key: index,
     [dataIndexTable.id]: topic.id,
     [dataIndexTable.name]: topic.name,
     [dataIndexTable.organ]: topic.manager.organ.name,
-    [dataIndexTable.manager]: `${
-      topic.manager?.rank?.name ?? ''
-    }. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
+    [dataIndexTable.manager]: `${topic.manager?.rank?.name ?? ''}. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
     [dataIndexTable.status]: topic.topicStatus.title,
     [dataIndexTable.time]: generateDateString(topic.startDate, topic.endDate),
+    [dataIndexTable.accountDetail]:topic.manager
   }));
 };
 const convertFilterToParams = (filterData) => {
@@ -255,6 +258,21 @@ function TopicList() {
       // width: '20%',
     },
     {
+      render: (text, record) => (
+        <Popover
+          content={<UserCard userData={record[dataIndexTable.accountDetail]} />}
+          placement="right"
+        >
+          <span
+            style={{
+              cursor: 'pointer',
+              color: record[dataIndexTable.disabled] ? '#ff4d4f' : '#1890ff',
+            }}
+          >
+            {text}
+          </span>
+        </Popover>
+      ),
       title: 'Chủ nhiệm',
       dataIndex: dataIndexTable.manager,
       filteredValue: filteredInfo[dataIndexTable.manager] || null,

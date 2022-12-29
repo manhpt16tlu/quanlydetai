@@ -1,7 +1,15 @@
 import { FilterOutlined, WarningOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
-import { Breadcrumb, Button, message, Popconfirm, Space, Table } from 'antd';
+import {
+  Breadcrumb,
+  Button,
+  message,
+  Popconfirm,
+  Popover,
+  Space,
+  Table,
+} from 'antd';
 import CustomDivider from 'components/General/CustomDivider';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
@@ -19,6 +27,7 @@ import {
 } from 'utils/general';
 import * as userSerivce from 'services/UserService';
 import * as organService from 'services/OrganService';
+import UserCard from 'components/Account/UserCard';
 const dataIndexTable = {
   id: 'manguoidung',
   fullname: 'tennguoidung',
@@ -26,6 +35,7 @@ const dataIndexTable = {
   organ: 'coquanchutri',
   disabled: 'vohieuhoa',
   createDate: 'ngaytao',
+  accountDetail: 'thongtinchitiettaikhoan',
 };
 const generateTableData = (data) => {
   // console.log(data);
@@ -34,10 +44,11 @@ const generateTableData = (data) => {
     [dataIndexTable.id]: user.id,
     [dataIndexTable.username]: user.username,
     [dataIndexTable.organ]: user.organ.name,
-    [dataIndexTable.createDate]: moment(user.createDate).format(
-      TIMESTAMP_FORMAT
-    ),
+    // prettier-ignore
+    [dataIndexTable.createDate]: moment(user.createDate).format(TIMESTAMP_FORMAT),
     [dataIndexTable.disabled]: user.disabled,
+
+    [dataIndexTable.accountDetail]: user,
   }));
 };
 const convertFilterToParams = (filterData) => {
@@ -49,6 +60,7 @@ const rowSelection = {
   type: 'checkbox',
   onChange: (selectedRowKeys, selectedRows) => {},
 };
+
 function Account() {
   const { tableStyle } = useContext(AntdSettingContext);
   const [tableBorder] = tableStyle;
@@ -93,20 +105,31 @@ function Account() {
       dataIndex: dataIndexTable.username,
       width: '40%',
       render: (text, record) => (
-        <Link
-          style={
-            record[dataIndexTable.disabled]
-              ? {
-                  color: '#ff4d4f',
-                }
-              : null
-          }
+        <Popover
+          content={<UserCard userData={record[dataIndexTable.accountDetail]} />}
+          placement="right"
         >
-          {text}
-        </Link>
+          <span
+            style={{
+              cursor: 'pointer',
+              color: record[dataIndexTable.disabled] ? '#ff4d4f' : '#1890ff',
+            }}
+          >
+            {text}
+          </span>
+        </Popover>
       ),
     },
     {
+      render: (text, record) => (
+        <span
+          style={{
+            color: record[dataIndexTable.disabled] ? '#ff4d4f' : '#1890ff',
+          }}
+        >
+          {text}
+        </span>
+      ),
       title: 'Cơ quan chủ trì',
       dataIndex: dataIndexTable.organ,
       filters: dataFilterOrgan,
@@ -125,7 +148,19 @@ function Account() {
       // filterMultiple: false, //cho phép lọc theo nhiều hay không
       width: '20%',
     },
-    { title: 'Ngày tạo', dataIndex: dataIndexTable.createDate },
+    {
+      render: (text, record) => (
+        <span
+          style={{
+            color: record[dataIndexTable.disabled] ? '#ff4d4f' : '#1890ff',
+          }}
+        >
+          {text}
+        </span>
+      ),
+      title: 'Ngày tạo',
+      dataIndex: dataIndexTable.createDate,
+    },
     {
       title: 'Hành động',
       align: 'center',
