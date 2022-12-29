@@ -1,9 +1,14 @@
-import { FilterOutlined, WarningOutlined } from '@ant-design/icons';
+import {
+  FilterOutlined,
+  WarningOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import {
   Breadcrumb,
   Button,
+  Input,
   message,
   Popconfirm,
   Popover,
@@ -30,7 +35,6 @@ import * as organService from 'services/OrganService';
 import UserCard from 'components/Account/UserCard';
 const dataIndexTable = {
   id: 'manguoidung',
-  fullname: 'tennguoidung',
   username: 'tentaikhoan',
   organ: 'coquanchutri',
   disabled: 'vohieuhoa',
@@ -54,6 +58,7 @@ const generateTableData = (data) => {
 const convertFilterToParams = (filterData) => {
   return {
     organ: filterData[dataIndexTable.organ]?.[0],
+    username: filterData[dataIndexTable.username]?.[0],
   };
 };
 const rowSelection = {
@@ -70,6 +75,69 @@ function Account() {
   const [filteredInfo, setFilteredInfo] = useState({});
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
 
+  const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => {
+      return (
+        <div
+          style={{
+            padding: 8,
+          }}
+        >
+          <Input
+            placeholder={`Nhập ${inputPlaceHolder}`}
+            value={selectedKeys[0]}
+            onChange={(e) => {
+              setSelectedKeys(e.target.value ? [e.target.value] : []);
+            }}
+            style={{
+              marginBottom: 8,
+              display: 'block',
+            }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => {
+                confirm();
+              }}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters();
+                confirm();
+              }}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </div>
+      );
+    },
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+          fontSize: 18,
+        }}
+      />
+    ),
+  });
   const handleDisabledUser = (userId, disabled) => {
     userSerivce
       .disableUser(userId)
@@ -119,6 +187,8 @@ function Account() {
           </span>
         </Popover>
       ),
+      filteredValue: filteredInfo[dataIndexTable.username] || null,
+      ...getColumnSearchProps(dataIndexTable.username, 'tên tài khoản'),
     },
     {
       render: (text, record) => (

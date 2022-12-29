@@ -32,4 +32,7 @@ const getFormById = (formId) => {
 const getFormFileByFormId = (formId) => {
   return call('GET', `formFile/${formId}`);
 };
-export { existByFormName, getFormById, getFormFileByFormId };
+const getAllFormType = () => {
+  return call('GET', `formType`);
+};
+export { getAllFormType, existByFormName, getFormById, getFormFileByFormId };

@@ -61,8 +61,10 @@ const getAllFormType = () => {
 const deleteForm = (formId) => {
   return call('DELETE', `form/${formId}`);
 };
-const getAllForm = (page, size) => {
-  return call('GET', `form?page=${page}&size=${size}`);
+const getAllForm = (page, size, params) => {
+  return call('GET', `form?page=${page}&size=${size}`, null, {
+    params,
+  });
 };
 
 export {

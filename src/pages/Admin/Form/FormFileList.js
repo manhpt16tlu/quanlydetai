@@ -2,8 +2,11 @@ import {
   DeleteOutlined,
   DownloadOutlined,
   WarningOutlined,
+  SearchOutlined,
+  FilterOutlined,
 } from '@ant-design/icons';
 import {
+  Input,
   Divider,
   Space,
   Table,
@@ -38,30 +41,38 @@ import {
 } from 'configs/general';
 import { AntdSettingContext } from 'context/AntdSettingContext';
 import CustomDivider from 'components/General/CustomDivider';
+const dataIndexTable = {
+  id: 'ma',
+  name: 'tenbieumau',
+  type: 'loai',
+  date: 'ngaybanhanh',
+};
+const generateTableData = (forms) => {
+  return forms.map((form, index) => ({
+    key: index,
+    [dataIndexTable.name]: form.name,
+    [dataIndexTable.date]: moment(form.createDate).format(TIMESTAMP_FORMAT),
+    [dataIndexTable.type]: form.type.title,
+    [dataIndexTable.id]: form.id,
+  }));
+};
+const convertFilterToParams = (filterData) => {
+  return {
+    name: filterData[dataIndexTable.name]?.[0],
+    type: filterData[dataIndexTable.type]?.[0],
+  };
+};
 function FormFileList() {
   const { tableStyle } = useContext(AntdSettingContext);
   const [tableBorder] = tableStyle;
   const [loading, setLoading] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   const [refresh, setRefresh] = useState(false);
-  const dataIndexTable = {
-    id: 'ma',
-    name: 'tenbieumau',
-    type: 'loai',
-    date: 'ngaybanhanh',
-  };
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [dataFilterFormType, setDataFilterFormType] = useState([]);
   const handleRefresh = useCallback(() => {
     setRefresh((prev) => !prev);
   }, []);
-  const generateTableData = (forms) => {
-    return forms.map((form, index) => ({
-      key: index,
-      [dataIndexTable.name]: form.name,
-      [dataIndexTable.date]: moment(form.createDate).format(TIMESTAMP_FORMAT),
-      [dataIndexTable.type]: form.type.title,
-      [dataIndexTable.id]: form.id,
-    }));
-  };
   const handleDownloadForm = async (formId) => {
     const form = (await formService.getFormById(formId).catch((err) => {}))
       ?.data;
@@ -90,6 +101,69 @@ function FormFileList() {
         });
     } else message.error('File không tồn tại');
   };
+  const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => {
+      return (
+        <div
+          style={{
+            padding: 8,
+          }}
+        >
+          <Input
+            placeholder={`Nhập ${inputPlaceHolder}`}
+            value={selectedKeys[0]}
+            onChange={(e) => {
+              setSelectedKeys(e.target.value ? [e.target.value] : []);
+            }}
+            style={{
+              marginBottom: 8,
+              display: 'block',
+            }}
+          />
+          <Space>
+            <Button
+              type="primary"
+              onClick={() => {
+                confirm();
+              }}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => {
+                clearFilters();
+                confirm();
+              }}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </div>
+      );
+    },
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+          fontSize: 18,
+        }}
+      />
+    ),
+  });
   const confirmDeleteForm = (formId) => {
     uploadSerivce
       .deleteForm(formId)
@@ -109,11 +183,26 @@ function FormFileList() {
       dataIndex: dataIndexTable.name,
       width: '45%',
       render: (text, record) => <Link>{text}</Link>,
+      filteredValue: filteredInfo[dataIndexTable.name] || null,
+      ...getColumnSearchProps(dataIndexTable.name, 'tên biểu mẫu'),
     },
     {
       title: 'Loại',
       width: '17%',
       dataIndex: dataIndexTable.type,
+      filters: dataFilterFormType,
+      filteredValue: filteredInfo[dataIndexTable.type] || null,
+      filterSearch: true,
+      filterMultiple: false,
+      // width: '20%',
+      filterIcon: (filtered) => (
+        <FilterOutlined
+          style={{
+            color: filtered ? '#1890ff' : undefined,
+            fontSize: 18,
+          }}
+        />
+      ),
     },
     {
       title: 'Ngày ban hành',
@@ -163,7 +252,8 @@ function FormFileList() {
     },
   ];
   const handleTableChange = (pagination, filters, sorter) => {
-    console.log();
+    //control filter reset
+    setFilteredInfo(filters);
   };
   const paginationProps = {
     current: dataPaging.current,
@@ -181,9 +271,7 @@ function FormFileList() {
     type: 'checkbox',
     onChange: (selectedRowKeys, selectedRows) => {},
   };
-  useEffect(() => {
-    console.log('formfilelist render');
-  });
+
   useEffect(() => {
     console.log('formlist call api');
     const callApi = async () => {
@@ -191,7 +279,8 @@ function FormFileList() {
       const pageResponse = (
         await uploadSerivce.getAllForm(
           dataPaging.current - 1,
-          dataPaging.pageSize
+          dataPaging.pageSize,
+          convertFilterToParams(filteredInfo)
         )
       )?.data;
       dispatch({
@@ -203,7 +292,25 @@ function FormFileList() {
       setLoading(false);
     };
     callApi();
-  }, [dataPaging.current, refresh]);
+  }, [dataPaging.current, filteredInfo, refresh]);
+  useEffect(() => {
+    const callApi = async () => {
+      try {
+        setLoading(true);
+        const formTypeList = (await formService.getAllFormType())?.data;
+        const formTypeListFilter = formTypeList.map((type, i) => ({
+          text: type.name ?? type.title,
+          value: JSON.stringify(type),
+        }));
+        setDataFilterFormType(formTypeListFilter);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        message.error('Có lỗi xảy ra');
+      }
+    };
+    callApi();
+  }, []);
   return (
     <>
       <Breadcrumb>
@@ -217,6 +324,7 @@ function FormFileList() {
       <CustomDivider text="Danh sách biểu mẫu" orientation="left" />
       <Spin spinning={loading}>
         <Table
+          onChange={handleTableChange}
           bordered={tableBorder}
           rowSelection={rowSelection}
           columns={tableColumn}
