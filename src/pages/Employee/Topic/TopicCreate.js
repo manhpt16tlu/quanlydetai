@@ -24,7 +24,6 @@ import {
   TOPIC_STATUS_DEFAULT,
 } from 'configs/general';
 import { useEffect, useReducer, useState } from 'react';
-import * as countService from 'services/CountService';
 import * as organService from 'services/OrganService';
 import * as fieldService from 'services/TopicFieldService';
 import * as resultService from 'services/TopicResultService';
@@ -164,8 +163,9 @@ function TopicCreate() {
             })
             .catch((err) => {
               if (createdTopicId) {
+                //liên quan đến soft delete cần refactor
                 //delete record topic
-                topicService.deleteById(createdTopicId).catch(() => {});
+                // topicService.deleteById(createdTopicId).catch(() => {});
               }
               console.log(err);
               openNotificationWithIcon('error', 'Tạo đề tài', 'top');
@@ -289,6 +289,7 @@ function TopicCreate() {
           ]}
         >
           <TextArea
+            spellCheck={false}
             autoSize={{
               minRows: 1,
               maxRows: 2,

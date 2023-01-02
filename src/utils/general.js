@@ -1,6 +1,7 @@
 import { notification } from 'antd';
-import { TABLE_PAGE_SIZE } from 'configs/general';
+import { TABLE_PAGE_SIZE, DOC, DOCUMENT_TITLE } from 'configs/general';
 import produce from 'immer';
+import { Route } from 'react-router-dom';
 const openNotificationWithIcon = (type, action, placement, mess) => {
   notification[type]({
     message: `${capitalizeFirstLetter(type)}`,
@@ -77,11 +78,39 @@ const pageReducer = (state, action) => {
   }
 };
 const generateManagerName = (manager) => {
-  return `${
-    manager.rank?.name ? `${manager.rank.name}. ` : ''
-  }${capitalizeFirstLetterEachWord(manager.name)}`;
+  //prettier-ignore
+  return `${manager?.rank?.name ? `${manager.rank.name}. ` : ''}${capitalizeFirstLetterEachWord(manager.name)}`;
+};
+const generateNestedRoutes = (childRoutes) => {
+  let indexRoute;
+  const routes = childRoutes.map((route, index) => {
+    if (route.index)
+      indexRoute = <Route index key={index} element={route.component} />;
+    return <Route key={index} path={route.path} element={route.component} />;
+  });
+  routes.push(indexRoute);
+  return routes;
+};
+function getMenuItemObj(label, key, icon, children, type) {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  };
+}
+const setDocumentTitle = (path) => {
+  document.title = DOCUMENT_TITLE[path] ?? 'Page not found - QuanLyDeTai';
+};
+const generateMoneyString = (money) => {
+  return `${money}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 export {
+  generateMoneyString,
+  setDocumentTitle,
+  getMenuItemObj,
+  generateNestedRoutes,
   generateManagerName,
   INITIAL_PAGE_STATE,
   pageReducer,

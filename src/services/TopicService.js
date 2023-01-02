@@ -64,24 +64,26 @@ const getFilteredApproved = (
   );
 };
 
-const getAllByUsernameWithFilter = (username, page, size, params) => {
+const getAllByUsernameWithFilter = (username, page, size, params, signal) => {
   return call(
     'GET',
     `topic/getAllByUser/${username}?page=${page}&size=${size}`,
     undefined,
     {
+      signal,
       params,
     }
   );
 };
 
-const getAllByAdminWithFilter = (page, size, params) => {
+const getAllByAdminWithFilter = (page, size, params, signal) => {
   return call(
     'GET',
     `topic/adminGetTopics/?page=${page}&size=${size}`,
     undefined,
     {
       params,
+      signal,
     }
   );
 };

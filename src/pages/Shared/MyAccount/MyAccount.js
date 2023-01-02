@@ -1,15 +1,17 @@
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { Breadcrumb, Button, Form, Input, Space } from 'antd';
+import { faAddressCard, faKey } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Breadcrumb, Col, Menu, Row } from 'antd';
 import CustomDivider from 'components/General/CustomDivider';
-import { MESSAGE_REQUIRE } from 'configs/general';
-import { Link } from 'react-router-dom';
+import { routes as routesConfig } from 'configs/general';
+import { Link, Outlet } from 'react-router-dom';
+import { getMenuItemObj } from 'utils/general';
+
 function MyAccount() {
-  const onFinish = (values) => {
-    console.log('Success:', values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
+  // prettier-ignore
+  const items = [
+    getMenuItemObj( <Link to={routesConfig.myAccountProfileEdit}>Chỉnh sửa thông tin</Link>,routesConfig.myAccountProfileEdit, <FontAwesomeIcon icon={faAddressCard} />),
+    getMenuItemObj( <Link to={routesConfig.myAccountPasswordChange}>Đổi mật khẩu</Link>,routesConfig.myAccountPasswordChange , <FontAwesomeIcon icon={faKey} />),
+  ];
   return (
     <>
       <Breadcrumb>
@@ -18,84 +20,23 @@ function MyAccount() {
         </Breadcrumb.Item>
         <Breadcrumb.Item>Tài khoản của tôi</Breadcrumb.Item>
       </Breadcrumb>
-      <CustomDivider size={5} text="Thông tin tài khoản" orientation="left" />
-      <Form
-        labelAlign="left"
-        labelCol={{
-          span: 4,
-          offset: 1,
-        }}
-        wrapperCol={{
-          span: 8,
-        }}
-        initialValues={{}}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        style={{
-          marginTop: 30,
-        }}
-      >
-        <Form.Item
-          label="Họ tên"
-          name=""
-          rules={[
-            {
-              required: true,
-              message: MESSAGE_REQUIRE,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item label="Tên tài khoản" name="">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Cơ quan trực thuộc" name="">
-          <Input />
-        </Form.Item>
-
-        <Form.Item label="Địa chỉ">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Số điện thoại">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Email">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Bằng cấp" name="">
-          <Input />
-        </Form.Item>
-        {/* <Form.Item
-          label="Password"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
-        >
-          <Input.Password />
-        </Form.Item> */}
-        <Form.Item
-          wrapperCol={{
-            offset: 5,
-            span: 8,
-          }}
-        >
-          <Space>
-            <Button type="primary" htmlType="submit">
-              <CheckCircleOutlined />
-              Lưu
-            </Button>
-            <Button type="primary" danger disabled>
-              <CloseCircleOutlined />
-              Hủy
-            </Button>
-          </Space>
-        </Form.Item>
-      </Form>
+      <CustomDivider text="Thông tin tài khoản" />
+      <Row>
+        <Col span={5}>
+          <Menu
+            style={{
+              width: '100%',
+            }}
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            mode="inline"
+            items={items}
+          />
+        </Col>
+        <Col span={19}>
+          <Outlet />
+        </Col>
+      </Row>
     </>
   );
 }

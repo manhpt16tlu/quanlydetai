@@ -32,6 +32,7 @@ import * as topicService from 'services/TopicService';
 import * as statusService from 'services/TopicStatusService';
 import {
   capitalizeFirstLetterEachWord,
+  generateManagerName,
   openNotificationWithIcon,
 } from 'utils/general';
 import CustomDivider from 'components/General/CustomDivider';
@@ -64,7 +65,7 @@ const generateTableData = (data) => {
     [dataIndexTable.id]: topic.id,
     [dataIndexTable.name]: topic.name,
     [dataIndexTable.organ]: topic.manager.organ.name,
-    [dataIndexTable.manager]: `${topic.manager?.rank?.name ?? ''}. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
+    [dataIndexTable.manager]: generateManagerName(topic.manager),
     [dataIndexTable.status]: topic.topicStatus.title,
     [dataIndexTable.time]: generateDateString(topic.startDate, topic.endDate),
     [dataIndexTable.accountDetail]:topic.manager
@@ -90,12 +91,16 @@ function TopicList() {
   const [reload, setReload] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   useEffect(() => {
+    //for cleanup funtion
+    const controller = new AbortController();
+
     setLoading(true);
     topicService
       .getAllByAdminWithFilter(
         dataPaging.current - 1,
         dataPaging.pageSize,
-        convertFilterToParams(filteredInfo)
+        convertFilterToParams(filteredInfo),
+        controller.signal
       )
       .then((response) => {
         dispatch({
@@ -110,6 +115,9 @@ function TopicList() {
         console.log(err);
         openNotificationWithIcon('error', null, 'top');
       });
+    return () => {
+      controller.abort();
+    };
   }, [dataPaging.current, filteredInfo, reload]);
 
   useEffect(() => {

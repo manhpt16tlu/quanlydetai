@@ -27,7 +27,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as topicService from 'services/TopicService';
 import * as fileService from 'services/UploadFileService';
 import {
-  capitalizeFirstLetterEachWord,
+  generateManagerName,
   getFileNameFromHeaderDisposition,
 } from 'utils/general';
 const { TextArea } = Input;
@@ -108,9 +108,7 @@ function TopicDetail() {
                   moment(topic.endDate, dateFormat),
                 ],
                 [formFieldNames.organ]: topic.manager.organ.name,
-                [formFieldNames.manager]: `${
-                  topic.manager.rank.name ?? ''
-                }. ${capitalizeFirstLetterEachWord(topic.manager.name)}`,
+                [formFieldNames.manager]: generateManagerName(topic.manager),
                 [formFieldNames.field]: topic.topicField.title,
                 [formFieldNames.status]: topic.topicStatus.title,
                 [formFieldNames.result]:
@@ -125,6 +123,7 @@ function TopicDetail() {
           }
         } else navigate(routesConfig.notFoundRedirect);
       } catch (error) {
+        console.log(error);
         message.error('Có lỗi xảy ra');
       }
     };

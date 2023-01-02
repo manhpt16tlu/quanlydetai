@@ -30,6 +30,7 @@ import {
   INITIAL_PAGE_STATE,
   openNotificationWithIcon,
   pageReducer,
+  generateMoneyString,
 } from 'utils/general';
 import { generateDateString } from 'utils/topicUtil';
 
@@ -48,7 +49,7 @@ const generateTableData = (data) => {
     [dataIndexTable.name]: topic.name,
     [dataIndexTable.organ]: topic.manager.organ.name,
     [dataIndexTable.time]: generateDateString(topic.startDate, topic.endDate),
-    [dataIndexTable.expense]: topic.expense,
+    [dataIndexTable.expense]: generateMoneyString(topic.expense),
   }));
 };
 const convertFilterToParams = (filterData) => {

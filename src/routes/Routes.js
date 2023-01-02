@@ -3,7 +3,6 @@ import FormFileList from 'pages/Admin/Form/FormFileList';
 import Home from 'pages/Admin/Home/Home';
 import Organ from 'pages/Admin/Organ/Organ';
 import UISetup from 'pages/Admin/Setup/UISetup';
-import TopicApprove from 'pages/Admin/Topic/TopicApprove';
 import TopicDetail from 'pages/Admin/Topic/TopicDetail';
 import TopicList from 'pages/Admin/Topic/TopicList';
 import EmployeeForm from 'pages/Employee/Form/FormFileList';
@@ -19,6 +18,8 @@ import Account from 'pages/Admin/Account/Account';
 import MyAccount from 'pages/Shared/MyAccount/MyAccount';
 import TopicSetup from 'pages/Admin/Setup/TopicSetup';
 import TopicApproveV2 from 'pages/Admin/Topic/TopicApprove_v2';
+import Profile from 'pages/Shared/MyAccount/Profile';
+import Password from 'pages/Shared/MyAccount/Password';
 
 const privateRoutes = {
   [ROLES.admin]: [
@@ -99,6 +100,17 @@ const privateRoutes = {
     {
       path: routesConfig.myAccount,
       component: <MyAccount />,
+      child: [
+        {
+          path: routesConfig.myAccountProfileEdit,
+          component: <Profile />,
+          index: true,
+        },
+        {
+          path: routesConfig.myAccountPasswordChange,
+          component: <Password />,
+        },
+      ],
       differentLayout: true, // chung route nhưng khác layout
     },
   ],

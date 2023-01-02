@@ -70,7 +70,7 @@ function TopicList() {
 
   useEffect(() => {
     //for cleanup funtion
-    // const controller = new AbortController();
+    const controller = new AbortController();
 
     setLoading(true);
     topicService
@@ -78,10 +78,8 @@ function TopicList() {
         userStorage.username,
         dataPaging.current - 1,
         dataPaging.pageSize,
-        convertFilterToParams(filteredInfo)
-        // {
-        //   signal: controller.signal,
-        // }
+        convertFilterToParams(filteredInfo),
+        controller.signal
       )
       .then((data) => {
         setTableData(generateTableData(data.data.content));
@@ -96,10 +94,10 @@ function TopicList() {
         console.log(err);
         openNotificationWithIcon('error', null, 'top');
       });
-    //cleanup function
-    // return () => {
-    //   controller.abort();
-    // };
+    // cleanup function
+    return () => {
+      controller.abort();
+    };
   }, [dataPaging.current, filteredInfo, refresh]);
 
   useEffect(() => {

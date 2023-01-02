@@ -1,4 +1,5 @@
 import api from 'configs/api';
+import { REQUEST_METHOD_NAME } from 'configs/general';
 const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
@@ -17,8 +18,8 @@ const call = async function (method, url, body, config) {
       break;
     }
     case 'PATCH': {
-      const data = body ? await api.patch(url, body) : await api.patch(url);
-      ret = data.data;
+      const axiosResponse = await api.patch(url, body, config);
+      ret = axiosResponse.data;
       break;
     }
     default:
@@ -38,4 +39,19 @@ const getAllUser = (page, size, params) => {
 const disableUser = (userId) => {
   return call('PATCH', `user/disable/${userId}`, null);
 };
-export { getUserByUsername, existByUserName, getAllUser, disableUser };
+const updateInformation = (userId, body) => {
+  return call(REQUEST_METHOD_NAME.patch, `user/${userId}`, body);
+};
+const changePassword = (params) => {
+  return call(REQUEST_METHOD_NAME.patch, `user/changepassword`, null, {
+    params,
+  });
+};
+export {
+  changePassword,
+  updateInformation,
+  getUserByUsername,
+  existByUserName,
+  getAllUser,
+  disableUser,
+};

@@ -63,7 +63,7 @@ function Login() {
             fail: true,
             message: 'Tài khoản hoặc mật khẩu không chính xác',
           });
-        form.resetFields();
+        form.resetFields([formFieldNames.pass]);
       });
   };
   const onFinishFailed = (errorInfo) => {

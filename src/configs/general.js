@@ -12,7 +12,7 @@ const routes = {
     home: '/',
   },
   [ROLES.admin]: {
-    topicCreate: '/admin/topic/create',
+    // topicCreate: '/admin/topic/create',
     topicList: '/admin/topic/list',
     topicApprove: '/admin/topic/approve',
     topicDetail: '/admin/topic/detail',
@@ -24,6 +24,8 @@ const routes = {
     accounts: '/admin/accounts',
   },
   myAccount: '/myAccount',
+  myAccountProfileEdit: 'profile', //nested route
+  myAccountPasswordChange: 'password/change', //nested route
   notFoundNavigate: '/notfound',
   notFound: '*',
   register: '/register',
@@ -50,8 +52,30 @@ const FILE_TYPE = {
   topic: 'topic',
   form: 'form',
 };
-
-const TABLE_PAGE_SIZE = 3;
+const DOCUMENT_TITLE = {
+  [routes.login]: 'Đăng nhập',
+  [routes.register]: 'Đăng ký tài khoản',
+  [routes[ROLES.employee].topicCreate]: 'Đề xuất đề tài',
+  [routes[ROLES.employee].topicDetail]: 'Chi tiết đề tài',
+  [routes[ROLES.employee].setup]: 'Thiết lập ứng dụng',
+  [routes[ROLES.employee].topicList]: 'Danh sách đề tài',
+  [routes[ROLES.employee].accounts]: 'Quản lý tài khoản',
+  [routes[ROLES.employee].form]: 'Danh sách biểu mẫu',
+  [routes[ROLES.employee].home]: 'Trang chủ',
+  [routes[ROLES.admin].topicList]: 'Danh sách đề tài',
+  [routes[ROLES.admin].home]: 'Trang chủ',
+  [routes[ROLES.admin].topicApprove]: 'Phê duyệt đề tài',
+  [routes[ROLES.admin].organ]: 'Quản lý cơ quan',
+  [routes[ROLES.admin].form]: 'Quản lý biểu mẫu',
+  [routes[ROLES.admin].accounts]: 'Quản lý tài khoản',
+  [routes[ROLES.admin].uiSetup]: 'Thiết lập giao diện',
+  [routes[ROLES.admin].topicSetup]: 'Thiết lập đề tài',
+  [routes.myAccount]: 'Tài khoản của tôi',
+  [routes.notFoundNavigate]: 'Page not found - QuanLyDeTai',
+  [routes.myAccount + '/' + routes.myAccountPasswordChange]: 'Đổi mật khẩu',
+  [routes.myAccount + '/' + routes.myAccountProfileEdit]: 'Thông tin tài khoản',
+};
+const TABLE_PAGE_SIZE = 7;
 // khớp với backend
 const TOPIC_STATUS_DEFAULT = {
   CHUA_DUYET: 'Chưa duyệt',
@@ -75,7 +99,16 @@ const MESSAGE_RESPONSE = {
   USER_DISABLED: 'User is disabled', // lấy từ backend response để check
   USER_UNAUTHORIZED: 'Can not authenticate user',
 };
+const REQUEST_METHOD_NAME = {
+  get: 'GET',
+  post: 'POST',
+  put: 'PUT',
+  patch: 'PATCH',
+  delete: 'DELETE',
+};
 export {
+  REQUEST_METHOD_NAME,
+  DOCUMENT_TITLE,
   TABLE_PAGE_SIZE,
   TOPIC_RESULT_DEFAULT,
   TOPIC_STATUS_DEFAULT,
