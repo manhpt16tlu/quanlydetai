@@ -65,6 +65,7 @@ const DOCUMENT_TITLE = {
   [routes[ROLES.admin].topicList]: 'Danh sách đề tài',
   [routes[ROLES.admin].home]: 'Trang chủ',
   [routes[ROLES.admin].topicApprove]: 'Phê duyệt đề tài',
+  [routes[ROLES.admin].topicDetail]: 'Chi tiết đề tài',
   [routes[ROLES.admin].organ]: 'Quản lý cơ quan',
   [routes[ROLES.admin].form]: 'Quản lý biểu mẫu',
   [routes[ROLES.admin].accounts]: 'Quản lý tài khoản',

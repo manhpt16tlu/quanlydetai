@@ -1,4 +1,5 @@
 import { TOPIC_RESULT_DEFAULT, TOPIC_STATUS_DEFAULT } from 'configs/general';
+import * as topicService from 'services/TopicService';
 import {
   PieChart,
   Pie,
@@ -7,23 +8,79 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Col, Row, Typography } from 'antd';
+import { Col, message, Row, Typography } from 'antd';
+import { useEffect } from 'react';
+import { useReducer } from 'react';
+import produce from 'immer';
 const { Title } = Typography;
+const chartName = {
+  result: 'ketqua',
+  status: 'trangthai',
+};
+const initChartData = {
+  [chartName.result]: [],
+  [chartName.status]: [],
+};
+// prettier-ignore
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH':
+      return produce(state, (draft) => {
+        //dùng immer nên có thể mutate state
+        draft[chartName.status] = action.payload[chartName.status];
+        draft[chartName.result] = action.payload[chartName.result];
+      
+      });
+
+    default:
+      return state;
+  }
+};
 function Home() {
   const COLORS = ['#0088FE', '#ff4d4f', '#bfbfbf', '#a0d911', '#fadb14'];
-  const data01 = [
-    { name: TOPIC_RESULT_DEFAULT.DAT, value: 5 },
-    { name: TOPIC_RESULT_DEFAULT.KHONG_DAT, value: 10 },
-    { name: 'Chưa đánh giá', value: 7 },
-    { name: TOPIC_RESULT_DEFAULT.TOT, value: 2 },
-    { name: TOPIC_RESULT_DEFAULT.XUAT_SAC, value: 1 },
-  ];
-  const data02 = [
-    { name: TOPIC_STATUS_DEFAULT.DANG_THUC_HIEN, value: 7 },
-    { name: TOPIC_STATUS_DEFAULT.DA_NGHIEM_THU, value: 3 },
-    { name: TOPIC_STATUS_DEFAULT.CHUA_DUYET, value: 2 },
-    { name: TOPIC_STATUS_DEFAULT.DA_PHE_DUYET, value: 5 },
-  ];
+  const [chartData, dispatch] = useReducer(reducer, initChartData);
+
+  useEffect(() => {
+    // prettier-ignore
+    const callApi = async () => {
+      try { 
+        const CHUA_DUYET = (await topicService.countByManagerAndStatus({status:TOPIC_STATUS_DEFAULT.CHUA_DUYET}))?.data;
+        const DANG_THUC_HIEN = (await topicService.countByManagerAndStatus({status:TOPIC_STATUS_DEFAULT.DANG_THUC_HIEN}))?.data;
+        const DA_PHE_DUYET = (await topicService.countByManagerAndStatus({status:TOPIC_STATUS_DEFAULT.DA_PHE_DUYET}))?.data;
+        const DA_NGHIEM_THU = (await topicService.countByManagerAndStatus({status:TOPIC_STATUS_DEFAULT.DA_NGHIEM_THU}))?.data;
+  
+        const DAT = (await topicService.countByManagerAndResult({result:TOPIC_RESULT_DEFAULT.DAT}))?.data;
+        const  KHONG_DAT= (await topicService.countByManagerAndResult({result:TOPIC_RESULT_DEFAULT.KHONG_DAT}))?.data;
+        const KHONG_XAC_DINH = (await topicService.countByManagerAndResult({result:TOPIC_RESULT_DEFAULT.KHONG_XAC_DINH}))?.data;
+        const TOT = (await topicService.countByManagerAndResult({result:TOPIC_RESULT_DEFAULT.TOT}))?.data;
+        const  XUAT_SAC = (await topicService.countByManagerAndResult({result:TOPIC_RESULT_DEFAULT.XUAT_SAC}))?.data;
+        dispatch({
+          type:'FETCH',
+          payload:{
+            [chartName.status]:[
+              { name: TOPIC_STATUS_DEFAULT.DANG_THUC_HIEN, value: DANG_THUC_HIEN },
+              { name: TOPIC_STATUS_DEFAULT.DA_NGHIEM_THU, value: DA_NGHIEM_THU},
+              { name: TOPIC_STATUS_DEFAULT.CHUA_DUYET, value: CHUA_DUYET },
+              { name: TOPIC_STATUS_DEFAULT.DA_PHE_DUYET, value:DA_PHE_DUYET }
+            ],
+            [chartName.result]:[
+              { name: TOPIC_RESULT_DEFAULT.DAT, value: DAT },
+              { name: TOPIC_RESULT_DEFAULT.KHONG_DAT, value: KHONG_DAT},
+              { name: "Chưa được đánh giá",value: KHONG_XAC_DINH },
+              { name: TOPIC_RESULT_DEFAULT.TOT, value:TOT },
+              { name: TOPIC_RESULT_DEFAULT.XUAT_SAC, value:XUAT_SAC }
+            ],
+            
+          }
+        })
+      } catch (error) {
+        console.log(error);
+        message.error('Có lỗi xảy ra');
+      }
+    
+    };
+    callApi();
+  }, []);
 
   return (
     <>
@@ -36,14 +93,14 @@ function Home() {
             <PieChart>
               <Pie
                 dataKey="value"
-                isAnimationActive={true}
-                data={data01}
+                isAnimationActive={false}
+                data={chartData[chartName.result]}
                 cy={200}
                 outerRadius={120}
                 fill="#8884d8"
                 label
               >
-                {data01.map((entry, index) => (
+                {chartData[chartName.result].map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -63,14 +120,14 @@ function Home() {
             <PieChart>
               <Pie
                 dataKey="value"
-                isAnimationActive={true}
-                data={data02}
+                isAnimationActive={false}
+                data={chartData[chartName.status]}
                 cy={200}
                 outerRadius={120}
                 fill="#8884d8"
                 label
               >
-                {data01.map((entry, index) => (
+                {chartData[chartName.status].map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}

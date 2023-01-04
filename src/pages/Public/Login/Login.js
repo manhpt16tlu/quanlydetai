@@ -17,7 +17,7 @@ import {
   routes as routesConfig,
 } from 'configs/general';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import * as authService from 'services/AuthService';
 import CustomDivider from 'components/General/CustomDivider';
 import { Link as RouteLink } from 'react-router-dom';
@@ -127,9 +127,7 @@ function Login() {
               <Form.Item valuePropName="checked" noStyle>
                 <Checkbox>Remember me</Checkbox>
               </Form.Item>
-              <a style={{ float: 'right' }} href="">
-                Quên mật khẩu
-              </a>
+              <Link style={{ float: 'right' }}>Quên mật khẩu</Link>
             </Form.Item>
             <Form.Item>
               <Button block type="primary" htmlType="submit">

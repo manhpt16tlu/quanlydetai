@@ -1,4 +1,5 @@
 import api from 'configs/api';
+import { REQUEST_METHOD_NAME } from 'configs/general';
 const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
@@ -128,7 +129,31 @@ const deleteById = (topicId) => {
 const existByName = (topicName) => {
   return call('GET', `topic/existByName?name=${encodeURI(topicName)}`);
 };
+const countByManagerAndStatus = (params) => {
+  return call(REQUEST_METHOD_NAME.get, `topic/countByManagerAndStatus`, null, {
+    params,
+  });
+};
+const countByStatus = (params) => {
+  return call(REQUEST_METHOD_NAME.get, `topic/countByStatus`, null, {
+    params,
+  });
+};
+const countByResult = (params) => {
+  return call(REQUEST_METHOD_NAME.get, `topic/countByResult`, null, {
+    params,
+  });
+};
+const countByManagerAndResult = (params) => {
+  return call(REQUEST_METHOD_NAME.get, `topic/countByManagerAndResult`, null, {
+    params,
+  });
+};
 export {
+  countByStatus,
+  countByResult,
+  countByManagerAndResult,
+  countByManagerAndStatus,
   getNotApproveTopicList,
   getAllByAdminWithFilter,
   getAllByUsernameWithFilter,

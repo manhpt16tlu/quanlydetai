@@ -277,7 +277,6 @@ function Profile() {
         </Form.Item>
         <Form.Item label="Chức danh" name={formFieldName.rank}>
           <Select
-            notFoundContent={'x'}
             placeholder="Chọn chức danh"
             allowClear
             showSearch
