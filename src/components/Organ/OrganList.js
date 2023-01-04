@@ -115,7 +115,7 @@ function OrganList({ refresh }) {
     },
     {
       title: 'Địa chỉ',
-      width: '20%',
+      // width: '20%',
       dataIndex: dataIndexTable.address,
       render: (text, record) => {
         if (editingKey === record.key) {
@@ -127,7 +127,7 @@ function OrganList({ refresh }) {
     {
       title: 'Email',
       dataIndex: dataIndexTable.email,
-      width: '20%',
+      // width: '20%',
       render: (text, record) => {
         if (editingKey === record.key) {
           return getFormItemEdit(dataIndexTable.email, 'email');
