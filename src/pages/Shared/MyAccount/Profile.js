@@ -1,3 +1,4 @@
+import { WarningOutlined } from '@ant-design/icons';
 import {
   Form,
   Input,
@@ -11,8 +12,15 @@ import {
   Upload,
   message,
   Select,
+  Spin,
+  Popconfirm,
 } from 'antd';
-import { MESSAGE_REQUIRE } from 'configs/general';
+import {
+  AVATAR_MIME_TYPE,
+  FILE_TYPE,
+  MAX_AVATAR_SIZE,
+  MESSAGE_REQUIRE,
+} from 'configs/general';
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -20,12 +28,16 @@ import {
 } from '@ant-design/icons';
 import produce from 'immer';
 import { useEffect, useReducer, useState } from 'react';
-import avatar from 'assets/images/default_avatar.jpg';
+import defaultAvatar from 'assets/images/default_avatar.jpg';
 import * as userService from 'services/UserService';
 import * as rankService from 'services/UserRankService';
 import * as authService from 'services/AuthService';
-import { openNotificationWithIcon } from 'utils/general';
-// import { optionSelectFillOBJ } from 'utils/topicUtil';
+import * as fileService from 'services/UploadFileService';
+import * as avatarService from 'services/UserAvatarService';
+import {
+  getFileNameFromHeaderDisposition,
+  openNotificationWithIcon,
+} from 'utils/general';
 import isEqual from 'lodash/isEqual';
 
 const { Title } = Typography;
@@ -45,6 +57,7 @@ const disableInput = {
 };
 const initFormData = {
   user: undefined,
+  avatarResourceResponse: undefined,
   data: {
     [formFieldName.fullname]: undefined,
     [formFieldName.username]: undefined,
@@ -67,6 +80,7 @@ const reducer = (state, action) => {
         draft.data[formFieldName.rank]=action.payload.data[formFieldName.rank];
         draft.option[formFieldName.rank]=action.payload.option[formFieldName.rank];
         draft.user=action.payload.user;
+        draft.avatarResourceResponse = action.payload.avatarResourceResponse;
       });
 
     default:
@@ -95,6 +109,8 @@ function Profile() {
   const [formData, dispatch] = useReducer(reducer, initFormData);
   const [disableResetBtn, setDisableResetBtn] = useState(true);
   const [refresh, setRefresh] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+
   const onFinish = (values) => {
     //xem dữ liệu có thay đổi không
     if (!isEqual(values, formData.data)) {
@@ -119,6 +135,16 @@ function Profile() {
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
+  const handleDeleteAvatar = async () => {
+    try {
+      await avatarService.removeAvatar();
+      setRefresh((prev) => !prev);
+      message.success('Xóa thành công');
+    } catch (error) {
+      console.log(error);
+      message.error('Có lỗi xảy ra');
+    }
+  };
   const handleFormValuesChange = (changedValues, allValues) => {
     setDisableResetBtn(false);
   };
@@ -126,22 +152,54 @@ function Profile() {
     form.resetFields();
     setDisableResetBtn(true);
   };
-  const handleAvatarChange = async () => {};
+  const uploadAvatar = async ({ file }) => {
+    try {
+      setAvatarLoading(true);
+      const formData = new FormData();
+      formData.append('fileUpload', file);
+      await fileService.uploadAvatar(formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setRefresh((prev) => !prev);
+      message.success('Cập nhật thành công');
+    } catch (error) {
+      console.log(error);
+      message.error('Có lỗi xảy ra');
+    }
+  };
+  const getAvatarFromResourceResponse = (response) => {
+    if (response) {
+      const url = URL.createObjectURL(response.data);
+      return url;
+    } else return null;
+  };
   useEffect(() => {
     form.resetFields();
   }, [formData]);
   useEffect(() => {
     const callApi = async () => {
       try {
+        setAvatarLoading(true);
         //prettier-ignore
         if (userStorage?.username) {
           const userData = (await userService.getUserByUsername(userStorage?.username))?.data;
           const listRank = (await rankService.getAll())?.data;
+          const avatarFileInfor = (await avatarService.getAvatarFileOfCurrentUser())?.data;
+          
+          let resourceResponse;
+          if(avatarFileInfor){
+             resourceResponse = await fileService.download(FILE_TYPE.avatar,avatarFileInfor.code,{
+             responseType: 'blob',
+            });
+          }
           
           dispatch({
             type: 'FETCH',
             payload:{
               user:userData,
+              avatarResourceResponse: resourceResponse,
               data:{
                 [formFieldName.fullname]: userData?.name,
                 [formFieldName.username]:  userData?.username,
@@ -153,6 +211,7 @@ function Profile() {
               }
             }
           });
+          setAvatarLoading(false);
         }
       } catch (error) {
         console.log(error);
@@ -161,6 +220,27 @@ function Profile() {
     };
     callApi();
   }, [refresh]);
+  const uploadProps = {
+    accept: 'image/*', // hiện danh sách loại file khi người dùng mở bảng upload file
+    customRequest: uploadAvatar,
+    showUploadList: false, // không hiển thị list file uploaded
+    beforeUpload: (file) => {
+      //check file type upload
+      if (!Object.values(AVATAR_MIME_TYPE).includes(file.type)) {
+        message.error('Không hỗ trợ loại file này');
+        return Upload.LIST_IGNORE;
+      } else if (file.size > MAX_AVATAR_SIZE) {
+        //check file zie
+        message.error(
+          `Không thể upload ảnh lớn hơn ${Math.round(MAX_AVATAR_SIZE / 1000)}KB`
+        );
+        return Upload.LIST_IGNORE; // không chấp nhận file
+      }
+      return true; // return false thì dừng upload
+    },
+    multiple: false, // k chọn nhiều file cùng lúc bằng phím ctl
+    maxCount: 1, // giới hạn tệp upload,cái sau thay thế cái trước nếu = 1
+  };
   return (
     <>
       <Form
@@ -191,28 +271,61 @@ function Profile() {
                 textAlign: 'right',
               }}
             >
-              <Avatar size={60} src={<Image src={avatar} />} />
+              <Avatar
+                size={60}
+                src={
+                  <Image
+                    src={
+                      getAvatarFromResourceResponse(
+                        formData.avatarResourceResponse
+                      ) ?? defaultAvatar
+                    }
+                  />
+                }
+              />
             </Col>
             <Col span={8} offset={1}>
-              <Title
-                level={5}
-                style={{
-                  marginBottom: 0,
-                }}
-              >
-                {userStorage?.username}
-              </Title>
-              <Upload>
-                <Button
-                  onClick={handleAvatarChange}
+              <Spin spinning={avatarLoading}>
+                <Title
+                  level={5}
                   style={{
-                    padding: 0,
+                    marginBottom: 7,
                   }}
-                  type="link"
                 >
-                  Thay đổi ảnh đại diện
-                </Button>
-              </Upload>
+                  {userStorage?.username}
+                </Title>
+                <Upload {...uploadProps}>
+                  <Button
+                    style={{
+                      padding: 0,
+                      marginBottom: 7,
+                    }}
+                    type="link"
+                  >
+                    Cập nhật ảnh đại diện
+                  </Button>
+                </Upload>
+                <br />
+                {formData.avatarResourceResponse ? (
+                  <Popconfirm
+                    placement="right"
+                    title="Xóa ảnh đại diện ?"
+                    onConfirm={handleDeleteAvatar}
+                    okText="Có"
+                    cancelText="Không"
+                    icon={<WarningOutlined />}
+                  >
+                    <Button
+                      style={{
+                        padding: 0,
+                      }}
+                      type="link"
+                    >
+                      Xóa ảnh đại diện
+                    </Button>
+                  </Popconfirm>
+                ) : null}
+              </Spin>
             </Col>
           </Row>
         </Form.Item>

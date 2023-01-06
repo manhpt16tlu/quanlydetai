@@ -42,7 +42,12 @@ const MIME_TYPE = {
   xls: 'application/vnd.ms-excel',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 };
+const AVATAR_MIME_TYPE = {
+  png: 'image/png',
+  jpeg: 'image/jpeg',
+};
 const MAX_FILE_SIZE = 10000000; //10mb
+const MAX_AVATAR_SIZE = 300000;
 const TIMESTAMP_FORMAT = 'MMMM DD YYYY, h:mm:ss a';
 const TOPIC_FILE_TYPE = {
   outline: 'Đề cương',
@@ -51,6 +56,7 @@ const TOPIC_FILE_TYPE = {
 const FILE_TYPE = {
   topic: 'topic',
   form: 'form',
+  avatar: 'avatar',
 };
 const DOCUMENT_TITLE = {
   [routes.login]: 'Đăng nhập',
@@ -108,6 +114,8 @@ const REQUEST_METHOD_NAME = {
   delete: 'DELETE',
 };
 export {
+  MAX_AVATAR_SIZE,
+  AVATAR_MIME_TYPE,
   REQUEST_METHOD_NAME,
   DOCUMENT_TITLE,
   TABLE_PAGE_SIZE,

@@ -4,12 +4,18 @@ import {
   PhoneOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
-import { Card, Avatar, Image } from 'antd';
+import { Card, Avatar, Image, message } from 'antd';
 import cover from 'assets/images/bg.png';
-import avatar from 'assets/images/default_avatar.jpg';
+import defaultAvatar from 'assets/images/default_avatar.jpg';
+import * as avatarService from 'services/UserAvatarService';
+import * as fileService from 'services/UploadFileService';
+import { useEffect, useState } from 'react';
 import { generateManagerName } from 'utils/general';
+import { FILE_TYPE } from 'configs/general';
 const { Meta } = Card;
 function UserCard({ userData, dataIndex }) {
+  //prettier-ignore
+  const [avatarResourceResponse, setAvatarResourceResponse] = useState(undefined);
   const title = (
     <>
       <p style={{ margin: 0 }}>{generateManagerName(userData ?? {})}</p>
@@ -24,6 +30,34 @@ function UserCard({ userData, dataIndex }) {
       <p style={{ margin: 0 }}><HomeOutlined /> Trần Phú Hà Đông, Bắc Kinh</p>
     </>
   );
+  const getAvatarFromResourceResponse = (response) => {
+    if (response) {
+      const url = URL.createObjectURL(response.data);
+      return url;
+    }
+    return null;
+  };
+  useEffect(() => {
+    const callApi = async () => {
+      //prettier-ignore
+      try {
+        const avatarFileInfor = (await avatarService.getAvatarFileOfUser(userData.username))?.data;
+        let resourceResponse;
+        if (avatarFileInfor) {
+          resourceResponse = await fileService.download(FILE_TYPE.avatar,avatarFileInfor.code,
+            {
+              responseType: 'blob',
+            }
+          );
+        }
+        setAvatarResourceResponse(resourceResponse);
+      } catch (error) {
+        console.log(error);
+        message.error('Có lỗi xảy ra');
+      }
+    };
+    callApi();
+  }, []);
   return (
     <>
       <Card
@@ -45,7 +79,19 @@ function UserCard({ userData, dataIndex }) {
         }
       >
         <Meta
-          avatar={<Avatar size={60} src={<Image src={avatar} />} />}
+          avatar={
+            <Avatar
+              size={60}
+              src={
+                <Image
+                  src={
+                    getAvatarFromResourceResponse(avatarResourceResponse) ??
+                    defaultAvatar
+                  }
+                />
+              }
+            />
+          }
           title={title}
           description={description}
         />

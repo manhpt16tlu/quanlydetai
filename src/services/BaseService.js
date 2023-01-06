@@ -1,10 +1,11 @@
 import api from 'configs/api';
+import { REQUEST_METHOD_NAME } from 'configs/general';
 
 const call = async function (method, url, body, config) {
   let ret;
   //prettier-ignore
   switch (method) {
-    case 'GET': {
+    case REQUEST_METHOD_NAME.get: {
       const axiosResponse = config ? await api.get(url, config) : await api.get(url);
       ret = axiosResponse.data;
       break;

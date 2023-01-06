@@ -1,4 +1,5 @@
 import api from 'configs/api';
+import { REQUEST_METHOD_NAME } from 'configs/general';
 
 //handle all file logic,include topic file and form file
 
@@ -41,6 +42,9 @@ const uploadTopicFile = (body, config) => {
 const uploadFormFile = (body, config) => {
   return call('POST', 'upload/form', body, config);
 };
+const uploadAvatar = (body, config) => {
+  return call(REQUEST_METHOD_NAME.post, `upload/avatar`, body, config);
+};
 const download = (fileType, fileCode, config) => {
   return call('GET_FILE', `download/${fileType}/${fileCode}`, null, config);
 };
@@ -59,7 +63,7 @@ const getAllFormType = () => {
   return call('GET', 'formType');
 };
 const deleteForm = (formId) => {
-  return call('DELETE', `form/${formId}`);
+  return call('DELETE', `delete/form/${formId}`);
 };
 const getAllForm = (page, size, params) => {
   return call('GET', `form?page=${page}&size=${size}`, null, {
@@ -68,6 +72,7 @@ const getAllForm = (page, size, params) => {
 };
 
 export {
+  uploadAvatar,
   getAllForm,
   deleteForm,
   createForm,
