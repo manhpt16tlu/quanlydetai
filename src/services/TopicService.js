@@ -125,7 +125,9 @@ const getNonApprovedByOrganId = (organId) => {
 const deleteById = (topicId) => {
   return call('DELETE', `topic/${topicId}`);
 };
-
+const softDeleteById = (topicId) => {
+  return call('DELETE', `topic/softDelete/${topicId}`);
+};
 const existByName = (topicName) => {
   return call('GET', `topic/existByName?name=${encodeURI(topicName)}`);
 };
@@ -150,6 +152,7 @@ const countByManagerAndResult = (params) => {
   });
 };
 export {
+  softDeleteById,
   countByStatus,
   countByResult,
   countByManagerAndResult,

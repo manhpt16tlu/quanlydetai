@@ -165,7 +165,7 @@ function TopicCreate() {
               if (createdTopicId) {
                 //liên quan đến soft delete cần refactor
                 //delete record topic
-                // topicService.deleteById(createdTopicId).catch(() => {});
+                topicService.deleteById(createdTopicId).catch(() => {});
               }
               console.log(err);
               openNotificationWithIcon('error', 'Tạo đề tài', 'top');

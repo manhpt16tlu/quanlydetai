@@ -22,6 +22,7 @@ import {
 import { ROLES, routes as routesConfig } from 'configs/general';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as authService from 'services/AuthService';
+import UserAvatar from '../parts/UserAvatar/UserAvatar';
 import style from './AppLayout.module.scss';
 const { Header, Sider, Content, Footer } = Layout;
 const { Text, Title } = Typography;
@@ -124,17 +125,17 @@ function AppLayout(props) {
           <Row justify="end">
             <Col>
               <Space>
-                <Text strong>{user?.username}</Text>
                 <Dropdown
                   menu={{
                     items: userItems,
                     onClick: handleUserMenuClick,
                   }}
-                  placement="bottomRight"
+                  placement="bottom"
                   arrow
                 >
-                  <Avatar size="large" icon={<AntDesignOutlined />} />
+                  <Text strong>{user?.username}</Text>
                 </Dropdown>
+                <UserAvatar username={user?.username} />
               </Space>
             </Col>
           </Row>

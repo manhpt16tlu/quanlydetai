@@ -216,7 +216,7 @@ function TopicList() {
 
   const confirmDeleteTopic = (topicId) => {
     topicService
-      .deleteById(topicId)
+      .softDeleteById(topicId)
       .then(() => {
         openNotificationWithIcon('success', 'Xóa đề tài', 'top');
         setReload((prev) => !prev);
