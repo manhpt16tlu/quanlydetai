@@ -173,7 +173,8 @@ function Profile() {
     if (response) {
       const url = URL.createObjectURL(response.data);
       return url;
-    } else return null;
+    }
+    return null;
   };
   useEffect(() => {
     form.resetFields();

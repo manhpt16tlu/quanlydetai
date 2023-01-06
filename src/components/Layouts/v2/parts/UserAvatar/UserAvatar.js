@@ -5,7 +5,6 @@ import * as fileService from 'services/UploadFileService';
 import { useEffect, useState, memo } from 'react';
 import { FILE_TYPE } from 'configs/general';
 function UserAvatar({ username }) {
-  console.log('avatar');
   const [avatarResourceResponse, setAvatarResourceResponse] =
     useState(undefined);
   const getAvatarFromResourceResponse = (response) => {
