@@ -4,7 +4,7 @@ import * as avatarService from 'services/UserAvatarService';
 import * as fileService from 'services/UploadFileService';
 import { useEffect, useState, memo } from 'react';
 import { FILE_TYPE } from 'configs/general';
-function UserAvatar({ username }) {
+function UserAvatar({ username, refreshAvatarHeader }) {
   const [avatarResourceResponse, setAvatarResourceResponse] =
     useState(undefined);
   const getAvatarFromResourceResponse = (response) => {
@@ -34,9 +34,10 @@ function UserAvatar({ username }) {
           }
     };
     callApi();
-  }, []);
+  }, [refreshAvatarHeader]);
   return (
     <Avatar
+      style={{ border: '1px solid #d9d9d9' }}
       size="large"
       src={
         <Image

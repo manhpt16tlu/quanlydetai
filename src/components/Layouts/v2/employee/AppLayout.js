@@ -7,9 +7,12 @@ import {
   PlusOutlined,
   UserOutlined,
   AntDesignOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
+  Badge,
+  Button,
   Col,
   Dropdown,
   Image,
@@ -20,6 +23,7 @@ import {
   Typography,
 } from 'antd';
 import { ROLES, routes as routesConfig } from 'configs/general';
+import { createContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import * as authService from 'services/AuthService';
 import UserAvatar from '../parts/UserAvatar/UserAvatar';
@@ -67,8 +71,10 @@ const userItems = [
   ),
   getItem('Đăng xuất', 'logout', <LogoutOutlined />),
 ];
+const LayoutContext = createContext();
 function AppLayout(props) {
   const navigate = useNavigate();
+  const [refreshAvatarHeader, setRefreshAvatarHeader] = useState(false);
   const location = useLocation();
   const user = authService.getCurrentUser();
   const { pathname, state } = location;
@@ -135,7 +141,18 @@ function AppLayout(props) {
                 >
                   <Text strong>{user?.username}</Text>
                 </Dropdown>
-                <UserAvatar username={user?.username} />
+                <Badge count={3} size="small" offset={[-6, 6]}>
+                  <Button
+                    // type="primary"
+                    shape="circle"
+                    icon={<BellOutlined />}
+                    size="large"
+                  />
+                </Badge>
+                <UserAvatar
+                  username={user?.username}
+                  refreshAvatarHeader={refreshAvatarHeader}
+                />
               </Space>
             </Col>
           </Row>
@@ -145,15 +162,19 @@ function AppLayout(props) {
             margin: '24px 16px 0',
           }}
         >
-          <div
-            className={style.siteLayoutBackground}
-            style={{
-              padding: 24,
-              minHeight: '100vh',
-            }}
+          <LayoutContext.Provider
+            value={[refreshAvatarHeader, setRefreshAvatarHeader]}
           >
-            {props.children}
-          </div>
+            <div
+              className={style.siteLayoutBackground}
+              style={{
+                padding: 24,
+                minHeight: '100vh',
+              }}
+            >
+              {props.children}
+            </div>
+          </LayoutContext.Provider>
         </Content>
         <Footer
           style={{
@@ -179,3 +200,4 @@ function AppLayout(props) {
 }
 
 export default AppLayout;
+export { LayoutContext };

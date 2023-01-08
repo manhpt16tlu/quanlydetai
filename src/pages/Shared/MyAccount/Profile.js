@@ -20,6 +20,7 @@ import {
   FILE_TYPE,
   MAX_AVATAR_SIZE,
   MESSAGE_REQUIRE,
+  ROLES,
 } from 'configs/general';
 import {
   CheckCircleOutlined,
@@ -27,7 +28,7 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 import produce from 'immer';
-import { useEffect, useReducer, useState } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import defaultAvatar from 'assets/images/default_avatar.jpg';
 import * as userService from 'services/UserService';
 import * as rankService from 'services/UserRankService';
@@ -39,6 +40,8 @@ import {
   openNotificationWithIcon,
 } from 'utils/general';
 import isEqual from 'lodash/isEqual';
+import { LayoutContext as AdminLayoutContext } from 'components/Layouts/v2/admin/AppLayout';
+import { LayoutContext as EmployeeLayoutContext } from 'components/Layouts/v2/employee/AppLayout';
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -105,6 +108,12 @@ const generateUserRequestBody = (data) => {
 };
 function Profile() {
   const userStorage = authService.getCurrentUser();
+  const roles = userStorage?.roles;
+
+  const [, setRefreshAvatarHeader] = useContext(
+    roles?.includes(ROLES.admin) ? AdminLayoutContext : EmployeeLayoutContext
+  );
+
   const [form] = Form.useForm();
   const [formData, dispatch] = useReducer(reducer, initFormData);
   const [disableResetBtn, setDisableResetBtn] = useState(true);
@@ -139,6 +148,7 @@ function Profile() {
     try {
       await avatarService.removeAvatar();
       setRefresh((prev) => !prev);
+      setRefreshAvatarHeader((prev) => !prev);
       message.success('Xóa thành công');
     } catch (error) {
       console.log(error);
@@ -163,6 +173,7 @@ function Profile() {
         },
       });
       setRefresh((prev) => !prev);
+      setRefreshAvatarHeader((prev) => !prev); // refresh avatar in header
       message.success('Cập nhật thành công');
     } catch (error) {
       console.log(error);
@@ -273,6 +284,7 @@ function Profile() {
               }}
             >
               <Avatar
+                style={{ border: '1px solid #d9d9d9' }}
                 size={60}
                 src={
                   <Image

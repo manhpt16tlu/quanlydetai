@@ -10,9 +10,12 @@ import {
   UserOutlined,
   AntDesignOutlined,
   UsergroupAddOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
+  Badge,
+  Button,
   Col,
   Dropdown,
   Image,
@@ -28,6 +31,8 @@ import * as authService from 'services/AuthService';
 import style from './AppLayout.module.scss';
 
 import UserAvatar from '../parts/UserAvatar/UserAvatar';
+import { useState } from 'react';
+import { createContext } from 'react';
 const { Header, Sider, Content, Footer } = Layout;
 const { Text, Title } = Typography;
 
@@ -89,15 +94,15 @@ const userItems = [
   ),
   getItem('Đăng xuất', 'logout', <LogoutOutlined />),
 ];
-
+const LayoutContext = createContext();
 function AppLayout(props) {
   const navigate = useNavigate();
+  const [refreshAvatarHeader, setRefreshAvatarHeader] = useState(false);
   const user = authService.getCurrentUser();
   const location = useLocation();
   const { pathname, state } = location;
   let menuKey = pathname; //hight light menu key
   let previousPath = state?.previousPath;
-
   switch (pathname) {
     case routesConfig[ROLES.admin].topicDetail:
       menuKey = previousPath ?? pathname;
@@ -148,7 +153,7 @@ function AppLayout(props) {
         >
           <Row justify="end">
             <Col>
-              <Space>
+              <Space size={10}>
                 <Dropdown
                   menu={{
                     items: userItems,
@@ -159,7 +164,18 @@ function AppLayout(props) {
                 >
                   <Text strong>{user?.username}</Text>
                 </Dropdown>
-                <UserAvatar username={user?.username} />
+                <Badge count={3} size="small" offset={[-6, 6]}>
+                  <Button
+                    // type="primary"
+                    shape="circle"
+                    icon={<BellOutlined />}
+                    size="large"
+                  />
+                </Badge>
+                <UserAvatar
+                  username={user?.username}
+                  refreshAvatarHeader={refreshAvatarHeader}
+                />
               </Space>
             </Col>
           </Row>
@@ -169,15 +185,19 @@ function AppLayout(props) {
             margin: '24px 16px 0',
           }}
         >
-          <div
-            className={style.siteLayoutBackground}
-            style={{
-              padding: 24,
-              minHeight: '100vh',
-            }}
+          <LayoutContext.Provider
+            value={[refreshAvatarHeader, setRefreshAvatarHeader]}
           >
-            {props.children}
-          </div>
+            <div
+              className={style.siteLayoutBackground}
+              style={{
+                padding: 24,
+                minHeight: '100vh',
+              }}
+            >
+              {props.children}
+            </div>
+          </LayoutContext.Provider>
         </Content>
         <Footer
           style={{
@@ -203,3 +223,4 @@ function AppLayout(props) {
 }
 
 export default AppLayout;
+export { LayoutContext };
