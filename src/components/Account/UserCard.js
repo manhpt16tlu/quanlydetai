@@ -81,6 +81,7 @@ function UserCard({ userData, dataIndex }) {
         <Meta
           avatar={
             <Avatar
+              style={{ border: '1px solid #d9d9d9' }}
               size={60}
               src={
                 <Image
