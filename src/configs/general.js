@@ -82,7 +82,7 @@ const DOCUMENT_TITLE = {
   [routes.myAccount + '/' + routes.myAccountPasswordChange]: 'Đổi mật khẩu',
   [routes.myAccount + '/' + routes.myAccountProfileEdit]: 'Thông tin tài khoản',
 };
-const TABLE_PAGE_SIZE = 7;
+const TABLE_PAGE_SIZE = 10;
 // khớp với backend
 const TOPIC_STATUS_DEFAULT = {
   CHUA_DUYET: 'Chưa duyệt',

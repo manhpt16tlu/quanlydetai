@@ -22,7 +22,9 @@ api.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status === 401) localStorage.clear();
+    if (error.response.status === 401)
+      if (localStorage.getItem(LOCALSTORAGE_KEY.currentUser) !== null)
+        localStorage.removeItem(LOCALSTORAGE_KEY.currentUser);
     // Any status codes that falls OUTSIDE the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(error);
