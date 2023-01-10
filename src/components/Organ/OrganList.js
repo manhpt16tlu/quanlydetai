@@ -3,6 +3,7 @@ import {
   CloseCircleOutlined,
   EditOutlined,
   WarningOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -80,11 +81,17 @@ const getFormItemEdit = (formItemName, type) => {
     </Form.Item>
   );
 };
+const convertFilterToParams = (filterData) => {
+  return {
+    name: filterData[dataIndexTable.name]?.[0],
+  };
+};
 function OrganList({ refresh }) {
   const { tableStyle } = useContext(AntdSettingContext);
   const [tableBorder] = tableStyle;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [filteredInfo, setFilteredInfo] = useState({});
   const [callApiAgain, setCallApiAgain] = useState(false);
   const [dataPaging, dispatch] = useReducer(pageReducer, INITIAL_PAGE_STATE);
   const [editingKey, setEditingKey] = useState(undefined);
@@ -101,16 +108,84 @@ function OrganList({ refresh }) {
       });
     },
   };
+  const getColumnSearchProps = (dataIndex, inputPlaceHolder) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => {
+      return (
+        <div
+          style={{
+            padding: 8,
+          }}
+        >
+          <Input
+            disabled={editingKey !== undefined}
+            placeholder={`Nhập ${inputPlaceHolder}`}
+            value={selectedKeys[0]}
+            onChange={(e) => {
+              setSelectedKeys(e.target.value ? [e.target.value] : []);
+            }}
+            style={{
+              marginBottom: 8,
+              display: 'block',
+            }}
+          />
+          <Space>
+            <Button
+              disabled={editingKey !== undefined}
+              type="primary"
+              onClick={() => {
+                confirm();
+              }}
+              icon={<SearchOutlined />}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Search
+            </Button>
+            <Button
+              disabled={editingKey !== undefined}
+              onClick={() => {
+                clearFilters();
+                confirm();
+              }}
+              size="small"
+              style={{
+                width: 90,
+              }}
+            >
+              Reset
+            </Button>
+          </Space>
+        </div>
+      );
+    },
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1890ff' : undefined,
+          fontSize: 18,
+        }}
+      />
+    ),
+  });
   const tableColumn = [
     {
       title: 'Tên cơ quan',
       dataIndex: dataIndexTable.name,
       width: '25%',
+      filteredValue: filteredInfo[dataIndexTable.name] || null,
       render: (text, record) => {
         if (editingKey === record.key) {
           return getFormItemEdit(dataIndexTable.name);
         } else return <Link>{text}</Link>;
       },
+      ...getColumnSearchProps(dataIndexTable.name, 'tên biểu mẫu'),
       editable: true,
     },
     {
@@ -221,13 +296,18 @@ function OrganList({ refresh }) {
     });
     setEditingKey(record.key);
   };
+  const handleTableChange = (pagination, filters, sorter) => {
+    //control filter reset
+    setFilteredInfo(filters);
+  };
   useEffect(() => {
     const callApi = async () => {
       setLoading(true);
       const pageResponse = (
         await organService.getAllWithFilter(
           dataPaging.current - 1,
-          dataPaging.pageSize
+          dataPaging.pageSize,
+          convertFilterToParams(filteredInfo)
         )
       )?.data;
       dispatch({
@@ -239,13 +319,14 @@ function OrganList({ refresh }) {
       setLoading(false);
     };
     callApi();
-  }, [dataPaging.current, refresh, callApiAgain]);
+  }, [dataPaging.current, refresh, callApiAgain, filteredInfo]);
 
   return (
     <>
       <Spin spinning={loading}>
         <Form form={form} component={false}>
           <Table
+            onChange={handleTableChange}
             bordered={tableBorder}
             rowSelection={rowSelection}
             columns={tableColumn}

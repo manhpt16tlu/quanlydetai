@@ -3,7 +3,7 @@ const call = async function (method, url, body, config) {
   let ret;
   switch (method) {
     case 'GET': {
-      const axiosResponse = await api.get(url);
+      const axiosResponse = await api.get(url, config);
       ret = axiosResponse.data;
       break;
     }
@@ -22,18 +22,18 @@ const call = async function (method, url, body, config) {
   }
   return ret;
 };
-const getAll = (page, search) => {
-  return call('GET', `organ?page=${page}&search=${search}`);
-};
-const getAllWithFilter = (page, size) => {
-  return call('GET', `organ?page=${page}&size=${size}`);
+// const getAll = (page, search) => {
+//   return call('GET', `organ?page=${page}&search=${search}`);
+// };
+const getAllWithFilter = (page, size, params) => {
+  return call('GET', `organ?page=${page}&size=${size}`, null, { params });
 };
 const getAllNoPaging = () => {
   return call('GET', `organ/nopaging`);
 };
-const getAllWhichNeedApprove = () => {
-  return call('GET', `organ/need_approve`);
-};
+// const getAllWhichNeedApprove = () => {
+//   return call('GET', `organ/need_approve`);
+// };
 const create = (body) => {
   return call('POST', 'organ', body);
 };
@@ -46,9 +46,9 @@ const existByName = (organName) => {
 export {
   getAllWithFilter,
   existByName,
-  getAll,
+  // getAll,
   getAllNoPaging,
   create,
   update,
-  getAllWhichNeedApprove,
+  // getAllWhichNeedApprove,
 };
