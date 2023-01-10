@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { generateManagerName } from 'utils/general';
 import { FILE_TYPE } from 'configs/general';
 const { Meta } = Card;
-function UserCard({ userData, dataIndex }) {
+function UserCard({ userData }) {
   //prettier-ignore
   const [avatarResourceResponse, setAvatarResourceResponse] = useState(undefined);
   const title = (
@@ -57,7 +57,7 @@ function UserCard({ userData, dataIndex }) {
       }
     };
     callApi();
-  }, []);
+  }, [userData]);
   return (
     <>
       <Card

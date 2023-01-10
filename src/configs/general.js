@@ -47,7 +47,7 @@ const AVATAR_MIME_TYPE = {
   jpeg: 'image/jpeg',
 };
 const MAX_FILE_SIZE = 10000000; //10mb
-const MAX_AVATAR_SIZE = 300000;
+const MAX_AVATAR_SIZE = 1000000;
 const TIMESTAMP_FORMAT = 'MMMM DD YYYY, h:mm:ss a';
 const TOPIC_FILE_TYPE = {
   outline: 'Đề cương',

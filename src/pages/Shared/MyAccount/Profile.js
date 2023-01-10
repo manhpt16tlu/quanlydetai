@@ -244,7 +244,9 @@ function Profile() {
       } else if (file.size > MAX_AVATAR_SIZE) {
         //check file zie
         message.error(
-          `Không thể upload ảnh lớn hơn ${Math.round(MAX_AVATAR_SIZE / 1000)}KB`
+          `Không thể upload ảnh lớn hơn ${Math.round(
+            MAX_AVATAR_SIZE / 1000000
+          )}MB`
         );
         return Upload.LIST_IGNORE; // không chấp nhận file
       }

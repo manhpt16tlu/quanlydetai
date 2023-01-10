@@ -185,7 +185,7 @@ function OrganList({ refresh }) {
           return getFormItemEdit(dataIndexTable.name);
         } else return <Link>{text}</Link>;
       },
-      ...getColumnSearchProps(dataIndexTable.name, 'tên biểu mẫu'),
+      ...getColumnSearchProps(dataIndexTable.name, 'tên cơ quan'),
       editable: true,
     },
     {
