@@ -61,10 +61,11 @@ function UserCard({ userData }) {
   return (
     <>
       <Card
+        // size="default"
         bordered={false}
-        style={{
-          width: 300,
-        }}
+        // style={{
+        //   width: 300,
+        // }}
         cover={
           <div
             style={{
